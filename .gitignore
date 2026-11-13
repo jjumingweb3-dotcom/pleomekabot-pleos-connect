@@ -1,5 +1,6 @@
 # Blind-review & submission-only files (excluded from public repo)
 참고자료/
+제출용/
 *.docx
 심사기준.png
 
