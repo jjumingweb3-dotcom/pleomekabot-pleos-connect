@@ -67,8 +67,9 @@
     }
     .main-layout {
       display: grid;
-      grid-template-columns: 325px 1fr;
+      grid-template-columns: 325px minmax(0, 1fr);
       flex: 1;
+      min-height: 0;
       overflow: hidden;
     }
     /* Control Panel (Sensor Sim) */
@@ -80,6 +81,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      min-width: 0;
     }
     .sim-title {
       font-family: 'Silkscreen', 'Galmuri11', monospace;
@@ -138,11 +140,13 @@
 
     /* In-Car Display Area */
     .in-car-screen {
-      padding: 14px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       position: relative;
+      min-width: 0;
+      min-height: 0;
       background:
         repeating-linear-gradient(
           0deg,
@@ -152,7 +156,8 @@
           transparent 4px
         ),
         var(--bg);
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
     .car-ambient-glow {
       position: absolute;
@@ -227,9 +232,11 @@
     .stt-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
 
     /* Screen Views */
-    .view-container { flex: 1; display: flex; gap: 12px; min-height: 0; }
+    .view-container { flex: 1; display: flex; gap: 12px; min-height: 0; min-width: 0; }
     .screen-panel {
       flex: 1;
+      min-width: 0;
+      min-height: 0;
       background: var(--card-bg);
       border: 3px solid var(--border-hi);
       box-shadow: 5px 5px 0 #000;
@@ -494,13 +501,21 @@
       color: #101018; font-weight: 900; cursor: pointer; flex-shrink: 0;
     }
     .btn-plus:disabled { background: #2b2b42; color: #64648c; cursor: not-allowed; }
+
+    @media (max-width: 1080px) {
+      body { height: auto; min-height: 100vh; overflow-y: auto; }
+      .main-layout { grid-template-columns: 1fr; overflow: visible; }
+      .sim-panel { border-right: none; border-bottom: 4px solid var(--border); overflow-y: visible; }
+      .in-car-screen { overflow: visible; }
+      .view-container { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="logo-area">
-      <div style="font-size:21px; font-weight:900; color:#38bdf8; letter-spacing:0.5px;">PLEOMEKABOT</div>
-      <div class="badge">Pleos Connect SDK v2.4 Verified</div>
+      <div style="font-size:21px; font-weight:900; color:#37C4FF; letter-spacing:0.5px;">PLEOMEKABOT</div>
+      <div class="badge">Pleos Vehicle SDK v2.3.2</div>
       <div class="badge" style="border-color:#22c55e44; color:#22c55e;">Zero-Distraction Compliant</div>
       <div class="badge" id="header-exp-toast" style="display:none; background:#14532d; color:#4ade80; border-color:#22c55e;">📡 드론 방어 +30 EXP 수신!</div>
     </div>

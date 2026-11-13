@@ -470,6 +470,11 @@
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
     }
 
+    @media (max-width: 600px) {
+      .hero-stats, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 20px; }
+    }
+
     @media print {
       body { background: #fff; color: #111; }
       .topbar { display: none; }
