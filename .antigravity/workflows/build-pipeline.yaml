@@ -1,0 +1,7 @@
+name: PLEOMEKABOT Build & Bundle Pipeline
+steps:
+  - name: Bundle Web Engine to Android Assets
+    run: Copy-Item demo.html android/app/src/main/assets/index.html -Force
+  - name: Assemble Pleos Connect APK (API 34/35)
+    working_directory: android
+    run: ./gradlew assembleDebug

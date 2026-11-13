@@ -1,0 +1,7 @@
+{
+  "name": "pleomekabot-web-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "In-Car 3D & 20s Battle Web Engine for Hyundai Pleos Connect",
+  "main": "src/index.ts"
+}

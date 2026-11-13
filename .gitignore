@@ -1,0 +1,20 @@
+# Blind-review & submission-only files (excluded from public repo)
+참고자료/
+*.docx
+심사기준.png
+
+# Android & Gradle build artifacts
+android/.gradle/
+android/**/build/
+android/local.properties
+android/.idea/
+*.iml
+.gradle/
+build/
+
+# Node / Web / OS artifacts
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.log

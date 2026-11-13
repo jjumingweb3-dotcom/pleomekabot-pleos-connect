@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLEOMEKABOT - Pleos Connect Interactive Demo</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(18, 24, 38, 0.90);
+      --border: #232d42;
+      --accent-blue: #0088ff;
+      --accent-red: #ff3b00;
+      --accent-ice: #00f0ff;
+      --accent-wind: #00e676;
+      --accent-earth: #ffb300;
+      --text: #f0f4fc;
+      --text-muted: #8a99b5;
+      --current-ambient: #0088ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      transition: background 0.5s ease;
+    }
+    header {
+      background: #111726;
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .badge { background: #1e293b; color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #38bdf844; }
+    .main-layout {
+      display: grid;
+      grid-template-columns: 325px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+    /* Control Panel (Sensor Sim) */
+    .sim-panel {
+      background: var(--card-bg);
+      border-right: 1px solid var(--border);
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sim-title { font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
+    .control-group { background: #151d2f; padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
+    .control-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+    .gear-btn-group { display: flex; gap: 6px; }
+    .gear-btn {
+      flex: 1; padding: 7px 0; border: 1px solid var(--border); background: #1a233a; color: #fff;
+      border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s;
+    }
+    .gear-btn.active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 10px rgba(56,189,248,0.5); }
+    input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
+    .val-disp { font-size: 12px; color: #fff; font-weight: 600; float: right; }
+    .switch-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 5px; }
+    .sim-select {
+      background: #111726; color: #fff; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 11px;
+    }
+
+    /* In-Car Display Area */
+    .in-car-screen {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, rgba(20, 32, 58, 0.55) 0%, rgba(11, 15, 25, 0.96) 100%);
+      transition: box-shadow 0.4s ease, border 0.4s ease;
+      overflow: hidden;
+    }
+    .car-ambient-glow {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 5px;
+      background: var(--accent-blue);
+      box-shadow: 0 0 28px var(--accent-blue);
+      transition: all 0.5s ease;
+      z-index: 10;
+    }
+    /* Screen Shake & Fallback Border Glow */
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-7px, 5px); }
+      40% { transform: translate(7px, -5px); }
+      60% { transform: translate(-5px, -3px); }
+      80% { transform: translate(5px, 3px); }
+    }
+    .shake-fx { animation: screenShake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
+    .fallback-border-glow {
+      box-shadow: inset 0 0 35px var(--current-ambient, #0088ff) !important;
+      border: 2px solid var(--current-ambient, #0088ff);
+    }
+
+    /* Hardware Status Bar */
+    .hw-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; font-size: 11px; color: #94a3b8;
+    }
+    .hw-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hw-pill {
+      background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; padding: 3px 9px;
+      border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+    }
+    .hw-dot { width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; }
+
+    .gleo-bubble {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #334155;
+      border-left: 4px solid #38bdf8;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .gleo-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .gleo-icon {
+      background: linear-gradient(135deg, #0284c7, #38bdf8); width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #0b0f19; flex-shrink: 0;
+    }
+    .stt-group { display: flex; gap: 6px; flex-shrink: 0; }
+    .stt-btn {
+      background: #1e293b; border: 1px solid #38bdf855; color: #38bdf8; padding: 5px 10px;
+      border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .stt-btn:hover { background: #0284c7; color: #fff; }
+
+    /* Screen Views */
+    .view-container { flex: 1; display: flex; gap: 14px; min-height: 0; }
+    .screen-panel {
+      flex: 1; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 13px; display: flex; flex-direction: column; overflow-y: auto;
+    }
+    .d-gear-overlay {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px dashed #334155; border-radius: 12px; background: rgba(15,23,42,0.68);
+      text-align: center; gap: 12px; padding: 20px;
+    }
+    .pulse-dot { width: 14px; height: 14px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.25); } 100% { opacity: 0.4; transform: scale(0.9); } }
+
+    /* Mecha Model Showcase */
+    .mecha-showcase {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; border-radius: 10px;
+      background: radial-gradient(circle at 50% 55%, rgba(0, 136, 255, 0.16) 0%, rgba(7, 11, 20, 0.9) 80%);
+      border: 1px solid #1e293b; padding: 10px; min-height: 185px; overflow: hidden;
+    }
+    .mecha-svg-wrap {
+      width: 112px; height: 112px; display: flex; align-items: center; justify-content: center;
+      animation: mechaHover 2.6s ease-in-out infinite;
+      filter: drop-shadow(0 0 18px var(--current-ambient, #0088ff));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    @keyframes mechaHover {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-6px) scale(1.03); }
+    }
+    .spark-warning {
+      position: absolute; top: 8px; right: 8px; background: rgba(244, 63, 94, 0.22);
+      border: 1px solid #f43f5e; color: #fda4af; font-size: 10px; padding: 3px 7px; border-radius: 4px;
+      display: none; align-items: center; gap: 4px; z-index: 4;
+    }
+    .bot-name-tag { font-size: 16px; font-weight: 800; margin-top: 6px; letter-spacing: 0.4px; }
+    .element-pill {
+      margin-top: 5px; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .cycle-hint {
+      font-size: 10px; color: #94a3b8; margin-top: 5px; background: #0f172a; padding: 3px 8px; border-radius: 4px; border: 1px solid #1e293b;
+    }
+
+    /* Battle Arena & Combat Animations */
+    .battle-arena { display: flex; flex-direction: column; height: 100%; gap: 8px; }
+    .timeline-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #0f172a; padding: 6px 12px; border-radius: 6px; border: 1px solid #1e293b; font-size: 11px;
+    }
+    .combat-stage {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background:
+        linear-gradient(180deg, rgba(10, 16, 30, 0.85) 0%, rgba(16, 26, 48, 0.95) 100%),
+        repeating-linear-gradient(90deg, rgba(56, 189, 248, 0.05) 0px, rgba(56, 189, 248, 0.05) 1px, transparent 1px, transparent 28px);
+      border: 1px solid #283652;
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 175px;
+    }
+    .combat-grid-floor {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 38px;
+      background: linear-gradient(180deg, transparent 0%, rgba(2, 132, 199, 0.18) 100%);
+      border-top: 1px solid rgba(56, 189, 248, 0.25);
+      pointer-events: none;
+    }
+    .fighter {
+      text-align: center; width: 42%; position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .arena-mecha-unit {
+      width: 96px; height: 96px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      animation: mechaHover 2.2s ease-in-out infinite;
+      transition: transform 0.2s, filter 0.2s;
+    }
+    /* Lunge & Hit Keyframes */
+    @keyframes lungeRight {
+      0% { transform: translateX(0) scale(1); }
+      35% { transform: translateX(52px) scale(1.15) rotate(4deg); }
+      100% { transform: translateX(0) scale(1); }
+    }
+    @keyframes lungeLeft {
+      0% { transform: translateX(0) scale(1); }
+      35% { transform: translateX(-52px) scale(1.15) rotate(-4deg); }
+      100% { transform: translateX(0) scale(1); }
+    }
+    @keyframes hitFlash {
+      0%, 100% { filter: brightness(1); transform: translateX(0); }
+      25% { filter: brightness(2.8) drop-shadow(0 0 24px #ff3b00); transform: translateX(10px) rotate(5deg); }
+      50% { filter: brightness(2.2) drop-shadow(0 0 18px #ffffff); transform: translateX(-8px) rotate(-4deg); }
+      75% { filter: brightness(1.8); transform: translateX(6px); }
+    }
+    @keyframes overdriveUlt {
+      0% { transform: translateX(0) scale(1); filter: brightness(1); }
+      30% { transform: translateX(-12px) scale(1.25); filter: brightness(2.2) drop-shadow(0 0 30px #22c55e); }
+      55% { transform: translateX(85px) scale(1.35); filter: brightness(3) drop-shadow(0 0 40px #fbbf24); }
+      100% { transform: translateX(0) scale(1); filter: brightness(1); }
+    }
+    .anim-lunge-right { animation: lungeRight 0.42s ease-out !important; }
+    .anim-lunge-left { animation: lungeLeft 0.42s ease-out !important; }
+    .anim-hit { animation: hitFlash 0.42s ease-out !important; }
+    .anim-overdrive { animation: overdriveUlt 0.65s cubic-bezier(.17,.67,.35,1.2) !important; }
+
+    /* Laser Beam & Impact Explosion FX */
+    .laser-beam {
+      position: absolute; top: 44%; left: 26%; width: 0%; height: 8px;
+      background: linear-gradient(90deg, #ffffff, var(--current-ambient, #0088ff), #fbbf24);
+      box-shadow: 0 0 20px var(--current-ambient, #0088ff), 0 0 35px #ffffff;
+      border-radius: 8px; z-index: 5; opacity: 0; pointer-events: none;
+      transform: translateY(-50%);
+    }
+    @keyframes shootBeamRight {
+      0% { left: 26%; width: 0%; opacity: 1; height: 10px; }
+      45% { left: 26%; width: 48%; opacity: 1; height: 14px; }
+      100% { left: 74%; width: 0%; opacity: 0; height: 4px; }
+    }
+    @keyframes shootBeamLeft {
+      0% { right: 26%; left: auto; width: 0%; opacity: 1; height: 8px; }
+      45% { right: 26%; left: auto; width: 48%; opacity: 1; height: 12px; }
+      100% { right: 74%; left: auto; width: 0%; opacity: 0; height: 4px; }
+    }
+    .beam-shoot-right { animation: shootBeamRight 0.38s ease-out forwards; }
+    .beam-shoot-left {
+      background: linear-gradient(270deg, #ffffff, #ff3b00, #fbbf24) !important;
+      box-shadow: 0 0 20px #ff3b00 !important;
+      animation: shootBeamLeft 0.38s ease-out forwards;
+    }
+
+    /* Floating Damage Number & Impact Burst */
+    .dmg-popup {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      font-size: 18px; font-weight: 900; color: #fbbf24;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 12px #f43f5e;
+      pointer-events: none; opacity: 0; z-index: 10; white-space: nowrap;
+    }
+    @keyframes floatDmg {
+      0% { opacity: 1; transform: translate(-50%, 10px) scale(0.7); }
+      35% { opacity: 1; transform: translate(-50%, -12px) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -28px) scale(0.95); }
+    }
+    .dmg-show { animation: floatDmg 0.75s ease-out forwards; }
+
+    .vs-emblem {
+      font-weight: 900; color: #f43f5e; font-size: 16px;
+      background: rgba(244, 63, 94, 0.14); border: 1px solid rgba(244, 63, 94, 0.4);
+      padding: 6px 10px; border-radius: 50%; z-index: 3;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+    }
+
+    .hp-bar-bg { width: 100%; height: 10px; background: #1e293b; border-radius: 5px; overflow: hidden; margin-top: 5px; border: 1px solid #334155; }
+    .hp-bar-fill { height: 100%; width: 100%; transition: width 0.28s ease; }
+
+    .timing-area {
+      background: #0f172a; border: 1px solid #334155; border-radius: 10px;
+      padding: 11px; text-align: center; margin-top: auto; position: relative;
+    }
+    .bar-track {
+      position: relative; width: 100%; height: 30px; background: #1e293b; border-radius: 15px;
+      overflow: hidden; margin: 7px 0; border: 1px solid #475569;
+    }
+    .good-zone {
+      position: absolute; top: 0; bottom: 0; left: 15%; width: 70%;
+      background: rgba(56, 189, 248, 0.12);
+    }
+    .great-zone {
+      position: absolute; top: 0; bottom: 0; left: 35%; width: 30%;
+      background: rgba(234, 179, 8, 0.25); border-left: 1px dashed #eab308; border-right: 1px dashed #eab308;
+    }
+    .perfect-zone {
+      position: absolute; top: 0; bottom: 0; left: 46.5%; width: 7%;
+      background: rgba(34, 197, 94, 0.45); border-left: 2px solid #22c55e; border-right: 2px solid #22c55e;
+      transition: left 0.2s, width 0.2s;
+    }
+    .needle {
+      position: absolute; top: 0; bottom: 0; width: 4px; background: #fff;
+      box-shadow: 0 0 10px #fff; left: 0%;
+    }
+    .critical-banner {
+      display: none; font-size: 13px; font-weight: 900; color: #fbbf24;
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.8); margin-bottom: 4px;
+    }
+    .action-btn {
+      width: 100%; padding: 11px; background: #0284c7; border: none; color: #fff;
+      font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s;
+    }
+    .action-btn:hover:not(:disabled) { background: #0369a1; }
+    .action-btn:disabled { background: #263147 !important; color: #94a3b8; cursor: not-allowed; border: 1px dashed #475569; }
+
+    /* Cooldown Warning Banner */
+    .cooldown-alert {
+      display: none;
+      background: rgba(244, 63, 94, 0.14);
+      border: 1px solid #f43f5e;
+      color: #fda4af;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+
+    /* Stat allocation (4 Stats) */
+    .stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px;
+    }
+    .stat-card {
+      background: #151d2f; border: 1px solid #232d42; border-radius: 6px; padding: 6px 8px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+    }
+    .stat-sub { font-size: 10px; color: #64748b; display: block; }
+    .btn-plus {
+      width: 22px; height: 22px; background: #38bdf8; border: none; border-radius: 4px;
+      color: #0b0f19; font-weight: 900; cursor: pointer; flex-shrink: 0;
+    }
+    .btn-plus:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-area">
+      <div style="font-size:21px; font-weight:900; color:#38bdf8; letter-spacing:0.5px;">PLEOMEKABOT</div>
+      <div class="badge">Pleos Connect SDK v2.4 Verified</div>
+      <div class="badge" style="border-color:#22c55e44; color:#22c55e;">Zero-Distraction Compliant</div>
+      <div class="badge" id="header-exp-toast" style="display:none; background:#14532d; color:#4ade80; border-color:#22c55e;">📡 드론 방어 +30 EXP 수신!</div>
+    </div>
+    <div style="font-size:12px; color:var(--text-muted);">
+      현대자동차그룹 Pleos 앱 공모전 출품작 (Project Antigravity In-Car Prototype)
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Left: Vehicle Sensor Simulator -->
+    <div class="sim-panel">
+      <div class="sim-title">
+        <span>Vehicle Sensors Sim (SDK Mock)</span>
+        <span style="font-size:10px; color:#64748b;">API 34</span>
+      </div>
+
+      <div class="control-group">
+        <label>1. Gear Shift (`Vehicle.carInfo.GearPosition`)</label>
+        <div class="gear-btn-group">
+          <button class="gear-btn" onclick="setGear('P')" id="btn-p">P (주차)</button>
+          <button class="gear-btn" onclick="setGear('R')" id="btn-r">R</button>
+          <button class="gear-btn" onclick="setGear('N')" id="btn-n">N</button>
+          <button class="gear-btn active" onclick="setGear('D')" id="btn-d">D (주행)</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>2. Car Model & Trim (`getCarInfo & Capabilities`)</label>
+        <div class="switch-row">
+          <span>차종 모델 (`CarInfo`)</span>
+          <select id="sel-model" class="sim-select" onchange="updateCarModel()">
+            <option value="IONIQ6">아이오닉 6 (아이오닉-타이탄)</option>
+            <option value="GRANDEUR">디 올 뉴 그랜저 (그랜저-발키리)</option>
+            <option value="TUCSON">투싼 Hybrid (투싼-가디언)</option>
+          </select>
+        </div>
+        <div class="switch-row" style="margin-top:7px;">
+          <span>하드웨어 트림 (`checkCapabilities`)</span>
+          <select id="sel-trim" class="sim-select" onchange="updateSensors()">
+            <option value="FULL">프레스티지 (앰비언트+햅틱 지원)</option>
+            <option value="FALLBACK">모던 트림 (화면 Glow/Shake 폴백)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>3. 5대 원소 센서 (`Wiper / HVAC / Cruise / Odometer`)</label>
+        <div style="margin-bottom:6px;">
+          <span style="font-size:11px; color:var(--text-muted);">외기온도 (`getHVAC`):</span>
+          <span class="val-disp" id="disp-temp">24°C</span>
+          <input type="range" min="-10" max="38" value="24" oninput="updateTemp(this.value)">
+        </div>
+        <div class="switch-row">
+          <span>🌧️ 우천 와이퍼 작동 (`getWiper`)</span>
+          <input type="checkbox" id="chk-rain" checked onchange="updateSensors()">
+        </div>
+        <div class="switch-row">
+          <span>🌪️ 스마트 크루즈 20km 정속 (`Speed`)</span>
+          <input type="checkbox" id="chk-cruise" onchange="updateSensors()">
+        </div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">
+          * 조건 미해당 시 🪨 땅 속성(누적 50km 무급정거 클린 주행) 적용
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>4. 상대 타깃 매칭 시뮬레이션 (`FusedLocation 1~5km`)</label>
+        <div class="switch-row">
+          <span>탐색된 적 메카봇 속성</span>
+          <select id="sel-enemy" class="sim-select" onchange="updateSensors()">
+            <option value="fire">🔥 그랜저-크림슨 (불 속성)</option>
+            <option value="ice">❄️ 코나-프로스트 (얼음 속성)</option>
+            <option value="wind">🌪️ 아이오닉5-제피르 (바람 속성)</option>
+            <option value="earth">🪨 싼타페-골렘 (땅 속성)</option>
+            <option value="water">💧 투싼-아쿠아 (물 속성)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>5. 차량 진단 & 충전 (`getTire / getEvBattery`)</label>
+        <div class="switch-row">
+          <span>4륜 타이어 공기압 (`getTire`)</span>
+          <select id="sel-tire" class="sim-select" onchange="updateSensors()">
+            <option value="OK">정상 34 psi (Full Armor +10% HP)</option>
+            <option value="LOW">우측 후륜 26 psi (-10% 방어 디버프)</option>
+          </select>
+        </div>
+        <div class="switch-row" style="margin-top:7px;">
+          <span>⚡ E-pit 급속 충전 도킹 (`getEvBattery`)</span>
+          <input type="checkbox" id="chk-ev" onchange="toggleEvCharging(this.checked)">
+        </div>
+      </div>
+
+      <div class="control-group" style="background:#1e293b66;">
+        <label>6. 거점 가디언 드론 (`WebSocket Real-time Sync`)</label>
+        <div style="font-size:11px; color:#94a3b8; line-height:1.35; margin-bottom:6px;">
+          회수 과정 없이 거점 방어 성공 즉시 본체로 경험치가 전송됩니다.
+        </div>
+        <button class="action-btn" style="padding:7px; font-size:12px; background:#0284c7;" onclick="triggerDroneDefense()">
+          📡 성수 거점 드론 방어 승리 수신 (+30 EXP)
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: In-Car Screen -->
+    <div class="in-car-screen" id="car-screen">
+      <div class="car-ambient-glow" id="ambient-bar"></div>
+
+      <!-- Hardware Orchestration Status Bar -->
+      <div class="hw-bar">
+        <div class="hw-pills">
+          <span class="hw-pill"><span class="hw-dot" id="hw-light-dot"></span><span id="hw-light-text">Ambient Light: #0088FF (Water)</span></span>
+          <span class="hw-pill" id="hw-seat-pill">💺 Seat Haptic: Ready</span>
+          <span class="hw-pill">🔊 Audio: 운전석 헤드레스트 독립 사운드존</span>
+        </div>
+        <div style="font-weight:700; color:#38bdf8;" id="odo-display">Odometer: 12,450.8 km (주행 원소 충전 완료)</div>
+      </div>
+
+      <!-- Gleo AI Agent Briefing & Voice Command -->
+      <div class="gleo-bubble">
+        <div class="gleo-left">
+          <div class="gleo-icon">G</div>
+          <div id="gleo-text">주행 중(D)입니다. 운전에 집중하세요. 와이퍼 및 정속 주행 센서 데이터가 백그라운드에서 축적 중입니다.</div>
+        </div>
+        <div class="stt-group" id="stt-controls" style="display:none;">
+          <button class="stt-btn" onclick="voiceCommand('stat')">🎙️ "스탯 파워에 찍어줘"</button>
+          <button class="stt-btn" onclick="voiceCommand('battle')">🎙️ "배틀 시작해줘"</button>
+        </div>
+      </div>
+
+      <!-- Driving Mode View (D/R/N) -->
+      <div class="d-gear-overlay" id="view-driving">
+        <div class="pulse-dot"></div>
+        <div style="font-size:21px; font-weight:800; letter-spacing:0.5px;">DRIVING MODE — Zero-Distraction Active</div>
+        <div style="font-size:13px; color:#94a3b8; max-width:500px; line-height:1.6;">
+          Pleos 안전 가이드라인에 따라 기어 <strong>D / R / N</strong> 상태에서는 모든 인터랙티브 UI와 터치 이벤트가 즉시 차단(`WebView.pauseTimers()`)됩니다.<br>
+          <span id="driving-stats" style="color:#38bdf8; font-weight:700; display:inline-block; margin-top:8px;">
+            🌧️ 비 오는 날씨 감지: 물 속성 에너지 백그라운드 축적 중
+          </span>
+        </div>
+        <div style="background:#0f172a; border:1px solid #22c55e66; padding:10px 18px; border-radius:8px; margin-top:4px;">
+          <div style="font-size:12px; color:#4ade80; font-weight:700;" id="driving-charge-status">
+            🔋 주행 코어 에너지 100% 충전 완료! (배틀 쿨타임 해제됨)
+          </div>
+          <div style="font-size:11px; color:#94a3b8; margin-top:3px;">
+            👉 목적지 도착 후 기어를 <strong>[P (주차)]</strong>로 변경하면 메카봇이 변신하며 배틀이 활성화됩니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- Parked Mode View (P) -->
+      <div class="view-container" id="view-parked" style="display:none;">
+        <!-- Left Panel: My Mekabot & 4 Stats -->
+        <div class="screen-panel" style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:12px; font-weight:800; color:#94a3b8;">MY MEKABOT STATUS</span>
+            <span id="badge-condition" class="badge" style="color:#22c55e; border-color:#22c55e55;">🛡️ Full Armor (+10% HP)</span>
+          </div>
+
+          <div class="mecha-showcase" id="mecha-box">
+            <div class="spark-warning" id="tire-spark">⚡ 우측 후륜 공기압 부족 (방어 -10%)</div>
+            <div class="mecha-svg-wrap" id="showcase-svg-holder"></div>
+            <div class="bot-name-tag">
+              <span id="bot-name">아이오닉-타이탄</span>
+              <span style="font-size:12px; color:#38bdf8;">Lv.<span id="disp-lv">13</span></span>
+            </div>
+            <div class="element-pill" id="bot-element" style="background:#0088ff22; color:#0088ff; border:1px solid #0088ff;">
+              💧 물 속성 코어 (우천 와이퍼 연계)
+            </div>
+            <div class="cycle-hint">
+              상성 순환: 🔥불 → ❄️얼음 → 🌪️바람 → 🪨땅 → 💧물 → 🔥불
+            </div>
+            <div style="display:flex; gap:10px; margin-top:5px;">
+              <span style="font-size:11px; color:#94a3b8; cursor:pointer; text-decoration:underline;" onclick="renameBot()">
+                ✏️ 콜사인 변경 (음성/터치)
+              </span>
+              <span id="btn-bluehands" style="display:none; font-size:11px; color:#f43f5e; font-weight:700; cursor:pointer; text-decoration:underline;" onclick="navigateBluehands()">
+                🧭 인근 블루핸즈 정비소 안내 (NaviHelper)
+              </span>
+            </div>
+          </div>
+
+          <!-- EXP Bar -->
+          <div style="margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+              <span>EXP Progress (레벨업 시 +3 Stat Pt)</span>
+              <span style="font-weight:700; color:#38bdf8;"><span id="cur-exp">80</span> / 100 EXP</span>
+            </div>
+            <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+              <div id="exp-bar" style="background:linear-gradient(90deg, #0284c7, #38bdf8); width:80%; height:100%; transition:width 0.4s;"></div>
+            </div>
+          </div>
+
+          <!-- 4 Stats Allocation -->
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-top:8px;">
+            <span style="color:#94a3b8; font-weight:600;">스탯 배분 (4대 코어 파라미터)</span>
+            <span>보너스 포인트: <strong id="stat-points" style="color:#fbbf24; font-size:14px;">3</strong> P</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div>
+                <strong>⚔️ 파워: <span id="val-pow">14</span></strong>
+                <span class="stat-sub">기본 공격력 +<span id="sub-pow">28</span>%</span>
+              </div>
+              <button class="btn-plus" onclick="addStat('pow')">+</button>
+            </div>
+            <div class="stat-card">
+              <div>
+                <strong>🛡️ 방어: <span id="val-def">12</span></strong>
+                <span class="stat-sub">피해 감소 -<span id="sub-def">18</span>%</span>
+              </div>
+              <button class="btn-plus" onclick="addStat('def')">+</button>
+            </div>
+            <div class="stat-card">
+              <div>
+                <strong>⚡ 스피드: <span id="val-spd">10</span></strong>
+                <span class="stat-sub">타이밍 바 감속 -<span id="sub-spd">15</span>%</span>
+              </div>
+              <button class="btn-plus" onclick="addStat('spd')">+</button>
+            </div>
+            <div class="stat-card">
+              <div>
+                <strong>🎯 테크: <span id="val-tec">10</span></strong>
+                <span class="stat-sub">PERFECT 존 <span id="sub-tec">7.0</span>% 폭</span>
+              </div>
+              <button class="btn-plus" onclick="addStat('tec')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: 20s Sector Battle & E-pit Raid -->
+        <div class="screen-panel" style="flex:1.18;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:800; color:#94a3b8;">20s SECTOR BATTLE (Gear P Only)</span>
+            <span id="cooldown-tag" class="badge" style="color:#4ade80; border-color:#22c55e55;">🔋 주행 충전 Ready (출격 가능)</span>
+          </div>
+
+          <!-- Lobby -->
+          <div id="battle-lobby" style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
+            <div style="background:#151d2f; border:1px solid #334155; padding:11px; border-radius:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8;">
+                <span>📍 FusedLocation 반경 3km 매칭</span>
+                <span id="raid-badge" style="display:none; color:#fbbf24; font-weight:700;">⚡ E-pit 비동기 보스 레이드 활성!</span>
+              </div>
+              <div style="font-size:15px; font-weight:800; margin-top:4px;" id="opp-lobby-title">
+                상대: 그랜저-크림슨 (Lv.13 / 🔥 불 속성)
+              </div>
+              <div style="font-size:12px; margin-top:5px; font-weight:700;" id="matchup-Result">
+                ⚡ 상성 판정: 💧물 → 🔥불 천적 우위! (최종 데미지 +30% 버프)
+              </div>
+              <div style="font-size:11px; color:#94a3b8; margin-top:4px;" id="matchup-detail">
+                내 스피드(10) 반영 바늘 속도 감속 • 내 테크(10) 반영 PERFECT 범위 7.0% 적용
+              </div>
+            </div>
+
+            <!-- Cooldown Lock Alert (Shown after 1 battle until Gear D drive) -->
+            <div class="cooldown-alert" id="cooldown-alert-box">
+              <strong>⏳ [코어 쿨타임 가동 중 — 추가 전투 불가]</strong><br>
+              주차당 1회 전투를 완료하여 코어 에너지가 소진되었습니다.<br>
+              👉 좌측에서 <strong>기어 [D (주행)]</strong>으로 전환해 실제 주행(원소 에너지 재충전) 후 다시 <strong>[P (주차)]</strong>로 오거나, <strong>[⚡ E-pit 급속 충전]</strong>을 연결하면 즉시 쿨타임이 해제됩니다!
+            </div>
+
+            <!-- E-pit Mega Boss Relay Info (Shown when EV Charging) -->
+            <div id="epit-raid-box" style="display:none; background:rgba(234, 179, 8, 0.1); border:1px solid #eab308; padding:9px; border-radius:8px;">
+              <div style="font-size:12px; font-weight:800; color:#fbbf24;">⚡ 주말 E-pit 충전소 메가 보스 비동기 레이드</div>
+              <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">
+                충전 대기 중인 현대차 오너 14명이 협동 타격 중! (보스 잔여 HP: 38,400 / 100,000)
+              </div>
+            </div>
+
+            <button class="action-btn" id="btn-start-battle" onclick="startBattle()">
+              ⚔️ 20초 메카 배틀 개시 (기어 P 전용)
+            </button>
+
+            <div style="border-top:1px solid #232d42; padding-top:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; font-weight:700; color:#94a3b8;">🛰️ 거점 가디언 드론 배치 (최대 3곳)</span>
+                <button style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;" onclick="deployDrone()">
+                  + 현 위치(성수 B2) 드론 배치
+                </button>
+              </div>
+              <div style="font-size:11px; color:#64748b; margin-top:4px;" id="drone-status-text">
+                배치 현황 [1/3]: 성수 오피스 B2 (Lv.13 스탯 복제 완료 • 실시간 방어 경험치 전송 대기)
+              </div>
+            </div>
+          </div>
+
+          <!-- Arena (Strict 20s Timeline + Animated Mecha Combat) -->
+          <div id="battle-arena" class="battle-arena" style="display:none;">
+            <div class="timeline-bar">
+              <span id="phase-label" style="color:#38bdf8; font-weight:700;">Phase 1 (0~4s): 상성 스캔 및 아머 전개</span>
+              <span style="font-weight:800; color:#fff;">⏱️ <span id="timer-sec">0.0</span>s / 20.0s</span>
+            </div>
+
+            <div class="combat-stage" id="combat-stage">
+              <div class="combat-grid-floor"></div>
+              <div class="laser-beam" id="laser-beam"></div>
+
+              <!-- My Mecha Unit -->
+              <div class="fighter">
+                <div class="dmg-popup" id="my-dmg-popup">-8%</div>
+                <div class="arena-mecha-unit" id="arena-my-unit"></div>
+                <div style="font-size:10px; font-weight:700; color:#38bdf8; margin-top:2px;" id="arena-my-elem">💧 물 속성</div>
+                <div style="font-size:12px; font-weight:800;" id="arena-my-name">아이오닉-타이탄</div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="my-hp" style="background:#0088ff;"></div></div>
+                <div style="font-size:10px; color:#94a3b8; margin-top:2px;">HP <span id="my-hp-text">110</span>%</div>
+              </div>
+
+              <div class="vs-emblem">VS</div>
+
+              <!-- Opponent Mecha Unit -->
+              <div class="fighter">
+                <div class="dmg-popup" id="opp-dmg-popup">-18%</div>
+                <div class="arena-mecha-unit" id="arena-opp-unit"></div>
+                <div style="font-size:10px; font-weight:700; color:#ff3b00; margin-top:2px;" id="arena-opp-elem">🔥 불 속성</div>
+                <div style="font-size:12px; font-weight:800;" id="arena-opp-name">그랜저-크림슨</div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="opp-hp" style="background:#ff3b00;"></div></div>
+                <div style="font-size:10px; color:#94a3b8; margin-top:2px;">HP <span id="opp-hp-text">100</span>%</div>
+              </div>
+            </div>
+
+            <div style="text-align:center; font-size:12px; font-weight:700; color:#e2e8f0; min-height:18px;" id="battle-log">
+              상성 우위 확인! 초기 배리어 전개 중...
+            </div>
+
+            <div class="timing-area">
+              <div class="critical-banner" id="crit-banner">💥 PERFECT OVERDRIVE! 200% 필살 레이저 캐논 작렬!</div>
+              <div style="font-size:11.5px; font-weight:700; color:#38bdf8;" id="timing-header">
+                8.0초 시점에 OVERDRIVE 타이밍 바가 활성화됩니다 (2초간 왕복)
+              </div>
+              <div class="bar-track">
+                <div class="good-zone"></div>
+                <div class="great-zone"></div>
+                <div class="perfect-zone" id="perfect-zone-bar"></div>
+                <div class="needle" id="needle"></div>
+              </div>
+              <button class="action-btn" id="btn-overdrive" style="background:#e11d48;" disabled onclick="hitTiming()">
+                ⚡ OVERDRIVE 필살기 발사! (정중앙 초록색 PERFECT 존 탭)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Vehicle & Game State ---
+    let gear = 'D';
+    let temp = 24;
+    let isRain = true;
+    let isCruise = false;
+    let tireCondition = 'OK';
+    let trimMode = 'FULL';
+    let isEvCharging = false;
+    let currentCarModel = 'IONIQ6';
+    let odometerKm = 12450.8;
+
+    // 1회 전투 후 D 기어 주행 전까지 쿨타임 잠금 상태 관리
+    let battleReadyFromDrive = true; // 초기 시작 시 D 기어 주행 중이므로 충전 완료 상태
+
+    let botName = "아이오닉-타이탄";
+    let level = 13;
+    let exp = 80;
+    let statPoints = 3;
+    let stats = { pow: 14, def: 12, spd: 10, tec: 10 };
+
+    // 5대 원소 정의 및 순환 상성: 불 -> 얼음 -> 바람 -> 땅 -> 물 -> 불
+    const ELEMENTS = {
+      fire:  { name: '불', icon: '🔥', color: '#ff3b00', beats: 'ice',   desc: '고온(28°C↑) 열기 코어' },
+      ice:   { name: '얼음', icon: '❄️', color: '#00f0ff', beats: 'wind',  desc: '혹한(5°C↓) 냉기 코어' },
+      wind:  { name: '바람', icon: '🌪️', color: '#00e676', beats: 'earth', desc: '스마트 크루즈 질풍 코어' },
+      earth: { name: '땅', icon: '🪨', color: '#ffb300', beats: 'water', desc: '무급정거 클린 주행 대지 코어' },
+      water: { name: '물', icon: '💧', color: '#0088ff', beats: 'fire',  desc: '우천 와이퍼 수류 코어' }
+    };
+
+    const ENEMIES = {
+      fire:  { name: '그랜저-크림슨', elem: 'fire', model: 'GRANDEUR' },
+      ice:   { name: '코나-프로스트', elem: 'ice', model: 'TUCSON' },
+      wind:  { name: '아이오닉5-제피르', elem: 'wind', model: 'IONIQ6' },
+      earth: { name: '싼타페-골렘', elem: 'earth', model: 'TUCSON' },
+      water: { name: '투싼-아쿠아', elem: 'water', model: 'TUCSON' }
+    };
+
+    let activeElement = 'water';
+    let enemyElement = 'fire';
+
+    // --- Custom SVG Mecha Robot Renderer ---
+    function buildMechaSvg(modelType, primaryColor, isEnemy = false) {
+      const flip = isEnemy ? 'transform="scale(-1, 1)" transform-origin="60 60"' : '';
+      const visorColor = isEnemy ? '#ff1744' : '#00f0ff';
+      const coreGlow = primaryColor;
+
+      if (modelType === 'GRANDEUR') {
+        // 중장갑 발키리/커맨더형 메카봇
+        return `
+        <svg viewBox="0 0 120 120" width="100%" height="100%">
+          <g ${flip}>
+            <!-- 숄더 캐논 & 날개 -->
+            <polygon points="12,35 32,20 36,52 16,58" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
+            <polygon points="108,35 88,20 84,52 104,58" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
+            <!-- 헤드 유닛 & V-블레이드 안테나 -->
+            <polygon points="60,8 42,20 48,24 60,16 72,24 78,20" fill="${coreGlow}"/>
+            <rect x="44" y="18" width="32" height="20" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+            <rect x="48" y="24" width="24" height="6" rx="2" fill="${visorColor}"/>
+            <!-- 흉부 코어 아머 -->
+            <polygon points="34,40 86,40 78,78 42,78" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
+            <circle cx="60" cy="57" r="10" fill="${coreGlow}" opacity="0.9"/>
+            <circle cx="60" cy="57" r="5" fill="#ffffff"/>
+            <!-- 양팔 블래스터 -->
+            <rect x="18" y="46" width="14" height="32" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
+            <rect x="88" y="46" width="14" height="32" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
+            <!-- 레그 부스터 -->
+            <polygon points="42,80 56,80 54,112 38,112" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+            <polygon points="64,80 78,80 82,112 66,112" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+          </g>
+        </svg>`;
+      } else if (modelType === 'TUCSON') {
+        // 중장갑 실드 가디언형 메카봇
+        return `
+        <svg viewBox="0 0 120 120" width="100%" height="100%">
+          <g ${flip}>
+            <!-- 헤비 숄더 실드 -->
+            <rect x="10" y="30" width="22" height="44" rx="6" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
+            <rect x="88" y="30" width="22" height="44" rx="6" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
+            <!-- 헬멧 & 듀얼 센서 -->
+            <rect x="42" y="14" width="36" height="22" rx="6" fill="#334155" stroke="${coreGlow}" stroke-width="2"/>
+            <rect x="47" y="21" width="26" height="7" rx="2" fill="${visorColor}"/>
+            <!-- 바디 탱크 코어 -->
+            <rect x="34" y="38" width="52" height="42" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+            <polygon points="60,45 72,58 60,71 48,58" fill="${coreGlow}"/>
+            <circle cx="60" cy="58" r="4" fill="#fff"/>
+            <!-- 헤비 레그 -->
+            <rect x="38" y="82" width="18" height="30" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
+            <rect x="64" y="82" width="18" height="30" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
+          </g>
+        </svg>`;
+      } else {
+        // IONIQ 6 하이테크 스트라이커 타이탄 메카봇
+        return `
+        <svg viewBox="0 0 120 120" width="100%" height="100%">
+          <g ${flip}>
+            <!-- 플라즈마 윙 부스터 -->
+            <polygon points="8,24 36,42 28,68 12,56" fill="${coreGlow}" opacity="0.35"/>
+            <polygon points="112,24 84,42 92,68 108,56" fill="${coreGlow}" opacity="0.35"/>
+            <!-- 블레이드 크레스트 & 헤드 -->
+            <polygon points="60,6 53,20 67,20" fill="#fbbf24"/>
+            <polygon points="44,18 76,18 72,36 48,36" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
+            <rect x="49" y="24" width="22" height="5" rx="2" fill="${visorColor}"/>
+            <!-- 에어로 체스트 & 아크 코어 -->
+            <polygon points="32,38 88,38 76,78 44,78" fill="#0f172a" stroke="${coreGlow}" stroke-width="2.5"/>
+            <circle cx="60" cy="56" r="11" fill="${coreGlow}"/>
+            <circle cx="60" cy="56" r="6" fill="#ffffff"/>
+            <!-- 암 블레이드 & 캐논 -->
+            <polygon points="20,42 32,42 28,76 16,72" fill="#334155" stroke="${coreGlow}" stroke-width="1.8"/>
+            <polygon points="88,42 100,42 104,72 92,76" fill="#334155" stroke="${coreGlow}" stroke-width="1.8"/>
+            <!-- 스피드 레그 -->
+            <polygon points="44,80 56,80 52,114 40,114" fill="#1e293b" stroke="${coreGlow}" stroke-width="1.8"/>
+            <polygon points="64,80 76,80 80,114 68,114" fill="#1e293b" stroke="${coreGlow}" stroke-width="1.8"/>
+          </g>
+        </svg>`;
+      }
+    }
+
+    function renderAllMechaModels() {
+      const myColor = ELEMENTS[activeElement].color;
+      const oppObj = ENEMIES[enemyElement];
+      const oppColor = ELEMENTS[enemyElement].color;
+
+      document.getElementById('showcase-svg-holder').innerHTML =
+        buildMechaSvg(currentCarModel, myColor, false);
+      document.getElementById('arena-my-unit').innerHTML =
+        buildMechaSvg(currentCarModel, myColor, false);
+      document.getElementById('arena-opp-unit').innerHTML =
+        buildMechaSvg(isEvCharging ? 'GRANDEUR' : oppObj.model, oppColor, true);
+    }
+
+    function updateCarModel() {
+      currentCarModel = document.getElementById('sel-model').value;
+      if (currentCarModel === 'IONIQ6') {
+        botName = '아이오닉-타이탄';
+      } else if (currentCarModel === 'GRANDEUR') {
+        botName = '그랜저-발키리';
+      } else {
+        botName = '투싼-가디언';
+      }
+      document.getElementById('bot-name').innerText = botName;
+      document.getElementById('arena-my-name').innerText = botName;
+      document.getElementById('gleo-text').innerText =
+        `[Vehicle.getCarInfo] 차종 '${currentCarModel}' 실루엣이 감지되어 전용 전투 로봇 '${botName}' 아머가 장착되었습니다.`;
+      renderAllMechaModels();
+    }
+
+    function calculateMultiplier(att, def) {
+      if (ELEMENTS[att].beats === def) return 1.3;
+      if (ELEMENTS[def].beats === att) return 0.8;
+      return 1.0;
+    }
+
+    function updateCooldownUI() {
+      const btnStart = document.getElementById('btn-start-battle');
+      const cdTag = document.getElementById('cooldown-tag');
+      const alertBox = document.getElementById('cooldown-alert-box');
+
+      const canFight = battleReadyFromDrive || isEvCharging;
+
+      if (canFight) {
+        btnStart.disabled = false;
+        alertBox.style.display = 'none';
+        if (isEvCharging) {
+          btnStart.innerText = '⚡ E-pit 하이퍼 리차지 배틀 개시 (쿨타임 무제한 해제)';
+          cdTag.innerText = '⚡ EV 하이퍼 리차지 ON';
+          cdTag.style.color = '#4ade80';
+          cdTag.style.borderColor = '#22c55e55';
+        } else {
+          btnStart.innerText = '⚔️ 20초 메카 배틀 개시 (주행 충전 완료 • 1회 출격 가능)';
+          cdTag.innerText = '🔋 주행 충전 Ready (1회 출격 가능)';
+          cdTag.style.color = '#38bdf8';
+          cdTag.style.borderColor = '#38bdf844';
+        }
+      } else {
+        btnStart.disabled = true;
+        btnStart.innerText = '🔒 코어 쿨타임 대기 중 (기어 D로 주행하여 에너지를 재충전하세요)';
+        alertBox.style.display = 'block';
+        cdTag.innerText = '⏳ 코어 쿨타임 (D 주행 필요)';
+        cdTag.style.color = '#f43f5e';
+        cdTag.style.borderColor = '#f43f5e55';
+      }
+    }
+
+    function updateSensors() {
+      isRain = document.getElementById('chk-rain').checked;
+      isCruise = document.getElementById('chk-cruise').checked;
+      tireCondition = document.getElementById('sel-tire').value;
+      trimMode = document.getElementById('sel-trim').value;
+      enemyElement = document.getElementById('sel-enemy').value;
+
+      // 1. 내 원소 판정 (ElementEngine.ts 동일 로직)
+      if (isRain) {
+        activeElement = 'water';
+      } else if (temp <= 5) {
+        activeElement = 'ice';
+      } else if (temp >= 28) {
+        activeElement = 'fire';
+      } else if (isCruise) {
+        activeElement = 'wind';
+      } else {
+        activeElement = 'earth';
+      }
+
+      const elObj = ELEMENTS[activeElement];
+      document.documentElement.style.setProperty('--current-ambient', elObj.color);
+
+      // 2. 앰비언트 라이트 & 폴백 반영 (Native Pleos SDK 연동 포함)
+      const ambientBar = document.getElementById('ambient-bar');
+      ambientBar.style.background = elObj.color;
+      ambientBar.style.boxShadow = `0 0 28px ${elObj.color}`;
+      if (window.PleosNativeVehicle && window.PleosNativeVehicle.syncAmbientLightColor) {
+        window.PleosNativeVehicle.syncAmbientLightColor(elObj.color);
+      }
+
+      const carScreen = document.getElementById('car-screen');
+      if (trimMode === 'FALLBACK') {
+        carScreen.classList.add('fallback-border-glow');
+        document.getElementById('hw-light-text').innerText = `Fallback Screen Glow: ${elObj.color} (${elObj.name})`;
+        document.getElementById('hw-seat-pill').innerText = `📳 Fallback: Screen Shake 모드`;
+      } else {
+        carScreen.classList.remove('fallback-border-glow');
+        document.getElementById('hw-light-text').innerText = `Ambient Light: ${elObj.color} (${elObj.name})`;
+        document.getElementById('hw-seat-pill').innerText = `💺 Seat Haptic: Active`;
+      }
+      document.getElementById('hw-light-dot').style.background = elObj.color;
+
+      // 3. 메카봇 속성 배지 및 SVG 로봇 렌더링 업데이트
+      const botElem = document.getElementById('bot-element');
+      botElem.innerText = `${elObj.icon} ${elObj.name} 속성 코어 (${elObj.desc})`;
+      botElem.style.color = elObj.color;
+      botElem.style.borderColor = elObj.color;
+      botElem.style.background = elObj.color + '22';
+      document.getElementById('driving-stats').innerText = `${elObj.icon} ${elObj.desc} 감지: ${elObj.name} 속성 에너지가 백그라운드에서 축적 중입니다.`;
+
+      renderAllMechaModels();
+
+      // 4. 타이어 공기압 & 블루핸즈 정비 연동
+      const condBadge = document.getElementById('badge-condition');
+      const spark = document.getElementById('tire-spark');
+      const bhBtn = document.getElementById('btn-bluehands');
+      if (tireCondition === 'OK') {
+        condBadge.innerText = '🛡️ Full Armor (+10% HP)';
+        condBadge.style.color = '#22c55e';
+        condBadge.style.borderColor = '#22c55e55';
+        spark.style.display = 'none';
+        bhBtn.style.display = 'none';
+      } else {
+        condBadge.innerText = '⚠️ 우측 후륜 저압 (-10% DEF)';
+        condBadge.style.color = '#f43f5e';
+        condBadge.style.borderColor = '#f43f5e55';
+        spark.style.display = 'inline-flex';
+        bhBtn.style.display = 'inline';
+      }
+
+      // 5. 상대 메카봇과의 실시간 상성 계산 및 쿨타임 UI 갱신
+      updateLobbyMatchup();
+      updateStatUI();
+      updateCooldownUI();
+    }
+
+    function updateLobbyMatchup() {
+      const myEl = ELEMENTS[activeElement];
+      const oppObj = ENEMIES[enemyElement];
+      const oppEl = ELEMENTS[enemyElement];
+      const mult = calculateMultiplier(activeElement, enemyElement);
+
+      const titleEl = document.getElementById('opp-lobby-title');
+      const resEl = document.getElementById('matchup-Result');
+
+      if (isEvCharging) {
+        titleEl.innerText = `⚡ 레이드 보스: 메가-기가트론 (Lv.30 / ${oppEl.icon} ${oppEl.name} 속성)`;
+      } else {
+        titleEl.innerText = `상대: ${oppObj.name} (Lv.13 / ${oppEl.icon} ${oppEl.name} 속성)`;
+      }
+
+      if (mult > 1.0) {
+        resEl.innerText = `⚡ 상성 판정: ${myEl.icon}${myEl.name} → ${oppEl.icon}${oppEl.name} 천적 우위! (최종 데미지 +30% 버프)`;
+        resEl.style.color = '#22c55e';
+      } else if (mult < 1.0) {
+        resEl.innerText = `⚠️ 상성 판정: ${myEl.icon}${myEl.name} ← ${oppEl.icon}${oppEl.name} 상성 열세 (데미지 -20% 페널티 • OVERDRIVE 역전 필요!)`;
+        resEl.style.color = '#f43f5e';
+      } else {
+        resEl.innerText = `⚖️ 상성 판정: ${myEl.icon}${myEl.name} vs ${oppEl.icon}${oppEl.name} 대등 상성 (데미지 100% 표준 연산)`;
+        resEl.style.color = '#38bdf8';
+      }
+    }
+
+    function updateStatUI() {
+      document.getElementById('stat-points').innerText = statPoints;
+      document.getElementById('val-pow').innerText = stats.pow;
+      document.getElementById('val-def').innerText = stats.def;
+      document.getElementById('val-spd').innerText = stats.spd;
+      document.getElementById('val-tec').innerText = stats.tec;
+
+      document.getElementById('sub-pow').innerText = (stats.pow * 2);
+      document.getElementById('sub-def').innerText = Math.round(stats.def * 1.5);
+      const speedSlowdown = Math.min(55, Math.round(stats.spd * 1.5));
+      document.getElementById('sub-spd').innerText = speedSlowdown;
+
+      const perfectWidth = Math.min(16, (2.0 + stats.tec * 0.5)).toFixed(1);
+      document.getElementById('sub-tec').innerText = perfectWidth;
+
+      const pZone = document.getElementById('perfect-zone-bar');
+      pZone.style.width = perfectWidth + '%';
+      pZone.style.left = (50 - perfectWidth / 2) + '%';
+
+      document.getElementById('matchup-detail').innerText =
+        `내 스피드(${stats.spd}) 반영 바늘 속도 -${speedSlowdown}% 감속 • 내 테크(${stats.tec}) 반영 PERFECT 존 ${perfectWidth}% 적용`;
+    }
+
+    function updateTemp(val) {
+      temp = parseInt(val, 10);
+      document.getElementById('disp-temp').innerText = val + '°C';
+      updateSensors();
+    }
+
+    function triggerHapticAndShake() {
+      const screen = document.getElementById('car-screen');
+      screen.classList.remove('shake-fx');
+      void screen.offsetWidth;
+      screen.classList.add('shake-fx');
+      if (window.PleosNativeVehicle && window.PleosNativeVehicle.triggerSeatHapticFeedback) {
+        window.PleosNativeVehicle.triggerSeatHapticFeedback(180);
+      }
+    }
+
+    function speakGleo(msg) {
+      if (window.PleosNativeAudio && window.PleosNativeAudio.speakBriefing) {
+        window.PleosNativeAudio.speakBriefing(msg);
+      }
+    }
+
+    function setGear(g) {
+      gear = g;
+      ['p','r','n','d'].forEach(k => document.getElementById('btn-' + k).classList.remove('active'));
+      document.getElementById('btn-' + g.toLowerCase()).classList.add('active');
+
+      const gleo = document.getElementById('gleo-text');
+      const sttControls = document.getElementById('stt-controls');
+
+      if (gear !== 'P') {
+        // Zero-Distraction: 즉시 모든 배틀 타이머 중단 및 화면 전환
+        abortBattleForSafety();
+        document.getElementById('view-driving').style.display = 'flex';
+        document.getElementById('view-parked').style.display = 'none';
+        sttControls.style.display = 'none';
+
+        if (gear === 'D') {
+          // D 기어 주행 시 오도미터 상승 및 다음 배틀 쿨타임 즉시 충전 완료!
+          odometerKm = +(odometerKm + 3.4).toFixed(1);
+          battleReadyFromDrive = true;
+          updateCooldownUI();
+          document.getElementById('odo-display').innerText = `Odometer: ${odometerKm.toFixed(1)} km (+3.4km 주행 충전 완료!)`;
+          document.getElementById('driving-charge-status').innerText =
+            `🔋 주행 코어 에너지 100% 재충전 완료! (다음 P 주차 시 즉시 배틀 가능)`;
+          gleo.innerText = `[Zero-Distraction] 기어 D 주행 감지: 모든 조작 UI가 차단되며, 주행 에너지가 충전되어 배틀 쿨타임이 해제되었습니다.`;
+        } else {
+          gleo.innerText = `[Zero-Distraction] 기어 ${gear} 감지: 안전을 위해 모든 게임 UI가 비활성화됩니다.`;
+        }
+      } else {
+        document.getElementById('view-driving').style.display = 'none';
+        document.getElementById('view-parked').style.display = 'flex';
+        sttControls.style.display = 'flex';
+        triggerHapticAndShake();
+        updateCooldownUI();
+        const elObj = ELEMENTS[activeElement];
+        const statusMsg = (battleReadyFromDrive || isEvCharging)
+          ? `기어 P 체결 완료. ${elObj.name} 속성 코어가 충전되었습니다! ${botName} 출격 준비 완료.`
+          : `기어 P 체결 완료. 현재 배틀 쿨타임 중입니다. 다음 전투를 위해 기어 D로 주행하여 코어를 충전하세요.`;
+        gleo.innerText = `🔊 [Gleo TTS 브리핑] "${statusMsg}"`;
+        speakGleo(statusMsg);
+      }
+    }
+
+    function toggleEvCharging(checked) {
+      isEvCharging = checked;
+      const gleo = document.getElementById('gleo-text');
+      const raidBox = document.getElementById('epit-raid-box');
+      const raidBadge = document.getElementById('raid-badge');
+      if (checked) {
+        gleo.innerText = "⚡ [EvBattery SDK] E-pit 급속 충전 도킹 감지! 주행 없이도 배틀 쿨타임이 즉시 초기화되며 메가 보스 레이드가 활성화되었습니다.";
+        raidBox.style.display = 'block';
+        raidBadge.style.display = 'inline';
+      } else {
+        raidBox.style.display = 'none';
+        raidBadge.style.display = 'none';
+      }
+      updateLobbyMatchup();
+      updateCooldownUI();
+      renderAllMechaModels();
+    }
+
+    function navigateBluehands() {
+      document.getElementById('gleo-text').innerText =
+        "🧭 [NaviHelper SDK] 우측 후륜 공기압(26 psi) 정비를 위해 1.2km 거리의 '블루핸즈 성수점'을 경유지로 안내합니다. 정비 완료 시 한정판 아머 파츠가 지급됩니다!";
+      speakGleo("우측 후륜 공기압 정비를 위해 인근 블루핸즈 성수점을 경유지로 안내합니다.");
+      if (window.PleosNativeLocation && window.PleosNativeLocation.navigateToBluehands) {
+        window.PleosNativeLocation.navigateToBluehands("블루핸즈 성수점");
+      }
+    }
+
+    function triggerDroneDefense() {
+      addExp(30);
+      const toast = document.getElementById('header-exp-toast');
+      toast.style.display = 'inline-block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3500);
+      document.getElementById('gleo-text').innerText =
+        "📡 [WebSocket 실시간 동기화] 성수 B2 거점 가디언 드론이 도전자 방어에 성공했습니다! 회수 없이 즉시 +30 EXP가 본체에 반영되었습니다.";
+    }
+
+    function addExp(pts) {
+      exp += pts;
+      let leveledUp = false;
+      while (exp >= 100) {
+        exp -= 100;
+        level += 1;
+        statPoints += 3;
+        leveledUp = true;
+      }
+      document.getElementById('disp-lv').innerText = level;
+      document.getElementById('cur-exp').innerText = exp;
+      document.getElementById('exp-bar').style.width = exp + '%';
+      updateStatUI();
+
+      if (leveledUp) {
+        triggerHapticAndShake();
+        document.getElementById('gleo-text').innerText =
+          `🎉 LEVEL UP! '${botName}'이(가) Lv.${level}로 성장했습니다! 보너스 스탯 포인트 +3점을 4대 스탯(파워/방어/스피드/테크)에 배분하세요.`;
+      }
+    }
+
+    function addStat(type) {
+      if (statPoints > 0) {
+        statPoints -= 1;
+        stats[type] += 1;
+        updateStatUI();
+        const names = { pow: '파워', def: '방어', spd: '스피드', tec: '테크' };
+        document.getElementById('gleo-text').innerText =
+          `✅ [${names[type]}] 스탯이 ${stats[type]}(으)로 상승했습니다! (남은 포인트: ${statPoints} P)`;
+      }
+    }
+
+    function voiceCommand(cmd) {
+      if (gear !== 'P') return;
+      if (cmd === 'stat') {
+        if (statPoints > 0) {
+          addStat('pow');
+          document.getElementById('gleo-text').innerText =
+            `🎙️ [STT 음성 인식: "스탯 파워에 찍어줘"] ➔ 파워 스탯에 1포인트를 배분했습니다! (현재 파워: ${stats.pow})`;
+        } else {
+          document.getElementById('gleo-text').innerText =
+            `🎙️ [STT 음성 인식] 현재 배분 가능한 스탯 포인트가 없습니다. 드론 방어 또는 배틀로 레벨업하세요!`;
+        }
+      } else if (cmd === 'battle') {
+        if (!battleReadyFromDrive && !isEvCharging) {
+          document.getElementById('gleo-text').innerText =
+            `🎙️ [STT 음성 인식: "배틀 시작해줘"] ➔ ⏳ 현재 코어 쿨타임 중입니다! 먼저 기어 D로 주행해 원소 에너지를 충전하세요.`;
+          speakGleo("현재 코어 쿨타임 중입니다. 기어 D로 주행하여 에너지를 충전하세요.");
+          return;
+        }
+        document.getElementById('gleo-text').innerText =
+          `🎙️ [STT 음성 인식: "배틀 시작해줘"] ➔ 20초 섹터 배틀 시퀀스를 즉시 개시합니다!`;
+        startBattle();
+      }
+    }
+
+    function renameBot() {
+      const name = prompt("새로운 메카봇 콜사인을 입력하세요 (Gleo AI 음성 연동):", botName);
+      if (name) {
+        botName = name;
+        document.getElementById('bot-name').innerText = name;
+        document.getElementById('arena-my-name').innerText = name;
+        document.getElementById('gleo-text').innerText = `🔊 메카봇 고유 콜사인이 '${name}'(으)로 등록되었습니다.`;
+      }
+    }
+
+    function deployDrone() {
+      document.getElementById('drone-status-text').innerText =
+        `배치 완료 [2/3]: 성수 오피스 B2 ('${botName}' Lv.${level} 스탯 복제 드론 • 실시간 방어 대기 중)`;
+      document.getElementById('gleo-text').innerText =
+        `🛰️ 현 주차 위치(성수 B2)에 '${botName}' 가디언 드론을 배치했습니다. 오프라인 중 교전 발생 시 실시간으로 경험치가 전송됩니다.`;
+    }
+
+    // --- Combat Visual FX Helpers ---
+    function playCombatExchangeAnimation(attDmg, defDmg, isOverdrive = false) {
+      const myUnit = document.getElementById('arena-my-unit');
+      const oppUnit = document.getElementById('arena-opp-unit');
+      const beam = document.getElementById('laser-beam');
+      const oppPopup = document.getElementById('opp-dmg-popup');
+      const myPopup = document.getElementById('my-dmg-popup');
+
+      // Reset classes
+      myUnit.className = 'arena-mecha-unit';
+      oppUnit.className = 'arena-mecha-unit';
+      beam.className = 'laser-beam';
+      oppPopup.className = 'dmg-popup';
+      myPopup.className = 'dmg-popup';
+      void myUnit.offsetWidth;
+
+      if (isOverdrive) {
+        myUnit.classList.add('anim-overdrive');
+        beam.classList.add('beam-shoot-right');
+        oppUnit.classList.add('anim-hit');
+        oppPopup.innerText = `💥 -${attDmg}% CRITICAL!`;
+        oppPopup.classList.add('dmg-show');
+        return;
+      }
+
+      // 1. 내 메카봇 돌진 및 레이저 사격 -> 적 피격
+      myUnit.classList.add('anim-lunge-right');
+      beam.classList.add('beam-shoot-right');
+      setTimeout(() => {
+        oppUnit.classList.add('anim-hit');
+        oppPopup.innerText = `-${attDmg}%`;
+        oppPopup.classList.add('dmg-show');
+      }, 150);
+
+      // 2. 적 메카봇 반격 -> 내 메카봇 피격
+      if (defDmg > 0) {
+        setTimeout(() => {
+          oppUnit.className = 'arena-mecha-unit anim-lunge-left';
+          beam.className = 'laser-beam beam-shoot-left';
+          myUnit.className = 'arena-mecha-unit anim-hit';
+          myPopup.innerText = `-${defDmg}%`;
+          myPopup.classList.add('dmg-show');
+        }, 420);
+      }
+    }
+
+    // --- 20-Second Strict Battle Engine ---
+    let battleTimer = null;
+    let needleInterval = null;
+    let needlePos = 0;
+    let needleDir = 1;
+    let battleElapsed = 0;
+    let overdriveResolved = false;
+    let earnedBonusExp = 0;
+    let myHp = 100;
+    let oppHp = 100;
+
+    function abortBattleForSafety() {
+      if (battleTimer || needleInterval) {
+        clearInterval(battleTimer);
+        clearInterval(needleInterval);
+        battleTimer = null;
+        needleInterval = null;
+        document.getElementById('battle-lobby').style.display = 'flex';
+        document.getElementById('battle-arena').style.display = 'none';
+      }
+    }
+
+    function startBattle() {
+      if (gear !== 'P') return;
+      if (!battleReadyFromDrive && !isEvCharging) {
+        updateCooldownUI();
+        return;
+      }
+      abortBattleForSafety();
+
+      const myEl = ELEMENTS[activeElement];
+      const oppObj = ENEMIES[enemyElement];
+      const oppEl = ELEMENTS[enemyElement];
+      const mult = calculateMultiplier(activeElement, enemyElement);
+
+      document.getElementById('battle-lobby').style.display = 'none';
+      document.getElementById('battle-arena').style.display = 'flex';
+      document.getElementById('crit-banner').style.display = 'none';
+
+      document.getElementById('arena-my-name').innerText = botName;
+      document.getElementById('arena-my-elem').innerText = `${myEl.icon} ${myEl.name} 속성`;
+      document.getElementById('arena-my-elem').style.color = myEl.color;
+      document.getElementById('my-hp').style.background = myEl.color;
+
+      document.getElementById('arena-opp-name').innerText = isEvCharging ? '메가-기가트론(보스)' : oppObj.name;
+      document.getElementById('arena-opp-elem').innerText = `${oppEl.icon} ${oppEl.name} 속성`;
+      document.getElementById('arena-opp-elem').style.color = oppEl.color;
+      document.getElementById('opp-hp').style.background = oppEl.color;
+
+      renderAllMechaModels();
+
+      myHp = tireCondition === 'OK' ? 110 : 95;
+      oppHp = 100;
+      updateHpBars();
+
+      battleElapsed = 0;
+      overdriveResolved = false;
+      earnedBonusExp = 0;
+      document.getElementById('timer-sec').innerText = '0.0';
+      document.getElementById('phase-label').innerText = 'Phase 1 (0~4s): 상성 스캔 및 전투 아머 전개';
+      document.getElementById('battle-log').innerText =
+        `[0~4s] ${myEl.icon}${myEl.name} vs ${oppEl.icon}${oppEl.name} 상성 배율 x${mult.toFixed(1)} 스캔 완료!`;
+      document.getElementById('timing-header').innerText = '8.0초 시점에 OVERDRIVE 타이밍 바가 활성화됩니다...';
+      document.getElementById('btn-overdrive').disabled = true;
+
+      // 2초 시점 오프닝 포격 연출
+      setTimeout(() => {
+        if (battleTimer) playCombatExchangeAnimation(8, 0, false);
+      }, 1500);
+
+      // 0.5초 단위 엄격한 20초 타임라인
+      battleTimer = setInterval(() => {
+        battleElapsed = +(battleElapsed + 0.5).toFixed(1);
+        document.getElementById('timer-sec').innerText = battleElapsed.toFixed(1);
+
+        if (battleElapsed === 4.0) {
+          document.getElementById('phase-label').innerText = 'Phase 2 (4~16s): 메카닉 실시간 교전 & 포격';
+        }
+
+        // 4~8초 및 13~15초 자동 교전 틱 + 로봇 타격 애니메이션
+        if (((battleElapsed >= 4.0 && battleElapsed < 8.0) || (battleElapsed >= 13.0 && battleElapsed <= 15.0)) && battleElapsed % 1.0 === 0) {
+          const attDmg = Math.round((9 + stats.pow * 0.3) * mult);
+          const defDmg = Math.max(3, Math.round(9 - stats.def * 0.25));
+          oppHp = Math.max(10, oppHp - attDmg);
+          myHp = Math.max(25, myHp - defDmg);
+          updateHpBars();
+          playCombatExchangeAnimation(attDmg, defDmg, false);
+          document.getElementById('battle-log').innerText =
+            `⚔️ 메카 공방전 (${battleElapsed}s): 플라즈마 캐논 -${attDmg}% 적중! (내 잔여 HP ${myHp}%)`;
+        }
+
+        // 8.0초: OVERDRIVE 타이밍 바 활성화
+        if (battleElapsed === 8.0) {
+          document.getElementById('phase-label').innerText = '⚡ OVERDRIVE (8.0s): 정중앙 초록 영역을 탭하세요!';
+          document.getElementById('timing-header').innerText = '⚡ 지금! 바늘이 중앙 PERFECT 존에 올 때 필살기를 발사하세요!';
+          document.getElementById('btn-overdrive').disabled = false;
+          startNeedle();
+        }
+
+        // 12.0초까지 미조작 시 기획서 명세대로 'GOOD' 자동 판정 처리
+        if (battleElapsed === 12.0 && !overdriveResolved) {
+          resolveOverdriveAutoGood();
+        }
+
+        // 16.0초: 결과 정산 페이즈
+        if (battleElapsed === 16.0) {
+          document.getElementById('phase-label').innerText = 'Phase 3 (16~20s): 적 메카봇 격파 및 EXP 동기화';
+          oppHp = 0;
+          updateHpBars();
+          playCombatExchangeAnimation(99, 0, true);
+          document.getElementById('battle-log').innerText =
+            `🏆 적 메카봇 완전 격파! 총 +${60 + earnedBonusExp} EXP 및 전투 데이터 정산 중...`;
+        }
+
+        // 20.0초: 엄격 종료
+        if (battleElapsed >= 20.0) {
+          finishBattle();
+        }
+      }, 500);
+    }
+
+    function updateHpBars() {
+      document.getElementById('my-hp').style.width = Math.min(100, myHp) + '%';
+      document.getElementById('my-hp-text').innerText = myHp;
+      document.getElementById('opp-hp').style.width = Math.max(0, oppHp) + '%';
+      document.getElementById('opp-hp-text').innerText = oppHp;
+    }
+
+    function startNeedle() {
+      needlePos = 0;
+      needleDir = 1;
+      const step = Math.max(1.0, 2.8 - (stats.spd * 0.08));
+      needleInterval = setInterval(() => {
+        needlePos += needleDir * step;
+        if (needlePos >= 98) { needlePos = 98; needleDir = -1; }
+        if (needlePos <= 2)  { needlePos = 2;  needleDir = 1; }
+        document.getElementById('needle').style.left = needlePos + '%';
+      }, 20);
+    }
+
+    function hitTiming() {
+      if (overdriveResolved) return;
+      overdriveResolved = true;
+      clearInterval(needleInterval);
+      document.getElementById('btn-overdrive').disabled = true;
+
+      const halfWidth = Math.min(8.0, 1.0 + stats.tec * 0.25);
+      const pMin = 50.0 - halfWidth;
+      const pMax = 50.0 + halfWidth;
+
+      if (needlePos >= pMin && needlePos <= pMax) {
+        earnedBonusExp = 40;
+        oppHp = Math.max(0, oppHp - 65);
+        triggerHapticAndShake();
+        playCombatExchangeAnimation(65, 0, true);
+        document.getElementById('crit-banner').style.display = 'block';
+        document.getElementById('battle-log').innerText =
+          `🔥 [PERFECT 판정!] 200% 크리티컬 버스트 캐논 작렬! (+40 보너스 EXP)`;
+      } else if (needlePos >= 35.0 && needlePos <= 65.0) {
+        earnedBonusExp = 20;
+        oppHp = Math.max(0, oppHp - 45);
+        triggerHapticAndShake();
+        playCombatExchangeAnimation(45, 0, true);
+        document.getElementById('battle-log').innerText =
+          `⚡ [GREAT 판정!] 150% 강화 포격 적중! (+20 보너스 EXP)`;
+      } else {
+        earnedBonusExp = 0;
+        oppHp = Math.max(0, oppHp - 30);
+        playCombatExchangeAnimation(30, 0, false);
+        document.getElementById('battle-log').innerText =
+          `👍 [GOOD 판정!] 100% 표준 타격 적중!`;
+      }
+      updateHpBars();
+    }
+
+    function resolveOverdriveAutoGood() {
+      overdriveResolved = true;
+      clearInterval(needleInterval);
+      document.getElementById('btn-overdrive').disabled = true;
+      earnedBonusExp = 0;
+      oppHp = Math.max(0, oppHp - 30);
+      playCombatExchangeAnimation(30, 0, false);
+      updateHpBars();
+      document.getElementById('battle-log').innerText =
+        `⏱️ [미조작 안전 폴백] GOOD 판정(100% 데미지)으로 자동 포격하여 전투를 지속합니다.`;
+    }
+
+    function finishBattle() {
+      clearInterval(battleTimer);
+      clearInterval(needleInterval);
+      battleTimer = null;
+      needleInterval = null;
+
+      // 1회 전투 완료 후 코어 에너지 소진 -> D 기어로 주행해야 다시 충전됨!
+      battleReadyFromDrive = false;
+      updateCooldownUI();
+
+      const totalExp = 60 + earnedBonusExp;
+      addExp(totalExp);
+
+      document.getElementById('battle-lobby').style.display = 'flex';
+      document.getElementById('battle-arena').style.display = 'none';
+      document.getElementById('gleo-text').innerText =
+        `🏆 20초 배틀 승리! 총 +${totalExp} EXP 획득! (코어 쿨타임 가동: 다음 전투를 위해 기어 D로 주행하여 원소를 재충전하세요)`;
+    }
+
+    // --- Pleos Connect Native SDK Event Bus ---
+    window.PleosEventBus = {
+      dispatch: function(event, payload) {
+        console.log("[PleosEventBus]", event, payload);
+        if (event === 'onGearChanged' && payload && payload.gear) {
+          setGear(payload.gear);
+        } else if (event === 'onExteriorTempChanged' && payload && typeof payload.temp === 'number') {
+          updateTemp(Math.round(payload.temp));
+        } else if (event === 'onWiperChanged' && payload) {
+          document.getElementById('chk-rain').checked = !!payload.isRaining;
+          updateSensors();
+        } else if (event === 'onCruiseChanged' && payload) {
+          document.getElementById('chk-cruise').checked = !!payload.isCruise;
+          updateSensors();
+        } else if (event === 'onTireStatusChanged' && payload) {
+          document.getElementById('sel-tire').value = payload.fullArmor ? 'OK' : 'LOW';
+          updateSensors();
+        } else if (event === 'onEvChargingChanged' && payload) {
+          document.getElementById('chk-ev').checked = !!payload.charging;
+          toggleEvCharging(!!payload.charging);
+        } else if (event === 'onOdometerChanged' && payload && typeof payload.km === 'number') {
+          odometerKm = payload.km;
+          document.getElementById('odo-display').innerText = `Odometer: ${odometerKm.toFixed(1)} km (Pleos SDK 검증됨)`;
+        } else if (event === 'onAmbientCapabilityChecked' && payload) {
+          document.getElementById('sel-trim').value = payload.supported ? 'FULL' : 'FALLBACK';
+          updateSensors();
+        } else if (event === 'onVoiceCommand' && payload && payload.utterance) {
+          if (payload.utterance.includes('파워') || payload.utterance.includes('스탯')) {
+            voiceCommand('stat');
+          } else if (payload.utterance.includes('배틀')) {
+            voiceCommand('battle');
+          }
+        }
+      }
+    };
+
+    // 초기화
+    updateSensors();
+  </script>
+</body>
+</html>

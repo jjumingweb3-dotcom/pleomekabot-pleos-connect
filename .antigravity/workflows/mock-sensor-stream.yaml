@@ -1,0 +1,9 @@
+name: Pleos Vehicle SDK Sensor Stream Simulation
+sensors:
+  gear: P
+  exterior_temp_celsius: 24.0
+  wiper_state: ON
+  cruise_control: ACTIVATED
+  tire_pressure_psi: [34.0, 34.0, 34.0, 34.0]
+  ev_battery_soc: 82
+  ev_charging: false

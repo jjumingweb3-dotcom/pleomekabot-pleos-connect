@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLEOMEKABOT — 아키텍처 · 프로세스 · 기획 요약</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f172a;
+      --surface-2: #162038;
+      --border: #24324d;
+      --primary: #38bdf8;
+      --primary-strong: #0284c7;
+      --accent: #22c55e;
+      --warn: #fbbf24;
+      --danger: #f43f5e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Malgun Gothic', sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 28px 20px 60px;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    /* Top Navigation & Print Bar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      padding: 12px 18px;
+      border-radius: 12px;
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); border-color: #38bdf844; background: #1e293b; }
+    .btn-print {
+      background: var(--primary-strong);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-print:hover { background: #0369a1; }
+
+    /* Hero Section */
+    .hero {
+      background: radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.16), transparent 45%),
+                  linear-gradient(135deg, #0f172a 0%, #091020 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .pill.green { background: rgba(34, 197, 94, 0.12); color: #4ade80; border-color: rgba(34, 197, 94, 0.35); }
+    .pill.amber { background: rgba(251, 191, 36, 0.12); color: var(--warn); border-color: rgba(251, 191, 36, 0.35); }
+    .hero h1 { font-size: 34px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 10px; }
+    .hero h1 span { color: var(--primary); }
+    .hero p.lead { font-size: 15.5px; color: #cbd5e1; max-width: 840px; }
+
+    /* Section Card */
+    section.card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 28px;
+      page-break-inside: avoid;
+    }
+    .sec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .sec-title { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .sec-num {
+      background: var(--primary-strong);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+    .sec-sub { font-size: 12.5px; color: var(--muted); }
+
+    /* Grids */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 860px) {
+      .grid-3, .grid-2, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .box h3 { font-size: 14.5px; font-weight: 800; margin-bottom: 8px; color: #f8fafc; display: flex; align-items: center; gap: 6px; }
+    .box p, .box li { font-size: 13px; color: #cbd5e1; line-height: 1.55; }
+    .box ul { padding-left: 18px; margin-top: 6px; }
+
+    /* 5-Element Cycle */
+    .elements-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .el-chip {
+      flex: 1;
+      min-width: 145px;
+      background: #0b1222;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .el-chip .icon { font-size: 24px; }
+    .el-chip .name { font-size: 14px; font-weight: 800; margin-top: 4px; }
+    .el-chip .cond { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+    .arrow { font-size: 18px; color: var(--primary); font-weight: 900; }
+
+    /* 20s Timeline */
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 860px) { .timeline-grid { grid-template-columns: 1fr; } }
+    .tl-step {
+      background: #0b1222;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--primary);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .tl-step.hot { border-top-color: #f43f5e; background: rgba(244, 63, 94, 0.08); }
+    .tl-step .time { font-size: 11px; font-weight: 800; color: var(--primary); }
+    .tl-step.hot .time { color: #fb7185; }
+    .tl-step .title { font-size: 13.5px; font-weight: 800; margin: 4px 0; }
+    .tl-step .desc { font-size: 12px; color: #cbd5e1; }
+
+    /* Process Flow */
+    .process-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 900px) { .process-flow { grid-template-columns: 1fr; } }
+    .proc-card {
+      background: #0b1222;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      position: relative;
+    }
+    .proc-tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .tag-d { background: rgba(34, 197, 94, 0.18); color: #4ade80; }
+    .tag-p { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
+    .tag-cloud { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+    .proc-card h4 { font-size: 13.5px; font-weight: 800; margin-bottom: 6px; }
+    .proc-card p { font-size: 12px; color: #cbd5e1; }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 11px 13px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #0b1222;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 12.5px;
+    }
+    td.highlight { background: rgba(56, 189, 248, 0.07); color: #f8fafc; font-weight: 600; }
+
+    /* KPI Cards */
+    .kpi-card {
+      background: linear-gradient(180deg, #162038 0%, #0d1424 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .kpi-val { font-size: 26px; font-weight: 900; color: var(--primary); }
+    .kpi-label { font-size: 12px; font-weight: 700; margin-top: 4px; color: #e2e8f0; }
+    .kpi-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* SVG Diagram Container */
+    .svg-diagram {
+      width: 100%;
+      background: #090f1d;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      overflow-x: auto;
+    }
+    code {
+      background: #090f1d;
+      border: 1px solid #24324d;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 11.5px;
+      color: #7dd3fc;
+    }
+
+    @media print {
+      body { background: #fff; color: #0f172a; padding: 0; }
+      .topbar { display: none; }
+      .hero, section.card, .box, .el-chip, .tl-step, .proc-card, .kpi-card {
+        background: #fff !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+      }
+      .box p, .box li, .tl-step .desc, .proc-card p, .hero p.lead { color: #334155 !important; }
+      th { background: #f1f5f9 !important; color: #0369a1 !important; }
+      td { border-color: #cbd5e1 !important; }
+      code { background: #f1f5f9; color: #0369a1; border-color: #cbd5e1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sticky Navigation -->
+    <div class="topbar">
+      <div style="font-weight:900; font-size:15px; color:var(--primary);">PLEOMEKABOT <span style="color:var(--muted); font-weight:600; font-size:12px;">| Submission Summary &amp; Architecture</span></div>
+      <div class="nav-links">
+        <a href="#sec-overview">1. 기획 요약</a>
+        <a href="#sec-mechanics">2. 핵심 메커니즘</a>
+        <a href="#sec-arch">3. 시스템 아키텍처</a>
+        <a href="#sec-process">4. 동작 프로세스</a>
+        <a href="#sec-diff">5. Pleos 차별성</a>
+        <a href="#sec-biz">6. 사업성 &amp; 로드맵</a>
+      </div>
+      <button class="btn-print" onclick="window.print()">🖨️ PDF 저장 / 인쇄</button>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badges">
+        <span class="pill">현대자동차그룹 차량용 앱 개발 공모전</span>
+        <span class="pill green">Pleos Playground Vehicle SDK v2.3.2 연동 완료</span>
+        <span class="pill amber">Zero-Distraction 안전 설계</span>
+      </div>
+      <h1><span>PLEOMEKABOT</span> (플레오메카봇)</h1>
+      <p class="lead">
+        내 차에 나만의 이름을 부여하고, <strong>주행(D)</strong> 중에는 안전 운전과 차량 센서로 5대 원소 에너지를 축적하며,
+        <strong>주차(P)</strong> 시 20초 속성 배틀·거점 가디언 드론 실시간 방어전으로 성장하는
+        <strong>Pleos Connect SDK 기반 하드웨어 오케스트레이션 배틀 게임</strong>입니다.
+      </p>
+    </div>
+
+    <!-- 1. 기획 요약 -->
+    <section class="card" id="sec-overview">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">01</span> 기획 배경 &amp; 핵심 가치 요약</div>
+        <div class="sec-sub">왜 차량용 스낵형 게임 + SDV 데이터인가?</div>
+      </div>
+      <div class="grid-3">
+        <div class="box">
+          <h3>😫 출퇴근 피로 &amp; 스낵형 콘텐츠 부재</h3>
+          <p>기존 차량용 앱은 20분 이상 시청하는 OTT·미디어에 편중되어 있습니다. 주차 후 하차 직전 <strong>1~2분 내 즐기는 스낵형 인카 콘텐츠</strong>가 필요합니다.</p>
+        </div>
+        <div class="box">
+          <h3>📍 모바일 GPS 게임의 한계 극복</h3>
+          <p>스마트폰 위치 게임은 GPS 오차와 스푸핑(조작)에 취약하며 주차 여부를 알 수 없습니다. 현대차 SDV의 <strong>기어(P/D)·오도미터·센서</strong>로 진짜 주행 DNA를 검증합니다.</p>
+        </div>
+        <div class="box">
+          <h3>🔧 자발적 정비 &amp; 충전 대기 전환</h3>
+          <p>타이어 공기압 경고등은 무시하기 쉽습니다. 정상 공기압 시 <strong>풀 아머(+10% HP) 버프</strong>를 부여하고, E-pit 충전 시 <strong>보스 레이드</strong>를 열어 대기 시간을 즐거움으로 바꿉니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 핵심 메커니즘 -->
+    <section class="card" id="sec-mechanics">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">02</span> 주행 센서 5대 원소 &amp; 20초 배틀 메커니즘</div>
+        <div class="sec-sub">주행 환경이 곧 전략이 되는 순환 상성 &amp; 8초 OVERDRIVE</div>
+      </div>
+
+      <div class="box" style="margin-bottom:16px;">
+        <h3>🔄 차량 센서 기반 5대 원소 순환 상성 (우위 +30% / 열세 -20%)</h3>
+        <div class="elements-row">
+          <div class="el-chip" style="border-color:#ff3b0066;">
+            <div class="icon">🔥</div>
+            <div class="name" style="color:#ff3b00;">불 (FIRE)</div>
+            <div class="cond">외기온도 28°C↑<br>(HVAC 센서)</div>
+          </div>
+          <div class="arrow">➔</div>
+          <div class="el-chip" style="border-color:#00f0ff66;">
+            <div class="icon">❄️</div>
+            <div class="name" style="color:#00f0ff;">얼음 (ICE)</div>
+            <div class="cond">외기온도 5°C↓<br>(혹한/야간 주행)</div>
+          </div>
+          <div class="arrow">➔</div>
+          <div class="el-chip" style="border-color:#00e67666;">
+            <div class="icon">🌪️</div>
+            <div class="name" style="color:#00e676;">바람 (WIND)</div>
+            <div class="cond">스마트 크루즈 정속<br>(DrivingMode)</div>
+          </div>
+          <div class="arrow">➔</div>
+          <div class="el-chip" style="border-color:#ffb30066;">
+            <div class="icon">🪨</div>
+            <div class="name" style="color:#ffb300;">땅 (EARTH)</div>
+            <div class="cond">누적 거리 클린 주행<br>(Odometer)</div>
+          </div>
+          <div class="arrow">➔</div>
+          <div class="el-chip" style="border-color:#0088ff66;">
+            <div class="icon">💧</div>
+            <div class="name" style="color:#0088ff;">물 (WATER)</div>
+            <div class="cond">우천 와이퍼 작동<br>(Wiper 센서)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>⏱️ 기어 P 전용 20초 엄격 타임라인 (주차 후 하차 전 완결)</h3>
+        <div class="timeline-grid">
+          <div class="tl-step">
+            <div class="time">0.0 ~ 4.0초</div>
+            <div class="title">상성 오프닝 &amp; 매칭</div>
+            <div class="desc">반경 1~5km 유저 봇 또는 야생 봇 매칭, 앰비언트 무드램프 점등 및 차종 아머 전개</div>
+          </div>
+          <div class="tl-step hot">
+            <div class="time">4.0 ~ 16.0초 (핵심 8.0초)</div>
+            <div class="title">자동 교전 &amp; OVERDRIVE</div>
+            <div class="desc">스탯(파워/방어) 자동 교전 중 <strong>8초에 타이밍 바</strong> 활성화! 중앙 2% PERFECT 시 200% 크리티컬 &amp; 시트 진동 (스피드/테크 스탯 반영)</div>
+          </div>
+          <div class="tl-step">
+            <div class="time">16.0 ~ 20.0초</div>
+            <div class="title">정산 &amp; 4대 스탯 배분</div>
+            <div class="desc">미조작 시 GOOD 자동 정산, 레벨업 시 보너스 3P를 파워·방어·스피드·테크에 음성/터치 배분</div>
+          </div>
+          <div class="tl-step">
+            <div class="time">전투 후 ~ 다음 주행</div>
+            <div class="title">쿨타임 &amp; 드론 배치</div>
+            <div class="desc">1회 전투 후 <strong>기어 D 주행</strong>(또는 E-pit 충전) 전까지 쿨타임 적용. 주차 거점 최대 3곳에 드론 배치</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 시스템 아키텍처 -->
+    <section class="card" id="sec-arch">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">03</span> 시스템 아키텍처 (Pleos Connect AAOS + WebGL Engine)</div>
+        <div class="sec-sub">Android Automotive OS API 34/35 · Vehicle SDK v2.3.2 · Hybrid Bridge</div>
+      </div>
+
+      <div class="svg-diagram">
+        <svg viewBox="0 0 1000 390" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#38bdf8" />
+            </marker>
+            <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#4ade80" />
+            </marker>
+          </defs>
+
+          <!-- Layer 1: Vehicle Hardware & Pleos Service -->
+          <rect x="15" y="20" width="230" height="350" rx="12" fill="#131c31" stroke="#334155" stroke-width="1.5" />
+          <text x="130" y="46" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">1. Vehicle &amp; Pleos OS</text>
+          <rect x="30" y="65" width="200" height="50" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="130" y="87" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Gear / Odometer / Speed</text>
+          <text x="130" y="104" text-anchor="middle" fill="#94a3b8" font-size="10">P·D·R·N 상태 &amp; 실주행 거리</text>
+
+          <rect x="30" y="128" width="200" height="50" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="130" y="150" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Wiper / HVAC / Cruise</text>
+          <text x="130" y="167" text-anchor="middle" fill="#94a3b8" font-size="10">5대 원소 환경 센서 스트림</text>
+
+          <rect x="30" y="191" width="200" height="50" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="130" y="213" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Tire / EvBattery / CarInfo</text>
+          <text x="130" y="230" text-anchor="middle" fill="#94a3b8" font-size="10">공기압·E-pit 충전·차종 식별</text>
+
+          <rect x="30" y="254" width="200" height="50" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="130" y="276" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Light / Seat / AudioZone</text>
+          <text x="130" y="293" text-anchor="middle" fill="#94a3b8" font-size="10">앰비언트 컬러 &amp; 헤드레스트 TTS</text>
+
+          <rect x="30" y="317" width="200" height="38" rx="8" fill="#0c4a6e" stroke="#38bdf8" />
+          <text x="130" y="340" text-anchor="middle" fill="#e0f2fe" font-size="11" font-weight="bold">checkXXXCapabilities() 검증</text>
+
+          <!-- Layer 2: Kotlin Native Bridge -->
+          <rect x="285" y="20" width="235" height="350" rx="12" fill="#131c31" stroke="#0284c7" stroke-width="1.5" />
+          <text x="402" y="46" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">2. Kotlin Native Container</text>
+
+          <rect x="302" y="68" width="200" height="65" rx="8" fill="#1e293b" stroke="#38bdf8" />
+          <text x="402" y="92" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">PleosVehicleBridge.kt</text>
+          <text x="402" y="110" text-anchor="middle" fill="#94a3b8" font-size="10">Vehicle SDK v2.3.2 리스너 바인딩</text>
+          <text x="402" y="124" text-anchor="middle" fill="#4ade80" font-size="10">트림 미지원 시 Fallback 분기</text>
+
+          <rect x="302" y="148" width="200" height="58" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="402" y="172" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">FusedLocationBridge.kt</text>
+          <text x="402" y="190" text-anchor="middle" fill="#94a3b8" font-size="10">주차 좌표 &amp; 블루핸즈 내비 연동</text>
+
+          <rect x="302" y="221" width="200" height="58" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="402" y="245" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">GleoAudioBridge.kt</text>
+          <text x="402" y="263" text-anchor="middle" fill="#94a3b8" font-size="10">기어 P TTS 브리핑 &amp; STT 명령</text>
+
+          <rect x="302" y="294" width="200" height="60" rx="8" fill="#3f1d2e" stroke="#f43f5e" />
+          <text x="402" y="317" text-anchor="middle" fill="#fda4af" font-size="12" font-weight="bold">MainActivity (Zero-Distraction)</text>
+          <text x="402" y="335" text-anchor="middle" fill="#fecdd3" font-size="10">D/R/N 즉시 차단 · P단 전용 활성화</text>
+
+          <!-- Layer 3: WebGL / TypeScript Battle Engine -->
+          <rect x="560" y="20" width="215" height="350" rx="12" fill="#131c31" stroke="#22c55e" stroke-width="1.5" />
+          <text x="667" y="46" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="bold">3. In-Car Web Engine</text>
+
+          <rect x="576" y="68" width="183" height="62" rx="8" fill="#1e293b" stroke="#4ade80" />
+          <text x="667" y="91" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">ElementEngine.ts</text>
+          <text x="667" y="109" text-anchor="middle" fill="#94a3b8" font-size="10">5대 원소 파싱 &amp; 상성 배율(+30%)</text>
+
+          <rect x="576" y="144" width="183" height="64" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="667" y="167" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">TimingBarPhysics.ts</text>
+          <text x="667" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">8초 OVERDRIVE &amp; 스탯 물리</text>
+
+          <rect x="576" y="222" width="183" height="62" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="667" y="245" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">StateManager &amp; Timer</text>
+          <text x="667" y="263" text-anchor="middle" fill="#94a3b8" font-size="10">20초 엄격 타이머 &amp; D주행 쿨타임</text>
+
+          <rect x="576" y="298" width="183" height="56" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="667" y="320" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">MechaRenderer &amp; GlowFx</text>
+          <text x="667" y="337" text-anchor="middle" fill="#94a3b8" font-size="10">차종별 메카 SVG/3D &amp; 폴백 FX</text>
+
+          <!-- Layer 4: Cloud & Geo Backend -->
+          <rect x="810" y="20" width="175" height="350" rx="12" fill="#131c31" stroke="#eab308" stroke-width="1.5" />
+          <text x="897" y="46" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">4. Cloud Backend</text>
+
+          <rect x="824" y="75" width="147" height="75" rx="8" fill="#1e293b" stroke="#fbbf24" />
+          <text x="897" y="102" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Redis Geospatial</text>
+          <text x="897" y="122" text-anchor="middle" fill="#94a3b8" font-size="10">반경 1~5km 유저 봇</text>
+          <text x="897" y="136" text-anchor="middle" fill="#94a3b8" font-size="10">실시간 섹터 매칭</text>
+
+          <rect x="824" y="170" width="147" height="80" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="897" y="198" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Drone Sync WS</text>
+          <text x="897" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">거점 드론 방어 시</text>
+          <text x="897" y="232" text-anchor="middle" fill="#4ade80" font-size="10">+30 EXP 즉시 스트림</text>
+
+          <rect x="824" y="270" width="147" height="80" rx="8" fill="#1e293b" stroke="#475569" />
+          <text x="897" y="298" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">E-pit Raid DB</text>
+          <text x="897" y="318" text-anchor="middle" fill="#94a3b8" font-size="10">주말 충전소 보스</text>
+          <text x="897" y="332" text-anchor="middle" fill="#94a3b8" font-size="10">비동기 체력 집계</text>
+
+          <!-- Arrows -->
+          <line x1="245" y1="155" x2="283" y2="155" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+          <line x1="520" y1="155" x2="558" y2="155" stroke="#4ade80" stroke-width="2" marker-end="url(#arr-green)" />
+          <line x1="775" y1="155" x2="808" y2="155" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- 4. End-to-End 프로세스 -->
+    <section class="card" id="sec-process">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">04</span> End-to-End 사용자 &amp; 데이터 프로세스</div>
+        <div class="sec-sub">출근 주행(원소 축적) → 주차 변신(배틀·드론) → 오프라인 성장 → 퇴근/주말 루프</div>
+      </div>
+      <div class="process-flow">
+        <div class="proc-card">
+          <span class="proc-tag tag-d">STEP 1 · Gear D</span>
+          <h4>주행 중 백그라운드 수집</h4>
+          <p>UI는 완전 차단(Zero-Distraction). <code>Wiper</code>·<code>HVAC</code>·<code>Odometer</code>가 주행 원소를 축적하고 배틀 쿨타임을 해제합니다.</p>
+        </div>
+        <div class="proc-card">
+          <span class="proc-tag tag-p">STEP 2 · Gear P</span>
+          <h4>2초 하드웨어 변신 &amp; 브리핑</h4>
+          <p>P단 체결 즉시 앰비언트 라이트 점등 + 시트 진동 + 헤드레스트 Gleo TTS로 충전 속성·차량 컨디션을 브리핑합니다.</p>
+        </div>
+        <div class="proc-card">
+          <span class="proc-tag tag-p">STEP 3 · Gear P</span>
+          <h4>20초 배틀 &amp; 8초 OVERDRIVE</h4>
+          <p>3km 내 매칭 상대와 교전 후 8초 타이밍 바로 필살기 타격. 승리 후 보너스 3P 스탯을 음성·터치로 배분합니다.</p>
+        </div>
+        <div class="proc-card">
+          <span class="proc-tag tag-cloud">STEP 4 · Offline</span>
+          <h4>거점 드론 실시간 방어</h4>
+          <p>주차 위치(최대 3곳)에 배치한 드론이 타 유저 도전을 방어하면 회수 없이 본체로 <code>+30 EXP</code>가 즉시 전송됩니다.</p>
+        </div>
+        <div class="proc-card">
+          <span class="proc-tag tag-cloud">STEP 5 · E-pit</span>
+          <h4>충전 연계 &amp; 정비 유도</h4>
+          <p><code>EvBattery</code> 충전 감지 시 쿨타임 즉시 초기화 &amp; 보스 레이드 개방. 타이어 저압 시 <code>NaviHelper</code>로 블루핸즈 안내.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 차별성 비교 -->
+    <section class="card" id="sec-diff">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">05</span> 왜 스마트폰 게임이 아니라 Pleos 차량 앱인가?</div>
+        <div class="sec-sub">차량특화성 및 안전성 비교</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:20%;">비교 항목</th>
+            <th style="width:25%;">기존 스마트폰 위치 게임</th>
+            <th style="width:25%;">기존 인카 OTT·미디어 앱</th>
+            <th style="width:30%;">PLEOMEKABOT × Pleos Connect</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>위치·주행 검증</strong></td>
+            <td>GPS 오차(수십 m), 모의 위치(스푸핑) 취약</td>
+            <td>주행 데이터와 무관한 단방향 콘텐츠</td>
+            <td class="highlight">오도미터(1m 단위) + 기어 신호 기반 진짜 주행 DNA 검증</td>
+          </tr>
+          <tr>
+            <td><strong>주행 안전성</strong></td>
+            <td>운전 중 조작 유혹 발생(안전 사고 위험)</td>
+            <td>장시간 시청으로 정차·하차 맥락 단절</td>
+            <td class="highlight">D/R/N 완전 차단(Zero-Distraction), P단 전용 20초 스낵 완결</td>
+          </tr>
+          <tr>
+            <td><strong>차량 하드웨어 결합</strong></td>
+            <td>스마트폰 화면·스피커에 국한</td>
+            <td>단순 디스플레이·오디오 출력만 활용</td>
+            <td class="highlight">앰비언트 라이트·시트 진동·헤드레스트 사운드존 오케스트레이션 (트림별 폴백 지원)</td>
+          </tr>
+          <tr>
+            <td><strong>차량 관리·서비스 연계</strong></td>
+            <td>연계 불가능</td>
+            <td>연계 불가능</td>
+            <td class="highlight">타이어 공기압 풀 아머 버프 / 저압 시 블루핸즈 안내 / E-pit 충전 레이드</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 6. 사업성 & 로드맵 -->
+    <section class="card" id="sec-biz">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">06</span> 기대효과 · 목표 KPI · 사업 확장 로드맵</div>
+        <div class="sec-sub">출퇴근 리텐션 고착화 및 현대차그룹 생태계(블루핸즈 · E-pit · UBI) 연계</div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="kpi-card">
+          <div class="kpi-val">65%</div>
+          <div class="kpi-label">Day-7 Retention</div>
+          <div class="kpi-desc">출퇴근 1일 2회 루틴 + 드론 실시간 알림</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val">40%+</div>
+          <div class="kpi-label">Day-30 Retention</div>
+          <div class="kpi-desc">스탯 육성 &amp; 5원소 시즌 메타</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val">15만+</div>
+          <div class="kpi-label">출시 1년 목표 MAU</div>
+          <div class="kpi-desc">2040 EV/출퇴근 오너 중심 확산</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val">40회/월</div>
+          <div class="kpi-label">인당 월평균 배틀</div>
+          <div class="kpi-desc">20초 스낵 플레이 높은 반복률</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="box">
+          <h3>Phase 1 · 공식 정비 연계</h3>
+          <p>타이어 공기압 등 차량 이상 감지 시 <strong>블루핸즈 예약·길안내</strong> 연동 및 정비 완료 오너에게 한정판 아머 파츠 지급.</p>
+        </div>
+        <div class="box">
+          <h3>Phase 2 · E-pit &amp; IP 스폰서십</h3>
+          <p>현대차 <strong>E-pit 초고속 충전소·휴게소</strong>를 보스 레이드 거점으로 유치하고, N 브랜드 퍼포먼스 스킨 및 로봇 IP 콜라보 전개.</p>
+        </div>
+        <div class="box">
+          <h3>Phase 3 · UBI 보험 &amp; 계정 계승</h3>
+          <p>안전 운전(정속·무급정거) 데이터를 커넥티드카 보험 특약과 연동하고, <strong>신차 대차 시 메카봇 레벨 계승</strong>으로 브랜드 락인 구축.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
