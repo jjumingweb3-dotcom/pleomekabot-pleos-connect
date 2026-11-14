@@ -85,11 +85,7 @@
 
 ## 5. APK 파일 위치
 
-- **공모전 제출 규격 Release APK (`apk/` 폴더)**:
-  - [`apk/PLEOMEKABOT_PLEOMEKABOT_release.apk`](./apk/PLEOMEKABOT_PLEOMEKABOT_release.apk)
-  - [`apk/플레오메카봇_플레오메카봇_release.apk`](./apk/플레오메카봇_플레오메카봇_release.apk)
-- **루트 APK 사본**:
-  - [`PLEOMEKABOT-debug.apk`](./PLEOMEKABOT-debug.apk)
+- [`apk/PLEOMEKABOT_PLEOMEKABOT_release.apk`](./apk/PLEOMEKABOT_PLEOMEKABOT_release.apk)
 
 ---
 
