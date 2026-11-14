@@ -1008,6 +1008,7 @@
       document.getElementById('ambient-bar').style.background = el.color;
       document.getElementById('hw-light-dot').style.background = el.color;
       document.getElementById('hw-light-text').innerText = `Ambient: ${el.color} (${el.name} 버프)`;
+      if (typeof notifyNativeHardware === 'function') notifyNativeHardware(el.color, false);
       document.getElementById('odo-display').innerText = `Odometer: ${state.odometerKm.toLocaleString()} km · 🎫 배틀권 ${state.tickets}회`;
       document.getElementById('header-ticket-badge').innerText = `🎫 배틀권: ${state.tickets}회`;
       document.getElementById('ticket-tag').innerText = `🎫 보유 배틀권: ${state.tickets}회`;
@@ -1138,6 +1139,9 @@
       if (state.trim === 'FALLBACK' || isCrit) {
         stage.classList.add('shake-fx');
         setTimeout(() => stage.classList.remove('shake-fx'), 340);
+        if (isCrit && typeof notifyNativeHardware === 'function') {
+          notifyNativeHardware(ELEMENTS[state.myBuff].color, true);
+        }
       }
       setTimeout(() => {
         myUnit.classList.remove('anim-lunge-right', 'anim-hit', 'anim-overdrive');
@@ -1277,6 +1281,55 @@
       document.getElementById('battle-arena').style.display = 'none';
       document.getElementById('battle-lobby').style.display = 'flex';
       updateSensors();
+    }
+
+    // Pleos Native Android WebView Bridge (PleosVehicleBridge.kt / FusedLocationBridge.kt / GleoAudioBridge.kt)
+    window.PleosEventBus = {
+      dispatch(event, payload) {
+        try {
+          if (event === 'onSdkConnected' && payload && payload.connected) {
+            document.getElementById('hw-seat-pill').innerText = '🔌 Pleos SDK v' + (payload.version || '2.3.2') + ' 연결됨';
+          } else if (event === 'onGearChanged' && payload && payload.gear) {
+            setGear(payload.gear);
+          } else if (event === 'onWiperChanged' && payload) {
+            document.getElementById('chk-rain').checked = !!payload.isRaining;
+            updateSensors();
+          } else if (event === 'onExteriorTempChanged' && payload && typeof payload.temp === 'number') {
+            const t = Math.round(payload.temp);
+            document.getElementById('rng-temp').value = t;
+            updateTemp(t);
+          } else if (event === 'onCruiseChanged' && payload) {
+            document.getElementById('chk-cruise').checked = !!payload.isCruise;
+            updateSensors();
+          } else if (event === 'onOdometerChanged' && payload && typeof payload.km === 'number') {
+            const newKm = Math.round(payload.km);
+            if (newKm > state.odometerKm) {
+              const gained = Math.floor((newKm - state.odometerKm) / 10);
+              if (gained > 0) state.tickets += gained;
+            }
+            state.odometerKm = newKm;
+            updateSensors();
+          } else if (event === 'onTireStatusChanged' && payload) {
+            document.getElementById('chk-tire-low').checked = !payload.fullArmor;
+            updateSensors();
+          } else if (event === 'onVoiceCommand' && payload && payload.utterance) {
+            const u = payload.utterance;
+            if (u.includes('배틀') || u.includes('전투')) voiceCommand('battle');
+            else if (u.includes('스탯') || u.includes('파워')) voiceCommand('stat');
+          }
+        } catch (e) {
+          console.warn('PleosEventBus error:', e);
+        }
+      }
+    };
+
+    function notifyNativeHardware(elColor, triggerHaptic) {
+      if (window.PleosNativeVehicle) {
+        try {
+          window.PleosNativeVehicle.syncAmbientLightColor(elColor);
+          if (triggerHaptic) window.PleosNativeVehicle.triggerSeatHapticFeedback(80);
+        } catch (_) {}
+      }
     }
 
     // Initialize UI
