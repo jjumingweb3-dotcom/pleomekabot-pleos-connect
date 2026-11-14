@@ -36,8 +36,8 @@
      - 워셔액 부족 경고 (`LowWasherFluidWaringListener`) → **테크(TEC) 저하 (-20%)**
      - 출력 제한 / 연료·배터리 부족 (`PowerDownWarningIndicatorListener` / `FuelPercentListener` / `EvBatteryStateOfChargeListener`) → **스피드(SPD) 저하 (-20%)**
 
-5. **4대 차종 로봇 디자인 & 파츠 성장 시스템**
-   - **지원 차종 (로보카 폴리 스타일 친근한 메카봇)**:
+5. **전 차종 확장 지원 & 파츠 성장 시스템**
+   - **지원 차종**: 실제 서비스는 **Pleos 앱을 사용할 수 있는 모든 차종**을 대상으로 하며, 현재 **시안(프로토타입)에서는 대표 4종**을 우선 구현했습니다.
      - **투싼 (`TUCSON`)**: 파라메트릭 쥬얼 그릴·히든 램프 시그니처
      - **그랜저 (`GRANDEUR`)**: 심리스 호라이즌 램프 시그니처
      - **아이오닉 (`IONIQ`)**: 파라메트릭 픽셀 LED 시그니처
@@ -47,15 +47,9 @@
 
 ---
 
-## UI/UX 디자인 컨셉
-
-- **도파민 디자인 (Dopamine Design)**: 고채도 네온·비비드 팔레트(`#FF6F61`, `#FFD700`, `#00CED1`, `#FF1493`, `#2EE59D`)와 둥글고 촉각적인 3D 버튼으로 게이머부터 어린 자녀·동승자까지 직관적으로 몰입할 수 있도록 설계했습니다.
-
----
-
 ## 프로젝트 구성
 
-- [`demo.html`](./demo.html): 도파민 디자인 기반 인터랙티브 웹 시뮬레이터 (주행 거리 10km 배틀권 획득, 기어 P 배틀, POI 스페셜 메카봇, 4대 차종 SVG 및 파츠/디버프 실시간 테스트)
+- [`demo.html`](./demo.html): 인터랙티브 웹 시뮬레이터 (시안 프로토타입: 대표 4종 메카봇, 주행 거리 10km 배틀권 획득, 기어 P 배틀, POI 스페셜 메카봇, 파츠/디버프 실시간 테스트)
 - [`PLEOMEKABOT_아키텍처_프로세스_요약.html`](./PLEOMEKABOT_아키텍처_프로세스_요약.html): 아키텍처, 게임 메커니즘, Pleos SDK 연동 요약 문서
 - [`android/`](./android): Pleos Playground Vehicle SDK (`ai.pleos.playground:Vehicle:2.3.2`) 연동 Android 앱 소스 (`PleosVehicleBridge.kt` + WebView 브리지)
 - [`PLEOMEKABOT-debug.apk`](./PLEOMEKABOT-debug.apk): 최신 디버그 APK 빌드
