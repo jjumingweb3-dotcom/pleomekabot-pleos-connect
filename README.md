@@ -8,9 +8,9 @@
 
 ## 핵심 게임 루프 (차량판 포켓몬 GO)
 
-1. **주행 & 배틀권 충전 (`DistanceDriven`)**
-   - 차량을 **10km 주행할 때마다 배틀권 1회**가 자동 충전됩니다.
-   - 별도 조작 없이 안전한 주행 자체가 게임의 에너지원이 됩니다.
+1. **주행거리 기반 배틀권 획득 (`DistanceDriven`)**
+   - 차량을 **10km 주행할 때마다 배틀권 1회**가 자동 지급됩니다.
+   - 배틀권은 오직 실제 주행거리에 의해서만 획득되며, 별도 조작 없이 안전한 주행 자체가 게임의 에너지원이 됩니다.
 
 2. **직전 주행 기반 5대 속성 버프 (고정 속성 없음)**
    - 메카봇은 태생적으로 고정된 속성을 갖지 않습니다.
@@ -31,10 +31,10 @@
 
 4. **실제 차량 상태 연동 디버프 (`Pleos Vehicle SDK v2.3.2`)**
    - 단순 수치 놀이가 아닌 실제 차량 점검을 유도하도록 차량 이상 상태를 디버프로 반영합니다.
-     - 타이어 공기압 경고 (`TirePressureListener`) → **속도 저하**
-     - 엔진오일 레벨 경고 (`OilLevelStateListener`) → **방어력 저하**
-     - 워셔액 부족 경고 (`LowWasherFluidWaringListener`) → **명중률 저하**
-     - 출력 제한 / 연료·배터리 부족 (`PowerDownWarningIndicatorListener` / `FuelPercentListener` / `EvBatteryStateOfChargeListener`) → **공격력 저하**
+     - 타이어 공기압 경고 (`TirePressureListener`) → **방어력(DEF) 저하 (-20%)**
+     - 엔진오일 레벨 경고 (`OilLevelStateListener`) → **파워(POW) 저하 (-20%)**
+     - 워셔액 부족 경고 (`LowWasherFluidWaringListener`) → **테크(TEC) 저하 (-20%)**
+     - 출력 제한 / 연료·배터리 부족 (`PowerDownWarningIndicatorListener` / `FuelPercentListener` / `EvBatteryStateOfChargeListener`) → **스피드(SPD) 저하 (-20%)**
 
 5. **4대 차종 로봇 디자인 & 파츠 성장 시스템**
    - **지원 차종 (로보카 폴리 스타일 친근한 메카봇)**:
@@ -43,7 +43,7 @@
      - **아이오닉 (`IONIQ`)**: 파라메트릭 픽셀 LED 시그니처
      - **팰리세이드 (`PALISADE`)**: 수직형 LED 주간주행등·대형 플래그십 시그니처
    - **현대자동차그룹 서비스 연계 파츠 획득 & 외형 업그레이드**:
-     - 레벨업에 따라 메카봇 외형 티어가 진화하며, **블루핸즈 정비(블루핸즈 실드)**, **E-pit 충전(E-pit 윙)**, **블루멤버스 포인트(블루포인트 캐논)**, **공식 이벤트(이벤트 코어)** 등을 통해 능력치(`+ATK`/`+DEF`/`+SPD`/`+HP`)와 외형이 강화되는 파츠를 장착할 수 있습니다.
+     - 레벨업에 따라 메카봇 외형 티어가 진화하며, **블루핸즈 정비(블루핸즈 실드 +3 DEF)**, **E-pit 충전(E-pit 윙 +3 SPD)**, **블루멤버스 포인트(블루포인트 캐논 +3 POW)**, **공식 이벤트(이벤트 코어 +3 TEC)** 등을 통해 능력치와 외형이 강화되는 파츠를 장착할 수 있습니다.
 
 ---
 
@@ -55,7 +55,7 @@
 
 ## 프로젝트 구성
 
-- [`demo.html`](./demo.html): 도파민 디자인 기반 인터랙티브 웹 시뮬레이터 (주행 거리 10km 배틀권 충전, 기어 P 배틀, POI 스페셜 메카봇, 4대 차종 SVG 및 파츠/디버프 실시간 테스트)
+- [`demo.html`](./demo.html): 도파민 디자인 기반 인터랙티브 웹 시뮬레이터 (주행 거리 10km 배틀권 획득, 기어 P 배틀, POI 스페셜 메카봇, 4대 차종 SVG 및 파츠/디버프 실시간 테스트)
 - [`PLEOMEKABOT_아키텍처_프로세스_요약.html`](./PLEOMEKABOT_아키텍처_프로세스_요약.html): 아키텍처, 게임 메커니즘, Pleos SDK 연동 요약 문서
 - [`android/`](./android): Pleos Playground Vehicle SDK (`ai.pleos.playground:Vehicle:2.3.2`) 연동 Android 앱 소스 (`PleosVehicleBridge.kt` + WebView 브리지)
 - [`PLEOMEKABOT-debug.apk`](./PLEOMEKABOT-debug.apk): 최신 디버그 APK 빌드
