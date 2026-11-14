@@ -3,67 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PLEOMEKABOT — 서비스 요약 &amp; 아키텍처</title>
+  <title>PLEOMEKABOT — 차량판 포켓몬 GO 서비스 요약 &amp; 아키텍처</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet" />
   <style>
     :root {
-      --bg: #101018;
-      --surface: #181828;
-      --surface-2: #202036;
-      --border: #484870;
-      --border-bright: #8a8ac0;
-      --text: #f4f4ff;
-      --muted: #a4a4cc;
-      --gold: #F7E26B;
-      --red: #EF3E4A;
-      --cyan: #37C4FF;
-      --green: #7CFF6B;
-      --shadow: #000000;
+      --bg: #FFF9F0;
+      --ink: #1A1635;
+      --muted: #544E75;
+      --coral: #FF6F61;
+      --gold: #FFD700;
+      --turq: #00CED1;
+      --pink: #FF1493;
+      --mint: #2EE59D;
+      --purple: #8B5CF6;
+      --card: #FFFFFF;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border-radius: 0 !important;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
     body {
       background-color: var(--bg);
       background-image:
-        linear-gradient(rgba(55, 196, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(55, 196, 255, 0.04) 1px, transparent 1px);
-      background-size: 16px 16px;
-      color: var(--text);
-      font-family: 'Galmuri11', 'Pretendard', monospace, sans-serif;
-      font-size: 14px;
-      line-height: 1.7;
-      -webkit-font-smoothing: none;
+        radial-gradient(circle at 12% 14%, rgba(255, 215, 0, 0.22) 0, transparent 22%),
+        radial-gradient(circle at 88% 12%, rgba(0, 206, 209, 0.20) 0, transparent 24%),
+        radial-gradient(circle at 82% 82%, rgba(255, 20, 147, 0.14) 0, transparent 24%);
+      color: var(--ink);
+      font-family: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.65;
     }
 
-    .px-box {
-      background: var(--surface);
-      border: 3px solid var(--border-bright);
-      box-shadow: 6px 6px 0 var(--shadow);
-      position: relative;
+    .display-font {
+      font-family: 'Fredoka', 'Jua', 'Pretendard', sans-serif;
     }
 
+    /* Top Nav */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: #141422;
-      border-bottom: 4px solid var(--gold);
-      box-shadow: 0 4px 0 #000;
+      background: #FFFFFF;
+      border-bottom: 4px solid var(--ink);
+      box-shadow: 0 5px 0 rgba(26, 22, 53, 0.12);
     }
 
     .topbar-inner {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 12px 20px;
       display: flex;
@@ -75,191 +64,305 @@
 
     .brand { display: flex; align-items: center; gap: 12px; }
 
-    .brand-icon {
-      width: 36px; height: 36px;
-      background: var(--gold);
-      border: 3px solid #000;
-      box-shadow: 3px 3px 0 var(--red);
+    .brand-badge {
+      width: 44px; height: 44px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--coral), var(--pink));
+      border: 3px solid var(--ink);
+      box-shadow: 0 4px 0 var(--ink);
       display: grid; place-items: center;
-      color: #101018; font-weight: 900; font-size: 16px;
+      color: #fff; font-weight: 800; font-size: 18px;
+      font-family: 'Fredoka', sans-serif;
     }
 
     .brand-title {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 13px; color: var(--gold); text-shadow: 2px 2px 0 #000;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.3px;
     }
 
-    .brand-sub { font-size: 11px; color: var(--cyan); margin-top: 2px; }
+    .brand-sub {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--pink);
+    }
 
     .nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    .nav a, .btn-px {
+    .nav a, .btn-pop {
       text-decoration: none;
-      font-family: 'Galmuri11', monospace;
-      font-size: 12px; font-weight: 700;
-      padding: 7px 11px;
-      background: var(--surface-2);
-      color: var(--text);
-      border: 2px solid var(--border-bright);
-      box-shadow: 3px 3px 0 #000;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #F4F1FF;
+      color: var(--ink);
+      border: 2.5px solid var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
       cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
       display: inline-flex; align-items: center; gap: 6px;
     }
 
-    .nav a:hover, .btn-px:hover {
-      background: #2b2b48; border-color: var(--cyan); color: var(--cyan);
+    .nav a:hover, .btn-pop:hover {
+      background: var(--turq);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .nav a:active, .btn-pop:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--ink);
     }
 
-    .btn-px-gold {
-      background: var(--gold); color: #101018; border-color: #fff3a1;
+    .btn-gold {
+      background: var(--gold);
+      color: var(--ink);
     }
-    .btn-px-gold:hover { background: #ffed82; color: #101018; border-color: #fff; }
+    .btn-gold:hover { background: #ffe44d; color: var(--ink); }
 
-    .container { max-width: 1120px; margin: 0 auto; padding: 26px 20px 60px; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 28px 20px 64px; }
 
     /* Hero */
     .hero {
-      padding: 26px;
-      margin-bottom: 24px;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 4px),
-        linear-gradient(135deg, #16162a 0%, #1c1830 55%, #122030 100%);
-      border: 4px solid var(--cyan);
-      box-shadow: 8px 8px 0 #000;
+      background: linear-gradient(135deg, #FFF0F6 0%, #FFFBE6 52%, #E6FFFE 100%);
+      border: 4px solid var(--ink);
+      border-radius: 32px;
+      box-shadow: 8px 8px 0 var(--ink);
+      padding: 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .quest-badge {
-      display: inline-block;
-      background: var(--red); color: #fff;
-      border: 2px solid #000; box-shadow: 3px 3px 0 #000;
-      padding: 4px 10px; font-size: 11px; font-weight: 700; margin-bottom: 12px;
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pink);
+      color: #fff;
+      border: 2.5px solid var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 14px;
     }
 
     .hero h1 {
-      font-size: 24px; line-height: 1.5; color: #fff;
-      text-shadow: 3px 3px 0 #000; margin-bottom: 12px;
+      font-family: 'Jua', 'Pretendard', sans-serif;
+      font-size: 30px;
+      line-height: 1.38;
+      margin-bottom: 12px;
+      color: var(--ink);
     }
-    .hero h1 .hl-gold { color: var(--gold); }
-    .hero h1 .hl-cyan { color: var(--cyan); }
-    .hero p { color: var(--muted); max-width: 840px; font-size: 14px; }
+
+    .hero h1 .hl-coral { color: var(--coral); }
+    .hero h1 .hl-turq  { color: #00999C; }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 820px;
+      font-size: 15px;
+      font-weight: 500;
+    }
 
     .hero-stats {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 22px;
     }
-    .stat-tile {
-      background: #101018; border: 2px solid var(--border-bright);
-      box-shadow: 4px 4px 0 #000; padding: 12px;
-    }
-    .stat-tile .k { font-family: 'Silkscreen', monospace; font-size: 10px; color: var(--cyan); margin-bottom: 4px; }
-    .stat-tile .v { font-size: 14px; font-weight: 700; color: var(--gold); }
-    .stat-tile .s { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    .sec { padding: 22px; margin-bottom: 24px; }
+    .stat-bubble {
+      background: #fff;
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      box-shadow: 0 5px 0 var(--ink);
+      padding: 14px;
+    }
+    .stat-bubble .k {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--pink);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .stat-bubble .v { font-size: 16px; font-weight: 800; color: var(--ink); }
+    .stat-bubble .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Section Card */
+    .sec {
+      background: var(--card);
+      border: 3.5px solid var(--ink);
+      border-radius: 28px;
+      box-shadow: 6px 6px 0 var(--ink);
+      padding: 26px;
+      margin-bottom: 26px;
+    }
+
     .sec-head {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap; padding-bottom: 12px; margin-bottom: 16px;
-      border-bottom: 3px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 3px dashed #D8D2F2;
     }
+
     .sec-title {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 17px; font-weight: 700; color: var(--gold); text-shadow: 2px 2px 0 #000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Jua', 'Pretendard', sans-serif;
+      font-size: 21px;
+      color: var(--ink);
     }
+
     .sec-num {
-      font-family: 'Press Start 2P', monospace; font-size: 11px;
-      background: var(--cyan); color: #101018;
-      border: 2px solid #000; box-shadow: 3px 3px 0 #000; padding: 6px 8px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--gold);
+      color: var(--ink);
+      border: 2.5px solid var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
+      border-radius: 14px;
+      padding: 4px 11px;
     }
-    .sec-sub { font-size: 12px; color: var(--muted); }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .sec-sub { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 
-    .item-box {
-      padding: 15px; background: var(--surface-2);
-      border: 2px solid var(--border); box-shadow: 4px 4px 0 #000;
+    .pop-card {
+      background: #FAF8FF;
+      border: 2.5px solid var(--ink);
+      border-radius: 20px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: 16px;
     }
-    .item-box h3 {
-      font-size: 14px; color: var(--cyan); margin-bottom: 7px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .item-box p { font-size: 13px; color: #d6d6f0; }
-    .item-box strong { color: var(--gold); }
 
-    .sub-pill {
+    .pop-card h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pop-card p { font-size: 13px; color: var(--muted); }
+    .pop-card strong { color: #D92672; }
+
+    .tag-chip {
       display: inline-block;
-      font-size: 10px; font-weight: 700;
-      padding: 2px 6px; margin-bottom: 8px;
-      border: 2px solid #000;
-      background: var(--gold); color: #101018;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 2px solid var(--ink);
+      margin-bottom: 8px;
     }
-    .sub-pill.alt { background: var(--cyan); color: #101018; }
+    .tag-coral { background: var(--coral); color: #fff; }
+    .tag-turq  { background: var(--turq); color: var(--ink); }
+    .tag-gold  { background: var(--gold); color: var(--ink); }
+    .tag-mint  { background: var(--mint); color: var(--ink); }
 
-    /* Main Loop Flow Banner */
-    .loop-flow {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+    /* Element Chips */
+    .el-card {
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: 14px 10px;
+      text-align: center;
+      background: #fff;
     }
-    .loop-step {
-      background: #12121e; border: 3px solid var(--green);
-      box-shadow: 4px 4px 0 #000; padding: 13px;
-    }
-    .loop-step .st {
-      font-family: 'Silkscreen', monospace; font-size: 10px;
-      color: var(--green); margin-bottom: 4px;
-    }
-    .loop-step h4 { font-size: 13px; color: #fff; margin-bottom: 5px; }
-    .loop-step p { font-size: 12px; color: var(--muted); }
+    .el-card.fire  { background: #FFF0EE; }
+    .el-card.ice   { background: #E8FCFF; }
+    .el-card.wind  { background: #EAFFF5; }
+    .el-card.earth { background: #FFF9DE; }
+    .el-card.water { background: #EEF4FF; }
+    .el-emoji { font-size: 26px; margin-bottom: 4px; }
+    .el-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+    .el-cond { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
 
-    /* 5 Element Tiles */
-    .el-tile {
-      background: #12121e; border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 #000; padding: 12px 10px; text-align: center;
+    /* Car Lineup Cards */
+    .car-card {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F7F4FF 100%);
+      border: 3px solid var(--ink);
+      border-radius: 24px;
+      box-shadow: 0 5px 0 var(--ink);
+      padding: 14px;
+      text-align: center;
     }
-    .el-tile.fire  { border-color: var(--red); }
-    .el-tile.ice   { border-color: var(--cyan); }
-    .el-tile.wind  { border-color: var(--green); }
-    .el-tile.earth { border-color: var(--gold); }
-    .el-tile.water { border-color: #5b8cff; }
-    .el-emoji { font-size: 22px; margin-bottom: 4px; }
-    .el-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-    .el-cond { font-size: 11px; color: var(--muted); }
+    .car-card h4 { font-size: 14px; font-weight: 800; margin-top: 6px; color: var(--ink); }
+    .car-card p  { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
 
     code {
-      background: #0b0b12; color: var(--gold);
-      border: 1px solid var(--border); padding: 1px 5px;
-      font-family: 'Silkscreen', 'Galmuri11', monospace; font-size: 11px;
+      background: #EFEAFF;
+      color: #6D28D9;
+      border: 1.5px solid #C4B5FD;
+      border-radius: 8px;
+      padding: 1px 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .arch-wrap {
+      background: #1A1635;
+      border: 3.5px solid var(--ink);
+      border-radius: 24px;
+      box-shadow: 0 6px 0 var(--ink);
+      padding: 16px;
+      overflow-x: auto;
     }
 
     .px-table-wrap { overflow-x: auto; }
     table {
-      width: 100%; border-collapse: collapse; font-size: 13px;
-      border: 3px solid var(--border-bright); box-shadow: 5px 5px 0 #000;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 3px solid var(--ink);
+      border-radius: 20px;
+      overflow: hidden;
+      font-size: 13px;
     }
-    th, td { border: 2px solid var(--border); padding: 11px 12px; text-align: left; }
-    th { background: #101018; color: var(--gold); font-size: 12px; }
-    td { background: var(--surface-2); color: #d6d6f0; }
-    td.hl { background: #1b2838; color: var(--green); font-weight: 700; }
-
-    .arch-wrap {
-      background: #0c0c14; border: 3px solid var(--cyan);
-      box-shadow: 6px 6px 0 #000; padding: 14px; overflow-x: auto;
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 2px solid #E5E0FA;
+      border-right: 2px solid #E5E0FA;
+      text-align: left;
     }
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+    th { background: var(--gold); color: var(--ink); font-weight: 800; }
+    td { background: #fff; color: var(--muted); }
+    td.hl { background: #E9FFF9; color: #0F766E; font-weight: 800; }
 
-    .footer-note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; }
+    .footer-note { text-align: center; font-size: 12.5px; color: var(--muted); font-weight: 600; margin-top: 10px; }
 
     @media (max-width: 960px) {
-      .hero-stats, .loop-flow, .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+      .hero-stats, .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
-      .hero-stats, .loop-flow, .grid-4, .grid-5 { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 20px; }
+      .hero-stats, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 22px; }
     }
     @media print {
-      body { background: #fff; color: #111; }
+      body { background: #fff; }
       .topbar { display: none; }
-      .px-box, .hero, .item-box, .loop-step { box-shadow: none !important; break-inside: avoid; }
+      .sec, .hero, .pop-card, .car-card { box-shadow: none !important; break-inside: avoid; }
     }
   </style>
 </head>
@@ -267,19 +370,19 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div class="brand-icon">PM</div>
+        <div class="brand-badge">PM</div>
         <div>
           <div class="brand-title">PLEOMEKABOT</div>
-          <div class="brand-sub">PLEOS CONNECT · 차량 주행 연동 메카닉 배틀 RPG</div>
+          <div class="brand-sub">차량판 포켓몬 GO · Pleos Connect 메카닉 배틀 RPG</div>
         </div>
       </div>
       <nav class="nav">
-        <a href="#sec-core">01 핵심 구조</a>
-        <a href="#sec-mech">02 원소·배틀</a>
-        <a href="#sec-arch">03 아키텍처</a>
-        <a href="#sec-user">04 타겟·시나리오</a>
-        <a href="#sec-diff">05 차별성·확장</a>
-        <button class="btn-px btn-px-gold" onclick="window.print()">PDF 인쇄</button>
+        <a href="#sec-core">01 코어 루프</a>
+        <a href="#sec-mecha">02 차종·파츠</a>
+        <a href="#sec-debuff">03 속성·디버프</a>
+        <a href="#sec-arch">04 아키텍처</a>
+        <a href="#sec-biz">05 타겟·확장</a>
+        <button class="btn-pop btn-gold" onclick="window.print()">PDF 저장</button>
       </nav>
     </div>
   </header>
@@ -287,295 +390,279 @@
   <main class="container">
     <!-- HERO -->
     <section class="hero">
-      <div class="quest-badge">HYUNDAI MOTOR GROUP · PLEOS CONNECT APP CONTEST</div>
+      <div class="hero-pill">🚗 HYUNDAI MOTOR GROUP · PLEOS CONNECT APP CONTEST</div>
       <h1>
-        <span class="hl-gold">주행</span>으로 속성을 모으고,<br />
-        <span class="hl-cyan">정차(P)</span>하면 근처 봇과 결투해 성장하는 차량 RPG
+        Pleos에서 즐기는 <span class="hl-coral">‘차량판 포켓몬 GO’</span>!<br />
+        <span class="hl-turq">10km 주행</span>으로 충전하고, 정차(P) 공간에서 배틀·진화하다
       </h1>
       <p>
         <strong>PLEOMEKABOT</strong>은 내연기관·하이브리드·EV 등 <strong>현대자동차그룹 전 차종</strong>을 대상으로 합니다.
-        주행 중에는 안전하게 화면을 잠그고 차량 센서로 원소 속성을 축적하며, 목적지에 정차(<code>Gear P</code>)하면
-        근처 <strong>AI 봇이나 다른 운전자가 배치한 봇</strong>과 20초 결투를 펼쳐 경험치를 얻고 성장합니다.
+        주행 중에는 Pleos 게임 앱 안전 정책을 준수하며 <strong>10km당 배틀권 1회</strong>를 충전하고 직전 주행 환경에 맞는 속성 버프를 획득합니다.
+        목적지 정차(<code>Gear P</code>) 후 직접 앱을 실행해 배틀을 누르면, 현재 주차 위치의 <strong>다른 차량 메카봇 · 스페셜 메카봇(경복궁·에버랜드·스타필드 등) · 지역 AI 메카봇</strong>과 20초 결투를 펼쳐 성장합니다.
       </p>
 
       <div class="hero-stats">
-        <div class="stat-tile">
-          <div class="k">MAIN LOOP</div>
-          <div class="v">주행 → 정차 결투</div>
-          <div class="s">속성 충전 · 봇 배틀 · EXP 획득</div>
+        <div class="stat-bubble">
+          <div class="k">CORE LOOP</div>
+          <div class="v">10km = 배틀 1회</div>
+          <div class="s">Odometer 누적 주행 연동</div>
         </div>
-        <div class="stat-tile">
-          <div class="k">SAFETY FIRST</div>
-          <div class="v">Gear P 전용</div>
-          <div class="s">D단 주행 시 화면 잠금 &amp; 쿨타임 해제</div>
+        <div class="stat-bubble">
+          <div class="k">SAFETY RULE</div>
+          <div class="v">P모드 수동 실행</div>
+          <div class="s">주차 시 유저가 직접 전투 개시</div>
         </div>
-        <div class="stat-tile">
-          <div class="k">SUB FEATURES</div>
-          <div class="v">배치 · E-pit 보너스</div>
-          <div class="s">내 봇 배치 · 전용 충전소 레이드</div>
+        <div class="stat-bubble">
+          <div class="k">SPECIAL SPOT</div>
+          <div class="v">랜드마크 스페셜</div>
+          <div class="s">경복궁 · 에버랜드 · 스타필드 등</div>
         </div>
-        <div class="stat-tile">
-          <div class="k">SDK VERIFIED</div>
-          <div class="v">Vehicle 2.3.2</div>
-          <div class="s">Android Studio 실빌드 APK 검증</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 01. 핵심 구조: 메인 vs 부가 기능 -->
-    <section class="px-box sec" id="sec-core">
-      <div class="sec-head">
-        <div class="sec-title"><span class="sec-num">01</span> 서비스 구조 (메인 루프 + 부가 기능)</div>
-        <div class="sec-sub">심플한 핵심 루프에 차량 특화 부가 기능을 결합</div>
-      </div>
-
-      <div class="loop-flow">
-        <div class="loop-step">
-          <div class="st">MAIN STEP 1 · GEAR D</div>
-          <h4>주행으로 속성 충전</h4>
-          <p>주행 중 화면은 안전 잠금되며, 온도·와이퍼·크루즈 센서가 <strong>5대 원소 속성</strong>을 채우고 배틀 쿨타임을 해제합니다.</p>
-        </div>
-        <div class="loop-step">
-          <div class="st">MAIN STEP 2 · GEAR P</div>
-          <h4>정차 시 메카봇 소환</h4>
-          <p>주차(P) 체결 시 내 차종 실루엣의 메카봇이 깨어나고, 주변 반경 내 <strong>AI 봇 또는 타 유저 봇</strong>을 탐색합니다.</p>
-        </div>
-        <div class="loop-step">
-          <div class="st">MAIN STEP 3 · 20s</div>
-          <h4>봇 결투 &amp; EXP 획득</h4>
-          <p>하차 전 <strong>20초 타이밍 배틀</strong>을 진행해 경험치(EXP)를 얻고, 레벨업 시 4대 스탯을 강화합니다.</p>
-        </div>
-        <div class="loop-step">
-          <div class="st">MAIN STEP 4 · REPEAT</div>
-          <h4>다음 주행으로 순환</h4>
-          <p>1회 전투 후에는 다시 <strong>Gear D로 주행</strong>해야 다음 배틀이 열려, 실제 운전과 게임이 자연스럽게 순환합니다.</p>
-        </div>
-      </div>
-
-      <div class="grid-3">
-        <div class="item-box">
-          <span class="sub-pill">부가 기능 1</span>
-          <h3>📍 내 봇 주차 거점 배치</h3>
-          <p>주차(P)한 위치에 내 봇을 배치해 두면, 근처를 지나다 정차한 다른 운전자가 도전할 때 방어전으로 추가 경험치를 얻을 수 있습니다.</p>
-        </div>
-        <div class="item-box">
-          <span class="sub-pill alt">부가 기능 2</span>
-          <h3>⚡ EV 전용 충전소 보너스 &amp; 레이드</h3>
-          <p>전기차(EV)의 경우 <strong>현대자동차그룹이 운영하는 초고속 충전소(E-pit 등)</strong>에서 충전할 때에만 보너스 배틀권과 협동 레이드 참여 기회를 제공합니다.</p>
-        </div>
-        <div class="item-box">
-          <span class="sub-pill">부가 기능 3</span>
-          <h3>🔧 차량 컨디션 버프 연동</h3>
-          <p>타이어 공기압 등 차량 상태가 정상일 때 전투 시 <strong>보호막(+10% HP)</strong> 버프를 부여하며, 이상 시 블루핸즈 안내를 연계할 수 있습니다.</p>
+        <div class="stat-bubble">
+          <div class="k">CUSTOMIZE</div>
+          <div class="v">외형 진화 &amp; 파츠</div>
+          <div class="s">블루핸즈 · E-pit · 블루포인트</div>
         </div>
       </div>
     </section>
 
-    <!-- 02. 5대 원소 & 20초 배틀 -->
-    <section class="px-box sec" id="sec-mech">
+    <!-- 01. 코어 루프 & 매칭 -->
+    <section class="sec" id="sec-core">
       <div class="sec-head">
-        <div class="sec-title"><span class="sec-num">02</span> 주행 센서 기반 5대 원소 &amp; 20초 배틀</div>
-        <div class="sec-sub">불 → 얼음 → 바람 → 땅 → 물 → 불 (상성 우위 +30% / 열세 -20%)</div>
+        <div class="sec-title"><span class="sec-num">01</span> ‘차량판 포켓몬 GO’ 코어 루프 &amp; 공간 매칭</div>
+        <div class="sec-sub">주행 → 정차 배치 &amp; 수동 배틀 → 레벨업 · 파츠 성장</div>
       </div>
 
-      <div class="grid-5" style="margin-bottom:14px;">
-        <div class="el-tile fire">
-          <div class="el-emoji">🔥</div>
-          <div class="el-name">불 (PYRO)</div>
-          <div class="el-cond">외기온도 28°C 이상 주행</div>
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="pop-card">
+          <span class="tag-chip tag-turq">STEP 1 · 주행 (Gear D)</span>
+          <h3>10km당 배틀 1회 충전</h3>
+          <p><code>DistanceDriven</code> 기준 10km 주행마다 배틀권 1회가 충전되며, 직전 주행 환경에 따른 <strong>속성 버프</strong>가 저장됩니다.</p>
         </div>
-        <div class="el-tile ice">
-          <div class="el-emoji">❄️</div>
-          <div class="el-name">얼음 (CRYO)</div>
-          <div class="el-cond">외기온도 5°C 이하 주행</div>
+        <div class="pop-card">
+          <span class="tag-chip tag-gold">STEP 2 · 정차 (Gear P)</span>
+          <h3>현재 위치 메카봇 배치</h3>
+          <p>목적지에 주차하면 내가 현재 주차한 위치에 내 메카봇이 배치됩니다. Pleos P모드 전용 정책에 따라 정차 후 앱을 실행합니다.</p>
         </div>
-        <div class="el-tile wind">
-          <div class="el-emoji">🌪️</div>
-          <div class="el-name">바람 (AERO)</div>
-          <div class="el-cond">크루즈 정속 주행</div>
+        <div class="pop-card">
+          <span class="tag-chip tag-coral">STEP 3 · 수동 배틀</span>
+          <h3>타 차량 / 스페셜 / AI 대결</h3>
+          <p>유저가 [전투]를 누르면 해당 구역의 <strong>타 차량 메카봇</strong>(승리 시 보너스 EXP!) 또는 AI·스페셜 메카봇과 20초 배틀을 펼칩니다.</p>
         </div>
-        <div class="el-tile earth">
-          <div class="el-emoji">🪨</div>
-          <div class="el-name">땅 (TERRA)</div>
-          <div class="el-cond">안정적인 일반 클린 주행</div>
+        <div class="pop-card">
+          <span class="tag-chip tag-mint">STEP 4 · 성장</span>
+          <h3>스탯 &amp; 외형 파츠 진화</h3>
+          <p>레벨업 스탯(파워·방어·스피드·테크) 강화와 파츠 장착으로 같은 차종이라도 나만의 개성 있는 메카봇으로 변신합니다.</p>
         </div>
-        <div class="el-tile water">
-          <div class="el-emoji">💧</div>
-          <div class="el-name">물 (HYDRO)</div>
-          <div class="el-cond">우천 와이퍼 작동 주행</div>
+      </div>
+
+      <div class="pop-card" style="background: linear-gradient(90deg, #FFF8DC, #FFF0F6);">
+        <h3>🏛️ 특정 스팟(POI) ‘스페셜 메카봇’ 출현 시스템</h3>
+        <p>정차한 위치가 <strong>경복궁(유적지) · 에버랜드(관광지·테마파크) · 스타필드(유명 복합몰)</strong> 등 특정 스팟이라면 그 장소에서만 만날 수 있는 특별한 <strong>‘스페셜 메카봇’</strong>이 등장해 가족 나들이와 탐험의 재미를 극대화합니다.</p>
+      </div>
+    </section>
+
+    <!-- 02. 4개 차종 메카봇 & 파츠 커스터마이징 -->
+    <section class="sec" id="sec-mecha">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">02</span> 4대 대표 차종 메카봇 라인업 &amp; 파츠 보강</div>
+        <div class="sec-sub">로보카폴리처럼 친근하면서 차종 디자인이 살아있는 메카봇 + 파츠별 능력치(+) &amp; 외형 변화</div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="car-card">
+          <span class="tag-chip tag-turq">SUV</span>
+          <h4>투싼 (TUCSON-GUARDIAN)</h4>
+          <p>파라메트릭 그릴 흉갑과 튼튼한 SUV 휠 숄더를 갖춘 균형형 가디언</p>
+        </div>
+        <div class="car-card">
+          <span class="tag-chip tag-gold">SEDAN</span>
+          <h4>그랜저 (GRANDEUR-VALKYRIE)</h4>
+          <p>심리스 호라이즌 일자 램프 바이저가 빛나는 날렵한 세단형 발키리</p>
+        </div>
+        <div class="car-card">
+          <span class="tag-chip tag-mint">EV</span>
+          <h4>아이오닉 (IONIQ-TITAN)</h4>
+          <p>파라메트릭 픽셀 LED 눈과 에어로 윙을 장착한 미래형 타이탄</p>
+        </div>
+        <div class="car-card">
+          <span class="tag-chip tag-coral">FLAGSHIP SUV</span>
+          <h4>팰리세이드 (PALISADE-REX)</h4>
+          <p>수직형 3단 LED 숄더와 웅장한 대형 그릴이 돋보이는 중장갑 렉스</p>
         </div>
       </div>
 
       <div class="grid-2">
-        <div class="item-box">
-          <h3>⏱️ 20초 타이밍 배틀 &amp; 4대 스탯</h3>
-          <p>정차 후 짧게 즐길 수 있도록 20초 안에 결투가 끝납니다. 전투 중 타이밍 바의 중앙(<strong>PERFECT</strong>)을 맞추면 강력한 크리티컬이 발동하며, 얻은 포인트로 <strong>파워(공격) · 방어 · 스피드(바 감속) · 테크(판정 폭)</strong>를 육성합니다.</p>
+        <div class="pop-card">
+          <h3>🎨 같은 차종도 다르게! 외형 업그레이드</h3>
+          <p>차종(<code>getCarInfo</code>)마다 기본 실루엣은 다르지만, 레벨업 성장과 <strong>장갑·무장·날개·코어 파츠</strong> 조합에 따라 전혀 다른 모습의 나만의 메카봇으로 진화하며 파츠별 <strong>능력치(+) 보너스</strong>도 적용됩니다.</p>
         </div>
-        <div class="item-box">
-          <h3>🎨 하드웨어 연출 &amp; 트림 호환 폴백</h3>
-          <p>기어 P 전환과 속성 결정에 맞춰 실내 앰비언트 라이트, 시트 진동, Gleo AI 음성 브리핑을 연동합니다. 해당 기능이 없는 트림은 <code>checkCapabilities()</code> 판별 후 <strong>화면 네온 테두리 &amp; 흔들림 효과</strong>로 자동 대체합니다.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 03. 시스템 아키텍처 -->
-    <section class="px-box sec" id="sec-arch">
-      <div class="sec-head">
-        <div class="sec-title"><span class="sec-num">03</span> 시스템 아키텍처 (실제 구현 구조)</div>
-        <div class="sec-sub">Pleos Vehicle SDK v2.3.2 ↔ Kotlin Native Bridge ↔ Pixel Web Engine</div>
-      </div>
-
-      <div class="arch-wrap">
-        <svg viewBox="0 0 1040 320" width="100%" height="auto" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" style="min-width:820px; display:block;">
-          <!-- Layer 1 -->
-          <rect x="16" y="16" width="225" height="288" fill="#141422" stroke="#37C4FF" stroke-width="3" />
-          <rect x="16" y="16" width="225" height="34" fill="#37C4FF" />
-          <text x="128" y="38" text-anchor="middle" fill="#101018" font-size="12" font-weight="bold" font-family="Silkscreen, Galmuri11, monospace">1. PLEOS VEHICLE / EMU</text>
-
-          <rect x="30" y="66" width="197" height="58" fill="#202036" stroke="#484870" stroke-width="2" />
-          <text x="128" y="90" text-anchor="middle" fill="#F7E26B" font-size="12" font-weight="bold">Gear / Speed / Odo</text>
-          <text x="128" y="110" text-anchor="middle" fill="#a4a4cc" font-size="11">P/D 판별 · 쿨타임 해제</text>
-
-          <rect x="30" y="138" width="197" height="58" fill="#202036" stroke="#484870" stroke-width="2" />
-          <text x="128" y="162" text-anchor="middle" fill="#37C4FF" font-size="12" font-weight="bold">HVAC / Wiper / Tire</text>
-          <text x="128" y="182" text-anchor="middle" fill="#a4a4cc" font-size="11">5대 원소 · 공기압 버프</text>
-
-          <rect x="30" y="210" width="197" height="76" fill="#202036" stroke="#484870" stroke-width="2" />
-          <text x="128" y="236" text-anchor="middle" fill="#7CFF6B" font-size="12" font-weight="bold">CarInfo / EvBattery</text>
-          <text x="128" y="256" text-anchor="middle" fill="#a4a4cc" font-size="11">전 차종 식별</text>
-          <text x="128" y="274" text-anchor="middle" fill="#a4a4cc" font-size="10">EV E-pit 충전 감지</text>
-
-          <!-- Arrow 1->2 -->
-          <rect x="241" y="157" width="38" height="6" fill="#37C4FF" />
-          <polygon points="279,150 293,160 279,170" fill="#37C4FF" />
-
-          <!-- Layer 2 -->
-          <rect x="293" y="16" width="235" height="288" fill="#141422" stroke="#7CFF6B" stroke-width="3" />
-          <rect x="293" y="16" width="235" height="34" fill="#7CFF6B" />
-          <text x="410" y="38" text-anchor="middle" fill="#101018" font-size="12" font-weight="bold" font-family="Silkscreen, Galmuri11, monospace">2. KOTLIN NATIVE HOST</text>
-
-          <rect x="307" y="66" width="207" height="68" fill="#202036" stroke="#7CFF6B" stroke-width="2" />
-          <text x="410" y="92" text-anchor="middle" fill="#7CFF6B" font-size="12" font-weight="bold">PleosVehicleBridge.kt</text>
-          <text x="410" y="112" text-anchor="middle" fill="#d6d6f0" font-size="11">Vehicle SDK v2.3.2 연동</text>
-
-          <rect x="307" y="148" width="207" height="68" fill="#202036" stroke="#F7E26B" stroke-width="2" />
-          <text x="410" y="174" text-anchor="middle" fill="#F7E26B" font-size="12" font-weight="bold">Safety &amp; Cooldown</text>
-          <text x="410" y="194" text-anchor="middle" fill="#d6d6f0" font-size="11">D단 잠금 / P단 배틀 해금</text>
-
-          <rect x="307" y="230" width="207" height="56" fill="#202036" stroke="#37C4FF" stroke-width="2" />
-          <text x="410" y="254" text-anchor="middle" fill="#37C4FF" font-size="12" font-weight="bold">@JavascriptInterface</text>
-          <text x="410" y="274" text-anchor="middle" fill="#a4a4cc" font-size="10">window.PleosBridge</text>
-
-          <!-- Arrow 2->3 -->
-          <rect x="528" y="157" width="38" height="6" fill="#7CFF6B" />
-          <polygon points="566,150 580,160 566,170" fill="#7CFF6B" />
-
-          <!-- Layer 3 -->
-          <rect x="580" y="16" width="245" height="288" fill="#141422" stroke="#F7E26B" stroke-width="3" />
-          <rect x="580" y="16" width="245" height="34" fill="#F7E26B" />
-          <text x="702" y="38" text-anchor="middle" fill="#101018" font-size="12" font-weight="bold" font-family="Silkscreen, Galmuri11, monospace">3. PIXEL WEB ENGINE</text>
-
-          <rect x="594" y="66" width="217" height="68" fill="#202036" stroke="#EF3E4A" stroke-width="2" />
-          <text x="702" y="92" text-anchor="middle" fill="#EF3E4A" font-size="12" font-weight="bold">ElementEngine</text>
-          <text x="702" y="112" text-anchor="middle" fill="#d6d6f0" font-size="11">5대 원소 상성 &amp; 4대 스탯</text>
-
-          <rect x="594" y="148" width="217" height="68" fill="#202036" stroke="#F7E26B" stroke-width="2" />
-          <text x="702" y="174" text-anchor="middle" fill="#F7E26B" font-size="12" font-weight="bold">TimingBarPhysics</text>
-          <text x="702" y="194" text-anchor="middle" fill="#d6d6f0" font-size="11">20초 배틀 &amp; 8초 PERFECT</text>
-
-          <rect x="594" y="230" width="217" height="56" fill="#202036" stroke="#37C4FF" stroke-width="2" />
-          <text x="702" y="254" text-anchor="middle" fill="#37C4FF" font-size="12" font-weight="bold">PixelMechaRenderer</text>
-          <text x="702" y="274" text-anchor="middle" fill="#a4a4cc" font-size="10">SVG 메카봇 전투 &amp; 폴백 연출</text>
-
-          <!-- Arrow 3->4 -->
-          <rect x="825" y="157" width="38" height="6" fill="#F7E26B" />
-          <polygon points="863,150 877,160 863,170" fill="#F7E26B" />
-
-          <!-- Layer 4 -->
-          <rect x="877" y="16" width="147" height="288" fill="#141422" stroke="#EF3E4A" stroke-width="3" />
-          <rect x="877" y="16" width="147" height="34" fill="#EF3E4A" />
-          <text x="950" y="38" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold" font-family="Silkscreen, Galmuri11, monospace">4. GAME SERVER</text>
-
-          <rect x="890" y="74" width="121" height="90" fill="#202036" stroke="#484870" stroke-width="2" />
-          <text x="950" y="106" text-anchor="middle" fill="#37C4FF" font-size="12" font-weight="bold">AI / 유저 봇</text>
-          <text x="950" y="126" text-anchor="middle" fill="#a4a4cc" font-size="11">근처 매칭 &amp;</text>
-          <text x="950" y="144" text-anchor="middle" fill="#a4a4cc" font-size="11">내 봇 배치</text>
-
-          <rect x="890" y="182" width="121" height="90" fill="#202036" stroke="#484870" stroke-width="2" />
-          <text x="950" y="214" text-anchor="middle" fill="#F7E26B" font-size="12" font-weight="bold">E-pit 보너스</text>
-          <text x="950" y="234" text-anchor="middle" fill="#a4a4cc" font-size="11">EV 충전소</text>
-          <text x="950" y="252" text-anchor="middle" fill="#a4a4cc" font-size="11">협동 레이드</text>
-        </svg>
-      </div>
-    </section>
-
-    <!-- 04. 타겟 유저 & 시나리오 -->
-    <section class="px-box sec" id="sec-user">
-      <div class="sec-head">
-        <div class="sec-title"><span class="sec-num">04</span> 주요 타겟 유저 &amp; 이용 시나리오</div>
-        <div class="sec-sub">게임을 좋아하는 운전자 + 카봇 등 로봇을 좋아하는 자녀를 둔 패밀리</div>
-      </div>
-
-      <div class="grid-2">
-        <div class="item-box">
-          <h3>🎮 시나리오 A · 게임을 좋아하는 출퇴근 운전자</h3>
-          <p>비 오는 날 출근 주행(Gear D)을 마치면 물 속성이 충전됩니다. 회사 주차장(Gear P)에 정차해 20초 만에 근처 AI 봇과 결투해 경험치를 얻고, 원한다면 주차 위치에 내 봇을 배치해 둔 뒤 하차합니다. 퇴근 전 다시 정차해 스탯을 찍고 배틀을 즐기는 가벼운 일상 루틴입니다.</p>
-        </div>
-        <div class="item-box">
-          <h3>👨‍👧 시나리오 B · 로봇을 좋아하는 자녀를 둔 부모</h3>
-          <p>카봇 같은 변신 로봇 애니메이션을 좋아하는 자녀와 주말 나들이에 나선 부모는, 목적지 정차(Gear P) 시 내 차가 메카봇으로 변신해 배틀하는 모습으로 아이에게 즐거운 이동 경험을 선물합니다. EV 차량이라면 현대차그룹 운영 E-pit 충전소에서 보너스 배틀권으로 함께 레이드를 즐깁니다.</p>
+        <div class="pop-card">
+          <h3>🎁 현대자동차그룹 서비스 &amp; 이벤트 파츠 획득</h3>
+          <p><strong>블루핸즈 정비 이용</strong>, <strong>현대자동차그룹 운영 E-pit 충전</strong>, <strong>블루멤버스 포인트(블루포인트) 구매</strong> 및 시즌/제휴 이벤트를 통해 능력치와 외형을 강화하는 파츠를 획득할 수 있습니다.</p>
         </div>
       </div>
     </section>
 
-    <!-- 05. 차별성 & 현실적 확장 -->
-    <section class="px-box sec" id="sec-diff">
+    <!-- 03. 직전 주행 속성 버프 & 차량 상태 디버프 -->
+    <section class="sec" id="sec-debuff">
       <div class="sec-head">
-        <div class="sec-title"><span class="sec-num">05</span> Pleos 차량 앱만의 차별성 &amp; 확장 방향</div>
-        <div class="sec-sub">모바일 게임 대비 차별점 및 현실적인 서비스 연계</div>
+        <div class="sec-title"><span class="sec-num">03</span> 직전 주행 5대 속성 버프 &amp; 차량 상태 연동 디버프</div>
+        <div class="sec-sub">고정 속성 없음 · 직전 주행 센서로 버프 획득 · 실제 차량 이상 시 디버프로 정비 유도</div>
       </div>
 
-      <div class="px-table-wrap" style="margin-bottom:16px;">
+      <div class="grid-5" style="margin-bottom:16px;">
+        <div class="el-card fire"><div class="el-emoji">🔥</div><div class="el-name">불 버프</div><div class="el-cond">외기온도 28°C+ 주행</div></div>
+        <div class="el-card ice"><div class="el-emoji">❄️</div><div class="el-name">얼음 버프</div><div class="el-cond">외기온도 5°C- 주행</div></div>
+        <div class="el-card wind"><div class="el-emoji">🌪️</div><div class="el-name">바람 버프</div><div class="el-cond">크루즈 정속 주행</div></div>
+        <div class="el-card earth"><div class="el-emoji">🪨</div><div class="el-name">땅 버프</div><div class="el-cond">안정적 일반 주행</div></div>
+        <div class="el-card water"><div class="el-emoji">💧</div><div class="el-name">물 버프</div><div class="el-cond">우천 와이퍼 주행</div></div>
+      </div>
+
+      <div class="px-table-wrap">
         <table>
           <thead>
             <tr>
-              <th style="width:22%;">비교 항목</th>
-              <th style="width:39%;">기존 스마트폰 게임</th>
-              <th style="width:39%;">PLEOMEKABOT (Pleos Connect)</th>
+              <th>Pleos Vehicle SDK v2.3.2 상태</th>
+              <th>메카봇 전투 영향 (디버프 / 버프)</th>
+              <th>유저 경험 연계</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>운전 안전성</strong></td>
-              <td>주행 중 화면 조작 차단이 어려움</td>
-              <td class="hl">Gear D 주행 중 UI 자동 잠금 · P단 정차 20초 결투</td>
+              <td><strong>정상 차량 컨디션</strong></td>
+              <td class="hl">보호막 (+10% HP) 풀 아머 버프</td>
+              <td>안전하고 건강한 차량 관리 보상</td>
             </tr>
             <tr>
-              <td><strong>차량 데이터 활용</strong></td>
-              <td>단순 GPS 위치 이동에만 의존</td>
-              <td class="hl">기어 · 온도 · 와이퍼 · 크루즈 · 공기압 등 실제 차량 센서 반영</td>
+              <td><code>TirePressureListener</code> 공기압 이상</td>
+              <td>방어력(DEF) 감소 + 스파크 경고</td>
+              <td>타이어 공기압 보충 및 블루핸즈 안내</td>
             </tr>
             <tr>
-              <td><strong>몰입 연출</strong></td>
-              <td>작은 스마트폰 화면·스피커에 국한</td>
-              <td class="hl">차량 실내 앰비언트 · 시트 진동 · 음성 안내 통합 연출</td>
+              <td><code>OilLevelStateListener</code> 엔진오일 이상</td>
+              <td>공격력(POW) 감소 디버프</td>
+              <td>엔진오일 점검 및 파츠 획득 유도</td>
+            </tr>
+            <tr>
+              <td><code>LowWasherFluidWaringListener</code> 워셔액 부족</td>
+              <td>타이밍 정밀도(TEC) 감소 디버프</td>
+              <td>워셔액 보충 등 일상 관리 습관화</td>
+            </tr>
+            <tr>
+              <td><code>PowerDownWarning</code> / 잔량 15% 이하</td>
+              <td>기동력(SPD) 감소 디버프</td>
+              <td>주유·충전 및 계기판 경고등(<code>Telltale</code>) 확인</td>
             </tr>
           </tbody>
         </table>
       </div>
+    </section>
+
+    <!-- 04. 시스템 아키텍처 -->
+    <section class="sec" id="sec-arch">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">04</span> 시스템 아키텍처 (실구현 + 확장 설계)</div>
+        <div class="sec-sub">Pleos Vehicle SDK v2.3.2 ↔ Kotlin Native Bridge ↔ WebView Engine ↔ 위치·스팟 매칭</div>
+      </div>
+
+      <div class="arch-wrap">
+        <svg viewBox="0 0 1040 310" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="min-width:820px; display:block;">
+          <rect x="16" y="16" width="225" height="278" rx="18" fill="#25204A" stroke="#00CED1" stroke-width="3" />
+          <text x="128" y="44" text-anchor="middle" fill="#00CED1" font-size="13" font-weight="bold">1. PLEOS VEHICLE / EMU</text>
+          <rect x="30" y="64" width="197" height="58" rx="12" fill="#1A1635" stroke="#544E75" stroke-width="2" />
+          <text x="128" y="88" text-anchor="middle" fill="#FFD700" font-size="12" font-weight="bold">Gear / Odometer</text>
+          <text x="128" y="108" text-anchor="middle" fill="#CBD5E1" font-size="11">P모드 실행 · 10km=1회권</text>
+
+          <rect x="30" y="136" width="197" height="58" rx="12" fill="#1A1635" stroke="#544E75" stroke-width="2" />
+          <text x="128" y="160" text-anchor="middle" fill="#2EE59D" font-size="12" font-weight="bold">HVAC / Wiper / Cruise</text>
+          <text x="128" y="180" text-anchor="middle" fill="#CBD5E1" font-size="11">직전 주행 5대 속성 버프</text>
+
+          <rect x="30" y="208" width="197" height="68" rx="12" fill="#1A1635" stroke="#544E75" stroke-width="2" />
+          <text x="128" y="234" text-anchor="middle" fill="#FF6F61" font-size="12" font-weight="bold">Tire · Oil · Washer · Light</text>
+          <text x="128" y="254" text-anchor="middle" fill="#CBD5E1" font-size="11">차량 이상 디버프 &amp; 연출</text>
+
+          <line x1="241" y1="155" x2="288" y2="155" stroke="#00CED1" stroke-width="4" />
+          <polygon points="282,147 296,155 282,163" fill="#00CED1" />
+
+          <rect x="296" y="16" width="235" height="278" rx="18" fill="#25204A" stroke="#2EE59D" stroke-width="3" />
+          <text x="413" y="44" text-anchor="middle" fill="#2EE59D" font-size="13" font-weight="bold">2. KOTLIN NATIVE HOST</text>
+          <rect x="310" y="64" width="207" height="64" rx="12" fill="#1A1635" stroke="#2EE59D" stroke-width="2" />
+          <text x="413" y="90" text-anchor="middle" fill="#2EE59D" font-size="12" font-weight="bold">PleosVehicleBridge.kt</text>
+          <text x="413" y="110" text-anchor="middle" fill="#CBD5E1" font-size="11">Vehicle SDK v2.3.2 실구현</text>
+
+          <rect x="310" y="142" width="207" height="64" rx="12" fill="#1A1635" stroke="#FFD700" stroke-width="2" />
+          <text x="413" y="168" text-anchor="middle" fill="#FFD700" font-size="12" font-weight="bold">Safety &amp; 10km Tracker</text>
+          <text x="413" y="188" text-anchor="middle" fill="#CBD5E1" font-size="11">P단 진입 제한 &amp; 트림 폴백</text>
+
+          <rect x="310" y="220" width="207" height="56" rx="12" fill="#1A1635" stroke="#00CED1" stroke-width="2" />
+          <text x="413" y="244" text-anchor="middle" fill="#00CED1" font-size="12" font-weight="bold">@JavascriptInterface</text>
+          <text x="413" y="264" text-anchor="middle" fill="#CBD5E1" font-size="10">window.PleosBridge</text>
+
+          <line x1="531" y1="155" x2="578" y2="155" stroke="#2EE59D" stroke-width="4" />
+          <polygon points="572,147 586,155 572,163" fill="#2EE59D" />
+
+          <rect x="586" y="16" width="235" height="278" rx="18" fill="#25204A" stroke="#FFD700" stroke-width="3" />
+          <text x="703" y="44" text-anchor="middle" fill="#FFD700" font-size="13" font-weight="bold">3. IN-CAR WEB ENGINE</text>
+          <rect x="600" y="64" width="207" height="64" rx="12" fill="#1A1635" stroke="#FF6F61" stroke-width="2" />
+          <text x="703" y="90" text-anchor="middle" fill="#FF6F61" font-size="12" font-weight="bold">Buff &amp; Parts Engine</text>
+          <text x="703" y="110" text-anchor="middle" fill="#CBD5E1" font-size="11">5대 속성 버프 · 파츠(+)</text>
+
+          <rect x="600" y="142" width="207" height="64" rx="12" fill="#1A1635" stroke="#FFD700" stroke-width="2" />
+          <text x="703" y="168" text-anchor="middle" fill="#FFD700" font-size="12" font-weight="bold">20s Battle Physics</text>
+          <text x="703" y="188" text-anchor="middle" fill="#CBD5E1" font-size="11">수동 개시 &amp; PERFECT 판정</text>
+
+          <rect x="600" y="220" width="207" height="56" rx="12" fill="#1A1635" stroke="#FF1493" stroke-width="2" />
+          <text x="703" y="244" text-anchor="middle" fill="#FF1493" font-size="12" font-weight="bold">Mecha Customizer</text>
+          <text x="703" y="264" text-anchor="middle" fill="#CBD5E1" font-size="10">4차종 외형 진화 &amp; 전투 FX</text>
+
+          <line x1="821" y1="155" x2="868" y2="155" stroke="#FFD700" stroke-width="4" />
+          <polygon points="862,147 876,155 862,163" fill="#FFD700" />
+
+          <rect x="876" y="16" width="148" height="278" rx="18" fill="#25204A" stroke="#FF1493" stroke-width="3" />
+          <text x="950" y="44" text-anchor="middle" fill="#FF1493" font-size="12" font-weight="bold">4. MATCH SERVER</text>
+          <rect x="888" y="72" width="124" height="86" rx="12" fill="#1A1635" stroke="#544E75" stroke-width="2" />
+          <text x="950" y="102" text-anchor="middle" fill="#00CED1" font-size="12" font-weight="bold">주차 위치 매칭</text>
+          <text x="950" y="122" text-anchor="middle" fill="#CBD5E1" font-size="11">타 차량 메카봇</text>
+          <text x="950" y="140" text-anchor="middle" fill="#CBD5E1" font-size="11">또는 AI 매칭</text>
+
+          <rect x="888" y="176" width="124" height="92" rx="12" fill="#1A1635" stroke="#544E75" stroke-width="2" />
+          <text x="950" y="206" text-anchor="middle" fill="#FFD700" font-size="12" font-weight="bold">스팟(POI) DB</text>
+          <text x="950" y="226" text-anchor="middle" fill="#CBD5E1" font-size="11">경복궁·에버랜드</text>
+          <text x="950" y="244" text-anchor="middle" fill="#CBD5E1" font-size="11">스페셜 메카봇</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 05. 타겟 & 사업성 -->
+    <section class="sec" id="sec-biz">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-num">05</span> 타겟 유저 &amp; MAU · Retention · 확장 계획</div>
+        <div class="sec-sub">게이머 오너와 로봇 팬 자녀 패밀리를 아우르는 전 차종 서비스</div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="pop-card">
+          <h3>🎮 게임을 좋아하는 2040 출퇴근 운전자</h3>
+          <p>비 오는 날 20km 출근 주행 후 배틀권 2회와 [물 버프]를 얻고, 회사 주차장에서 직접 배틀을 눌러 타 차량 메카봇과 대결·파츠를 강화합니다.</p>
+        </div>
+        <div class="pop-card">
+          <h3>👨‍👧 카봇 등 로봇을 좋아하는 자녀를 둔 3040 부모</h3>
+          <p>경복궁·에버랜드·스타필드 나들이 후 정차하면 그곳만의 스페셜 메카봇이 출현하고, 레벨업으로 더 멋진 로봇으로 진화하는 재미를 아이와 나눕니다.</p>
+        </div>
+      </div>
 
       <div class="grid-3">
-        <div class="item-box">
-          <h3>🔧 현대차그룹 서비스 연계</h3>
-          <p>타이어 공기압 등 이상 감지 시 블루핸즈 정비소 안내 및 점검 완료 시 스킨·파츠 보상을 제공하고, EV 오너에게는 현대차그룹 운영 E-pit 충전 시 보너스 배틀권을 부여합니다.</p>
+        <div class="pop-card">
+          <h3>📈 MAU 확보 기반</h3>
+          <p>현대·기아 <strong>전 차종(내연·하이브리드·EV)</strong>을 지원해 Pleos 탑재 차량 전체가 잠재 유저풀이며, 로봇 IP·모바일 게임 이벤트로 신규 유입을 넓힙니다.</p>
         </div>
-        <div class="item-box">
-          <h3>🤝 로봇 IP · 모바일 게임 콜라보</h3>
-          <p>카봇 등 인기 변신 로봇 IP나 콜라보 모바일 게임과 제휴해 기간 한정 메카봇 스킨·파츠 이벤트를 운영하면 가족 단위와 게이머 유저층을 동시에 넓힐 수 있습니다.</p>
+        <div class="pop-card">
+          <h3>🔁 Retention 유지 동력</h3>
+          <p>일상 주행(10km=1회권) 비례 보상, 주차 공간의 타 차량 대전 커뮤니티, 현대차그룹 서비스 기반 파츠 수집·외형 진화가 장기 재방문을 견인합니다.</p>
         </div>
-        <div class="item-box">
-          <h3>🚗 Pleos 계정 기반 성장 유지</h3>
-          <p>차량 내 주행 기록과 메카봇 레벨을 Pleos 계정에 연동해, 향후 다른 현대·기아 차량을 이용하거나 기변하더라도 내 봇 성장 데이터를 이어갈 수 있습니다.</p>
+        <div class="pop-card">
+          <h3>🔗 그룹 서비스 &amp; 계정 연동</h3>
+          <p>블루핸즈·E-pit·블루포인트 파츠 생태계를 연결하고, 메카봇 레벨·파츠를 <strong>Pleos 계정</strong>에 저장해 다른 현대·기아 차량에서도 이어서 즐길 수 있습니다.</p>
         </div>
       </div>
     </section>

@@ -1,136 +1,146 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PLEOMEKABOT - Pixel Art In-Car RPG</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLEOMEKABOT - Dopamine In-Car RPG Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet" />
   <style>
     :root {
-      --bg: #101018;
-      --card-bg: #181828;
-      --panel-2: #202036;
-      --border: #484870;
-      --border-hi: #8a8ac0;
-      --accent-blue: #37C4FF;
-      --accent-red: #EF3E4A;
-      --accent-ice: #37C4FF;
-      --accent-wind: #7CFF6B;
-      --accent-earth: #F7E26B;
-      --gold: #F7E26B;
-      --text: #f4f4ff;
-      --text-muted: #a4a4cc;
-      --current-ambient: #37C4FF;
+      --bg-cream: #FFF9F0;
+      --ink: #1A1635;
+      --stage-bg: #1D183B;
+      --stage-card: #282150;
+      --coral: #FF6F61;
+      --gold: #FFD700;
+      --turq: #00CED1;
+      --pink: #FF1493;
+      --mint: #2EE59D;
+      --muted: #B8B0DF;
+      --current-ambient: #00CED1;
     }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      border-radius: 0 !important;
-      font-family: 'Galmuri11', 'Silkscreen', monospace, sans-serif;
-      -webkit-font-smoothing: none;
-    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: var(--bg);
-      background-image:
-        linear-gradient(rgba(55, 196, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(55, 196, 255, 0.04) 1px, transparent 1px);
-      background-size: 16px 16px;
-      color: var(--text);
+      font-family: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+      background: var(--bg-cream);
+      color: var(--ink);
       display: flex;
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
     }
+
     header {
-      background: #141422;
-      padding: 10px 20px;
+      background: #FFFFFF;
+      padding: 8px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 4px solid var(--gold);
-      box-shadow: 0 4px 0 #000;
+      border-bottom: 3.5px solid var(--ink);
+      box-shadow: 0 3px 0 rgba(26, 22, 53, 0.12);
+      gap: 10px;
+      flex-wrap: wrap;
       z-index: 20;
     }
-    .logo-area { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .badge {
-      background: #202036;
-      color: var(--accent-blue);
-      padding: 4px 9px;
-      font-size: 11px;
+
+    .logo-area { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .logo-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 20px;
       font-weight: 700;
-      border: 2px solid var(--accent-blue);
-      box-shadow: 3px 3px 0 #000;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    .logo-dot {
+      width: 28px; height: 28px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--coral), var(--pink));
+      border: 2.5px solid var(--ink);
+      color: #fff;
+      font-size: 13px;
+      display: grid; place-items: center;
+    }
+    .badge {
+      background: #F3F0FF;
+      color: var(--ink);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      border: 2px solid var(--ink);
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
     .main-layout {
       display: grid;
-      grid-template-columns: 340px minmax(0, 1fr);
+      grid-template-columns: 335px minmax(0, 1fr);
       flex: 1;
       min-height: 0;
       overflow: hidden;
     }
-    /* Control Panel (Sensor Sim) */
+
+    /* Left: Vehicle Sensor Simulator (Cream Dopamine Panel) */
     .sim-panel {
-      background: var(--card-bg);
-      border-right: 4px solid var(--border);
+      background: #FFFDF8;
+      border-right: 3.5px solid var(--ink);
       padding: 8px 10px;
       overflow-y: auto;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 7px;
       min-width: 0;
     }
     .sim-title {
-      font-family: 'Silkscreen', 'Galmuri11', monospace;
-      font-size: 11px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--gold);
-      text-transform: uppercase;
+      color: var(--pink);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px dashed var(--border);
-      padding-bottom: 4px;
+      padding: 2px 2px 4px;
+      border-bottom: 2px dashed #DDD6FE;
     }
     .control-group {
-      background: var(--panel-2);
-      padding: 7px 8px;
-      border: 2px solid var(--border-hi);
-      box-shadow: 3px 3px 0 #000;
+      background: #FFFFFF;
+      padding: 7px 9px;
+      border-radius: 16px;
+      border: 2.5px solid var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
       min-width: 0;
     }
     .control-group label {
       display: block;
-      font-size: 10.5px;
-      color: var(--accent-blue);
-      margin-bottom: 4px;
-      font-weight: 700;
+      font-size: 11px;
+      color: var(--ink);
+      margin-bottom: 5px;
+      font-weight: 800;
     }
     .gear-btn-group { display: flex; gap: 5px; }
     .gear-btn {
       flex: 1;
       padding: 5px 0;
-      border: 2px solid var(--border-hi);
-      background: #141422;
-      color: #fff;
+      border: 2px solid var(--ink);
+      background: #F4F1FF;
+      color: var(--ink);
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 11px;
-      box-shadow: 2px 2px 0 #000;
+      box-shadow: 0 2px 0 var(--ink);
       transition: transform 0.08s;
     }
-    .gear-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
-    .gear-btn.active {
-      background: var(--gold);
-      color: #101018;
-      border-color: #fff;
-    }
-    input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
-    .val-disp { font-size: 11px; color: var(--gold); font-weight: 700; float: right; }
+    .gear-btn:active { transform: translateY(2px); box-shadow: none; }
+    .gear-btn.active { background: var(--gold); color: var(--ink); }
+
     .switch-row {
       display: flex;
       justify-content: space-between;
@@ -139,6 +149,7 @@
       margin-top: 4px;
       gap: 6px;
       min-width: 0;
+      font-weight: 600;
     }
     .switch-row > span {
       flex: 1;
@@ -148,384 +159,325 @@
       white-space: nowrap;
     }
     .sim-select {
-      background: #101018;
-      color: #fff;
-      border: 2px solid var(--border-hi);
-      padding: 3px 5px;
-      font-size: 10.5px;
-      width: 155px;
-      max-width: 155px;
+      background: #FFF9F0;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      width: 152px;
+      max-width: 152px;
       flex-shrink: 0;
     }
+    input[type=range] { width: 100%; accent-color: var(--pink); cursor: pointer; }
+    .val-disp { font-size: 11px; color: var(--pink); font-weight: 800; float: right; }
 
-    /* In-Car Display Area */
+    .mini-btn {
+      width: 100%;
+      margin-top: 5px;
+      padding: 6px 8px;
+      border-radius: 12px;
+      border: 2px solid var(--ink);
+      background: var(--turq);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 11.5px;
+      box-shadow: 0 3px 0 var(--ink);
+      cursor: pointer;
+    }
+    .mini-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+    /* Right: In-Car Display Area (Vivid Dark Stage for Contrast + Dopamine Pops) */
     .in-car-screen {
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
       position: relative;
       min-width: 0;
       min-height: 0;
       background:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.012) 0px,
-          rgba(255, 255, 255, 0.012) 2px,
-          transparent 2px,
-          transparent 4px
-        ),
-        var(--bg);
+        radial-gradient(circle at 18% 18%, rgba(255, 20, 147, 0.16), transparent 36%),
+        radial-gradient(circle at 82% 20%, rgba(0, 206, 209, 0.18), transparent 38%),
+        var(--stage-bg);
+      color: #fff;
       overflow-y: auto;
       overflow-x: hidden;
     }
     .car-ambient-glow {
       position: absolute;
       top: 0; left: 0; right: 0; height: 6px;
-      background: var(--accent-blue);
-      box-shadow: 0 4px 0 #000;
-      transition: background 0.3s ease;
+      background: var(--current-ambient);
+      box-shadow: 0 0 18px var(--current-ambient);
+      transition: all 0.35s ease;
       z-index: 10;
     }
     @keyframes screenShake {
       0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-6px, 4px); }
-      40% { transform: translate(6px, -4px); }
-      60% { transform: translate(-4px, -2px); }
-      80% { transform: translate(4px, 2px); }
+      25% { transform: translate(-6px, 4px); }
+      50% { transform: translate(6px, -4px); }
+      75% { transform: translate(-4px, 2px); }
     }
-    .shake-fx { animation: screenShake 0.3s steps(4) both; }
+    .shake-fx { animation: screenShake 0.32s ease both; }
     .fallback-border-glow {
-      border: 4px solid var(--current-ambient, #37C4FF) !important;
-      box-shadow: inset 0 0 0 4px #000 !important;
+      box-shadow: inset 0 0 0 4px var(--current-ambient), inset 0 0 28px var(--current-ambient) !important;
     }
 
     /* Hardware Status Bar */
     .hw-bar {
       display: flex; justify-content: space-between; align-items: center;
-      gap: 8px; font-size: 11px; color: var(--text-muted);
-      margin-top: 2px;
+      gap: 8px; font-size: 11px; color: var(--muted); flex-wrap: wrap;
     }
-    .hw-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hw-pills { display: flex; gap: 6px; flex-wrap: wrap; }
     .hw-pill {
-      background: var(--panel-2);
-      border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 #000;
-      padding: 3px 8px;
-      display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+      background: var(--stage-card);
+      border: 2px solid #4A4080;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: #fff;
     }
-    .hw-dot { width: 8px; height: 8px; background: var(--accent-blue); border: 1px solid #000; }
+    .hw-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--turq); }
 
     .gleo-bubble {
-      background: var(--panel-2);
-      border: 3px solid var(--accent-blue);
-      box-shadow: 4px 4px 0 #000;
-      padding: 8px 12px;
-      font-size: 12px;
-      line-height: 1.45;
+      background: #FFFFFF;
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      border-radius: 20px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: 8px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
     .gleo-left { display: flex; align-items: center; gap: 10px; flex: 1; }
     .gleo-icon {
-      background: var(--gold);
-      border: 2px solid #000;
-      box-shadow: 2px 2px 0 #000;
-      width: 28px; height: 28px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 900; color: #101018; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold), var(--coral));
+      border: 2px solid var(--ink);
+      width: 30px; height: 30px; border-radius: 12px;
+      display: grid; place-items: center;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px; font-weight: 700; color: var(--ink); flex-shrink: 0;
     }
     .stt-group { display: flex; gap: 6px; flex-shrink: 0; }
     .stt-btn {
-      background: #141422;
-      border: 2px solid var(--accent-blue);
-      box-shadow: 3px 3px 0 #000;
-      color: var(--accent-blue);
-      padding: 5px 9px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
+      background: #F3F0FF; border: 2px solid var(--ink); color: var(--ink);
+      padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 2px 0 var(--ink);
     }
-    .stt-btn:hover { background: var(--accent-blue); color: #101018; }
-    .stt-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
+    .stt-btn:hover { background: var(--gold); }
 
-    /* Screen Views */
-    .view-container { flex: 1; display: flex; gap: 12px; min-height: 0; min-width: 0; }
-    .screen-panel {
-      flex: 1;
-      min-width: 0;
-      min-height: 0;
-      background: var(--card-bg);
-      border: 3px solid var(--border-hi);
-      box-shadow: 5px 5px 0 #000;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
+    /* Driving Mode Overlay */
     .d-gear-overlay {
       flex: 1;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      border: 4px dashed var(--accent-wind);
-      background: #141422;
-      box-shadow: 6px 6px 0 #000;
+      border: 3px dashed var(--mint);
+      border-radius: 26px;
+      background: rgba(29, 24, 59, 0.85);
       text-align: center; gap: 12px; padding: 20px;
     }
     .pulse-dot {
-      width: 14px; height: 14px; background: var(--accent-wind);
-      border: 2px solid #000;
-      animation: pulse 1s steps(2) infinite;
+      width: 16px; height: 16px; background: var(--mint); border-radius: 50%;
+      border: 2px solid #fff;
+      animation: pulse 1.4s infinite;
     }
-    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.5; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
 
-    /* Mecha Model Showcase */
+    /* Parked View */
+    .view-container { flex: 1; display: flex; gap: 12px; min-height: 0; min-width: 0; }
+    .screen-panel {
+      flex: 1; min-width: 0; min-height: 0;
+      background: var(--stage-card);
+      border: 3px solid #4E438A;
+      border-radius: 24px;
+      box-shadow: 0 6px 0 #120E29;
+      padding: 12px;
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+
     .mecha-showcase {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: relative;
-      background: #101018;
-      border: 3px solid var(--border);
-      box-shadow: inset 4px 4px 0 #000;
-      padding: 10px; min-height: 180px; overflow: hidden;
+      border-radius: 20px;
+      background: radial-gradient(circle at 50% 48%, rgba(0, 206, 209, 0.18), rgba(20, 16, 44, 0.92));
+      border: 2.5px solid #4A4080;
+      padding: 10px; min-height: 175px; overflow: hidden;
     }
     .mecha-svg-wrap {
-      width: 112px; height: 112px; display: flex; align-items: center; justify-content: center;
-      animation: mechaHover 1.6s steps(4) infinite;
-      filter: drop-shadow(4px 4px 0 #000);
+      width: 126px; height: 126px;
+      display: flex; align-items: center; justify-content: center;
+      animation: mechaBounce 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5));
     }
-    @keyframes mechaHover {
+    @keyframes mechaBounce {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-7px); }
     }
     .spark-warning {
       position: absolute; top: 8px; right: 8px;
-      background: var(--accent-red);
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      color: #fff; font-size: 10px; font-weight: 700; padding: 3px 7px;
+      background: var(--coral); color: #fff;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      font-size: 10.5px; font-weight: 800; padding: 3px 9px;
       display: none; align-items: center; gap: 4px; z-index: 4;
     }
-    .bot-name-tag { font-size: 16px; font-weight: 700; margin-top: 6px; color: var(--gold); text-shadow: 2px 2px 0 #000; }
+    .bot-name-tag { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--gold); margin-top: 4px; }
     .element-pill {
-      margin-top: 5px; padding: 3px 10px;
-      border: 2px solid #000;
-      box-shadow: 2px 2px 0 #000;
-      font-size: 11px; font-weight: 700;
+      margin-top: 4px; padding: 3px 12px; border-radius: 999px;
+      font-size: 11px; font-weight: 800; border: 2px solid var(--ink);
       display: inline-flex; align-items: center; gap: 4px;
     }
-    .cycle-hint {
-      font-size: 10px; color: var(--text-muted); margin-top: 6px;
-      background: #181828; padding: 3px 8px; border: 2px solid var(--border);
+
+    /* Parts Bar */
+    .parts-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .part-btn {
+      padding: 5px 4px;
+      border-radius: 12px;
+      border: 2px solid #4E438A;
+      background: #1D183B;
+      color: #E2DCFF;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+    .part-btn.equipped {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--ink);
     }
 
-    /* Battle Arena & Combat Animations */
+    /* Stat Grid */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
+    .stat-card {
+      background: #1D183B; border: 2px solid #4E438A; border-radius: 14px;
+      padding: 6px 9px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+    }
+    .stat-sub { font-size: 10px; color: var(--muted); display: block; }
+    .btn-plus {
+      width: 24px; height: 24px; background: var(--turq); border: 2px solid var(--ink);
+      border-radius: 9px; color: var(--ink); font-weight: 900; cursor: pointer; flex-shrink: 0;
+    }
+    .btn-plus:disabled { background: #373063; color: #7C74AD; cursor: not-allowed; border-color: #4E438A; }
+
+    /* Battle Arena */
     .battle-arena { display: flex; flex-direction: column; height: 100%; gap: 8px; }
     .timeline-bar {
       display: flex; justify-content: space-between; align-items: center;
-      background: #101018; padding: 6px 10px;
-      border: 2px solid var(--border-hi);
-      box-shadow: 3px 3px 0 #000;
-      font-size: 11px;
+      background: #1D183B; padding: 6px 12px; border-radius: 999px;
+      border: 2px solid #4E438A; font-size: 11px; font-weight: 700;
     }
     .combat-stage {
-      position: relative;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      position: relative; display: flex; justify-content: space-between; align-items: center;
       padding: 12px 16px;
-      background-color: #101018;
-      background-image:
-        linear-gradient(rgba(55, 196, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(55, 196, 255, 0.08) 1px, transparent 1px);
-      background-size: 16px 16px;
-      border: 3px solid var(--accent-blue);
-      box-shadow: inset 4px 4px 0 #000;
-      overflow: hidden;
-      min-height: 175px;
+      background: radial-gradient(circle at 50% 60%, rgba(255, 20, 147, 0.16), rgba(18, 14, 41, 0.95));
+      border: 2.5px solid var(--turq); border-radius: 22px; overflow: hidden; min-height: 165px;
     }
     .combat-grid-floor {
       position: absolute; left: 0; right: 0; bottom: 0; height: 34px;
-      background: #18182e;
-      border-top: 3px solid var(--accent-blue);
+      background: rgba(0, 206, 209, 0.12);
+      border-top: 2px solid rgba(0, 206, 209, 0.35);
       pointer-events: none;
     }
-    .fighter {
-      text-align: center; width: 42%; position: relative; z-index: 2;
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .arena-mecha-unit {
-      width: 96px; height: 96px; position: relative;
-      display: flex; align-items: center; justify-content: center;
-      animation: mechaHover 1.4s steps(4) infinite;
-      filter: drop-shadow(3px 3px 0 #000);
-    }
-    @keyframes lungeRight {
-      0% { transform: translateX(0); }
-      35% { transform: translateX(48px); }
-      100% { transform: translateX(0); }
-    }
-    @keyframes lungeLeft {
-      0% { transform: translateX(0); }
-      35% { transform: translateX(-48px); }
-      100% { transform: translateX(0); }
-    }
+    .fighter { text-align: center; width: 42%; position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+    .arena-mecha-unit { width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; animation: mechaBounce 2s ease-in-out infinite; }
+    @keyframes lungeRight { 0% { transform: translateX(0); } 35% { transform: translateX(48px) scale(1.12); } 100% { transform: translateX(0); } }
+    @keyframes lungeLeft { 0% { transform: translateX(0); } 35% { transform: translateX(-48px) scale(1.12); } 100% { transform: translateX(0); } }
     @keyframes hitFlash {
       0%, 100% { filter: brightness(1); transform: translateX(0); }
-      25% { filter: brightness(3); transform: translateX(8px); }
-      50% { filter: brightness(2.2); transform: translateX(-8px); }
-      75% { filter: brightness(1.8); transform: translateX(4px); }
+      25% { filter: brightness(2.6); transform: translateX(8px); }
+      60% { filter: brightness(2); transform: translateX(-8px); }
     }
     @keyframes overdriveUlt {
       0% { transform: translateX(0) scale(1); }
-      30% { transform: translateX(-12px) scale(1.15); filter: brightness(2); }
-      55% { transform: translateX(80px) scale(1.25); filter: brightness(3); }
+      45% { transform: translateX(78px) scale(1.25); filter: brightness(2.8); }
       100% { transform: translateX(0) scale(1); }
     }
-    .anim-lunge-right { animation: lungeRight 0.38s steps(4) !important; }
-    .anim-lunge-left { animation: lungeLeft 0.38s steps(4) !important; }
-    .anim-hit { animation: hitFlash 0.38s steps(4) !important; }
-    .anim-overdrive { animation: overdriveUlt 0.55s steps(5) !important; }
+    .anim-lunge-right { animation: lungeRight 0.38s ease-out !important; }
+    .anim-lunge-left { animation: lungeLeft 0.38s ease-out !important; }
+    .anim-hit { animation: hitFlash 0.38s ease-out !important; }
+    .anim-overdrive { animation: overdriveUlt 0.55s ease-out !important; }
 
     .laser-beam {
       position: absolute; top: 44%; left: 26%; width: 0%; height: 10px;
-      background: var(--gold);
-      border-top: 2px solid #fff;
-      border-bottom: 2px solid var(--accent-red);
-      z-index: 5; opacity: 0; pointer-events: none;
-      transform: translateY(-50%);
+      background: linear-gradient(90deg, #fff, var(--gold), var(--pink));
+      border-radius: 999px; box-shadow: 0 0 18px var(--gold);
+      z-index: 5; opacity: 0; pointer-events: none; transform: translateY(-50%);
     }
-    @keyframes shootBeamRight {
-      0% { left: 26%; width: 0%; opacity: 1; }
-      45% { left: 26%; width: 48%; opacity: 1; }
-      100% { left: 74%; width: 0%; opacity: 0; }
-    }
-    @keyframes shootBeamLeft {
-      0% { right: 26%; left: auto; width: 0%; opacity: 1; }
-      45% { right: 26%; left: auto; width: 48%; opacity: 1; }
-      100% { right: 74%; left: auto; width: 0%; opacity: 0; }
-    }
-    .beam-shoot-right { animation: shootBeamRight 0.35s steps(5) forwards; }
-    .beam-shoot-left {
-      background: var(--accent-red) !important;
-      animation: shootBeamLeft 0.35s steps(5) forwards;
-    }
+    @keyframes shootBeamRight { 0% { left: 26%; width: 0%; opacity: 1; } 50% { left: 26%; width: 48%; opacity: 1; } 100% { left: 74%; width: 0%; opacity: 0; } }
+    @keyframes shootBeamLeft { 0% { right: 26%; left: auto; width: 0%; opacity: 1; } 50% { right: 26%; left: auto; width: 48%; opacity: 1; } 100% { right: 74%; left: auto; width: 0%; opacity: 0; } }
+    .beam-shoot-right { animation: shootBeamRight 0.35s ease-out forwards; }
+    .beam-shoot-left { background: linear-gradient(270deg, #fff, var(--coral), var(--pink)) !important; animation: shootBeamLeft 0.35s ease-out forwards; }
 
     .dmg-popup {
       position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-      font-family: 'Press Start 2P', monospace;
-      font-size: 14px; font-weight: 900; color: var(--gold);
-      text-shadow: 3px 3px 0 #000;
-      pointer-events: none; opacity: 0; z-index: 10; white-space: nowrap;
+      font-family: 'Fredoka', sans-serif; font-size: 20px; font-weight: 700; color: var(--gold);
+      text-shadow: 0 3px 0 var(--ink); pointer-events: none; opacity: 0; z-index: 10; white-space: nowrap;
     }
     @keyframes floatDmg {
-      0% { opacity: 1; transform: translate(-50%, 8px); }
-      40% { opacity: 1; transform: translate(-50%, -12px); }
-      100% { opacity: 0; transform: translate(-50%, -26px); }
+      0% { opacity: 1; transform: translate(-50%, 8px) scale(0.8); }
+      40% { opacity: 1; transform: translate(-50%, -12px) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -26px) scale(0.95); }
     }
-    .dmg-show { animation: floatDmg 0.7s steps(5) forwards; }
+    .dmg-show { animation: floatDmg 0.7s ease-out forwards; }
 
     .vs-emblem {
-      font-family: 'Press Start 2P', monospace;
-      font-weight: 900; color: #fff; font-size: 12px;
-      background: var(--accent-red);
-      border: 3px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      padding: 8px 8px; z-index: 3;
+      font-family: 'Fredoka', sans-serif; font-weight: 700; color: #fff; font-size: 14px;
+      background: var(--pink); border: 2.5px solid var(--ink); box-shadow: 0 3px 0 var(--ink);
+      padding: 6px 12px; border-radius: 999px; z-index: 3;
     }
-
-    .hp-bar-bg {
-      width: 100%; height: 12px; background: #101018;
-      margin-top: 5px; border: 2px solid var(--border-hi);
-      box-shadow: 2px 2px 0 #000;
-    }
-    .hp-bar-fill { height: 100%; width: 100%; transition: width 0.2s steps(6); }
+    .hp-bar-bg { width: 100%; height: 11px; background: #181332; border-radius: 999px; overflow: hidden; margin-top: 5px; border: 2px solid #4E438A; }
+    .hp-bar-fill { height: 100%; width: 100%; transition: width 0.25s ease; }
 
     .timing-area {
-      background: #101018; border: 3px solid var(--border-hi);
-      box-shadow: 4px 4px 0 #000;
-      padding: 10px; text-align: center; margin-top: auto; position: relative;
+      background: #1D183B; border: 2.5px solid #4E438A; border-radius: 18px;
+      padding: 10px; text-align: center; margin-top: auto;
     }
     .bar-track {
-      position: relative; width: 100%; height: 28px; background: #181828;
-      overflow: hidden; margin: 7px 0; border: 3px solid var(--border-hi);
+      position: relative; width: 100%; height: 28px; background: #120E29;
+      border-radius: 999px; overflow: hidden; margin: 7px 0; border: 2px solid #5B509E;
     }
-    .good-zone {
-      position: absolute; top: 0; bottom: 0; left: 15%; width: 70%;
-      background: rgba(55, 196, 255, 0.22);
-    }
-    .great-zone {
-      position: absolute; top: 0; bottom: 0; left: 35%; width: 30%;
-      background: rgba(247, 226, 107, 0.35);
-      border-left: 2px dashed var(--gold); border-right: 2px dashed var(--gold);
-    }
-    .perfect-zone {
-      position: absolute; top: 0; bottom: 0; left: 46.5%; width: 7%;
-      background: rgba(124, 255, 107, 0.55);
-      border-left: 3px solid var(--accent-wind); border-right: 3px solid var(--accent-wind);
-    }
-    .needle {
-      position: absolute; top: 0; bottom: 0; width: 6px; background: #fff;
-      border-left: 1px solid #000; border-right: 1px solid #000;
-      left: 0%;
-    }
-    .critical-banner {
-      display: none; font-size: 12px; font-weight: 900; color: var(--gold);
-      text-shadow: 2px 2px 0 #000; margin-bottom: 4px;
-    }
+    .good-zone { position: absolute; top: 0; bottom: 0; left: 15%; width: 70%; background: rgba(0, 206, 209, 0.2); }
+    .great-zone { position: absolute; top: 0; bottom: 0; left: 35%; width: 30%; background: rgba(255, 215, 0, 0.3); border-left: 2px dashed var(--gold); border-right: 2px dashed var(--gold); }
+    .perfect-zone { position: absolute; top: 0; bottom: 0; left: 46.5%; width: 7%; background: rgba(46, 229, 157, 0.6); border-left: 2px solid var(--mint); border-right: 2px solid var(--mint); }
+    .needle { position: absolute; top: 0; bottom: 0; width: 6px; background: #fff; border-radius: 3px; left: 0%; box-shadow: 0 0 8px #fff; }
+    .critical-banner { display: none; font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 4px; }
+
     .action-btn {
       width: 100%; padding: 11px;
-      background: var(--gold);
-      border: 3px solid #fff;
-      box-shadow: 4px 4px 0 #000;
-      color: #101018;
-      font-weight: 900;
-      cursor: pointer; font-size: 13px;
+      background: linear-gradient(135deg, var(--gold), #FFB800);
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      box-shadow: 0 4px 0 var(--ink);
+      color: var(--ink); font-weight: 900; cursor: pointer; font-size: 13.5px;
       transition: transform 0.08s;
     }
-    .action-btn:hover:not(:disabled) { background: #ffef8c; }
-    .action-btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #000; }
-    .action-btn:disabled {
-      background: #25253d !important; color: #8a8ac0;
-      cursor: not-allowed; border: 2px dashed var(--border);
-      box-shadow: 2px 2px 0 #000;
-    }
+    .action-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+    .action-btn:disabled { background: #373063 !important; color: #968EC4; cursor: not-allowed; border-color: #4E438A; box-shadow: none; }
 
-    /* Cooldown Warning Banner */
     .cooldown-alert {
-      display: none;
-      background: #2b121a;
-      border: 2px solid var(--accent-red);
-      box-shadow: 3px 3px 0 #000;
-      color: #ffd0d5;
-      padding: 8px 10px;
-      font-size: 11.5px;
-      line-height: 1.45;
+      display: none; background: rgba(255, 111, 97, 0.16);
+      border: 2px solid var(--coral); border-radius: 14px;
+      color: #FFD5D0; padding: 8px 11px; font-size: 11.5px; line-height: 1.45;
     }
-
-    /* Stat allocation (4 Stats) */
-    .stat-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px;
-    }
-    .stat-card {
-      background: var(--panel-2); border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 #000;
-      padding: 6px 8px;
-      display: flex; justify-content: space-between; align-items: center; font-size: 12px;
-    }
-    .stat-sub { font-size: 10px; color: var(--text-muted); display: block; }
-    .btn-plus {
-      width: 24px; height: 24px; background: var(--accent-blue);
-      border: 2px solid #000;
-      box-shadow: 2px 2px 0 #000;
-      color: #101018; font-weight: 900; cursor: pointer; flex-shrink: 0;
-    }
-    .btn-plus:disabled { background: #2b2b42; color: #64648c; cursor: not-allowed; }
 
     @media (max-width: 1080px) {
       body { height: auto; min-height: 100vh; overflow-y: auto; }
       .main-layout { grid-template-columns: 1fr; overflow: visible; }
-      .sim-panel { border-right: none; border-bottom: 4px solid var(--border); overflow-y: visible; }
+      .sim-panel { border-right: none; border-bottom: 3.5px solid var(--ink); overflow-y: visible; }
       .in-car-screen { overflow: visible; }
       .view-container { flex-direction: column; }
     }
@@ -534,26 +486,26 @@
 <body>
   <header>
     <div class="logo-area">
-      <div style="font-size:21px; font-weight:900; color:#37C4FF; letter-spacing:0.5px;">PLEOMEKABOT</div>
-      <div class="badge">Pleos Vehicle SDK v2.3.2</div>
-      <div class="badge" style="border-color:#22c55e44; color:#22c55e;">Zero-Distraction Compliant</div>
-      <div class="badge" id="header-exp-toast" style="display:none; background:#14532d; color:#4ade80; border-color:#22c55e;">📡 드론 방어 +30 EXP 수신!</div>
+      <div class="logo-title"><span class="logo-dot">PM</span>PLEOMEKABOT</div>
+      <div class="badge" style="background:#FFF3B0;">차량판 포켓몬 GO</div>
+      <div class="badge" style="background:#D9FFF8;">Pleos Vehicle SDK v2.3.2</div>
+      <div class="badge" id="header-ticket-badge" style="background:#FFE4F2;">🎫 배틀권: 1회</div>
     </div>
-    <div style="font-size:12px; color:var(--text-muted);">
-      현대자동차그룹 Pleos 앱 공모전 출품작 (Project Antigravity In-Car Prototype)
+    <div style="font-size:12px; font-weight:700; color:#544E75;">
+      10km 주행 = 배틀 1회 · P모드 수동 실행 · 직전 주행 속성 버프
     </div>
   </header>
 
   <div class="main-layout">
-    <!-- Left: Vehicle Sensor Simulator -->
+    <!-- Left Simulator -->
     <div class="sim-panel">
       <div class="sim-title">
-        <span>Vehicle Sensors Sim (SDK Mock)</span>
-        <span style="font-size:10px; color:#64748b;">API 34</span>
+        <span>VEHICLE SENSORS SIM</span>
+        <span style="color:#544E75;">SDK MOCK</span>
       </div>
 
       <div class="control-group">
-        <label>1. Gear Shift (`Vehicle.carInfo.GearPosition`)</label>
+        <label>1. 기어 변속 (P모드 전용 실행 정책)</label>
         <div class="gear-btn-group">
           <button class="gear-btn" onclick="setGear('P')" id="btn-p">P (주차)</button>
           <button class="gear-btn" onclick="setGear('R')" id="btn-r">R</button>
@@ -563,81 +515,75 @@
       </div>
 
       <div class="control-group">
-        <label>2. Car Model & Trim (`getCarInfo & Capabilities`)</label>
+        <label>2. 차종 선택 (로보카폴리 스타일 4차종) &amp; 트림</label>
         <div class="switch-row">
-          <span>차종 모델 (`CarInfo`)</span>
+          <span>차종 (CarInfo)</span>
           <select id="sel-model" class="sim-select" onchange="updateCarModel()">
-            <option value="IONIQ6">아이오닉 6 (아이오닉-타이탄)</option>
-            <option value="GRANDEUR">디 올 뉴 그랜저 (그랜저-발키리)</option>
-            <option value="TUCSON">투싼 Hybrid (투싼-가디언)</option>
+            <option value="TUCSON">투싼 (투싼-가디언)</option>
+            <option value="GRANDEUR">그랜저 (그랜저-발키리)</option>
+            <option value="IONIQ">아이오닉 (아이오닉-타이탄)</option>
+            <option value="PALISADE">팰리세이드 (팰리세이드-렉스)</option>
           </select>
         </div>
-        <div class="switch-row" style="margin-top:7px;">
-          <span>하드웨어 트림 (`checkCapabilities`)</span>
+        <div class="switch-row">
+          <span>트림 (Capabilities)</span>
           <select id="sel-trim" class="sim-select" onchange="updateSensors()">
-            <option value="FULL">프레스티지 (앰비언트+햅틱 지원)</option>
-            <option value="FALLBACK">모던 트림 (화면 Glow/Shake 폴백)</option>
+            <option value="FULL">프레스티지 (앰비언트+햅틱)</option>
+            <option value="FALLBACK">모던 (화면 Glow/Shake 폴백)</option>
           </select>
         </div>
       </div>
 
       <div class="control-group">
-        <label>3. 5대 원소 센서 (`Wiper / HVAC / Cruise / Odometer`)</label>
-        <div style="margin-bottom:6px;">
-          <span style="font-size:11px; color:var(--text-muted);">외기온도 (`getHVAC`):</span>
+        <label>3. 직전 주행 거리 &amp; 5대 속성 버프 (10km = +1회)</label>
+        <div style="margin-bottom:4px;">
+          <span style="font-size:11px; font-weight:700;">외기온도 (HVAC):</span>
           <span class="val-disp" id="disp-temp">24°C</span>
           <input type="range" min="-10" max="38" value="24" oninput="updateTemp(this.value)">
         </div>
         <div class="switch-row">
-          <span>🌧️ 우천 와이퍼 작동 (`getWiper`)</span>
+          <span>🌧️ 우천 와이퍼 (Wiper)</span>
           <input type="checkbox" id="chk-rain" checked onchange="updateSensors()">
         </div>
         <div class="switch-row">
-          <span>🌪️ 스마트 크루즈 20km 정속 (`Speed`)</span>
+          <span>🌪️ 크루즈 정속 (Cruise)</span>
           <input type="checkbox" id="chk-cruise" onchange="updateSensors()">
         </div>
-        <div style="font-size:10px; color:#64748b; margin-top:5px;">
-          * 조건 미해당 시 🪨 땅 속성(누적 50km 무급정거 클린 주행) 적용
-        </div>
+        <button class="mini-btn" onclick="simulateDrive10km()">🚗 +10km 주행 완료 (+1 배틀권 &amp; 버프 갱신)</button>
       </div>
 
       <div class="control-group">
-        <label>4. 상대 타깃 매칭 시뮬레이션 (`FusedLocation 1~5km`)</label>
+        <label>4. 정차 위치 &amp; 스팟 매칭 (FusedLocation)</label>
         <div class="switch-row">
-          <span>탐색된 적 메카봇 속성</span>
-          <select id="sel-enemy" class="sim-select" onchange="updateSensors()">
-            <option value="fire">🔥 그랜저-크림슨 (불 속성)</option>
-            <option value="ice">❄️ 코나-프로스트 (얼음 속성)</option>
-            <option value="wind">🌪️ 아이오닉5-제피르 (바람 속성)</option>
-            <option value="earth">🪨 싼타페-골렘 (땅 속성)</option>
-            <option value="water">💧 투싼-아쿠아 (물 속성)</option>
+          <span>주차 지역/스팟</span>
+          <select id="sel-spot" class="sim-select" onchange="updateSpotTarget()">
+            <option value="USER">일반 구역 (타 차량 배치됨 +EXP)</option>
+            <option value="AI">일반 구역 (주변 차량 없음 → AI)</option>
+            <option value="GYEONGBOK">🏛️ 경복궁 (스페셜: 해태-가디언)</option>
+            <option value="EVERLAND">🎡 에버랜드 (스페셜: 티익스-드래곤)</option>
+            <option value="STARFIELD">🌟 스타필드 (스페셜: 스타-발키리)</option>
           </select>
         </div>
       </div>
 
       <div class="control-group">
-        <label>5. 차량 진단 & 충전 (`getTire / getEvBattery`)</label>
+        <label>5. 차량 이상 상태 디버프 (Pleos SDK 연동)</label>
         <div class="switch-row">
-          <span>4륜 타이어 공기압 (`getTire`)</span>
-          <select id="sel-tire" class="sim-select" onchange="updateSensors()">
-            <option value="OK">정상 34 psi (Full Armor +10% HP)</option>
-            <option value="LOW">우측 후륜 26 psi (-10% 방어 디버프)</option>
-          </select>
+          <span>🛞 공기압 이상 (DEF↓)</span>
+          <input type="checkbox" id="chk-tire-low" onchange="updateSensors()">
         </div>
-        <div class="switch-row" style="margin-top:7px;">
-          <span>⚡ EV 전용: 현대차그룹 E-pit 보너스 충전</span>
-          <input type="checkbox" id="chk-ev" onchange="toggleEvCharging(this.checked)">
+        <div class="switch-row">
+          <span>🛢️ 엔진오일 이상 (POW↓)</span>
+          <input type="checkbox" id="chk-oil-low" onchange="updateSensors()">
         </div>
-      </div>
-
-      <div class="control-group" style="background:#1e293b66;">
-        <label>6. 거점 가디언 드론 (`WebSocket Real-time Sync`)</label>
-        <div style="font-size:11px; color:#94a3b8; line-height:1.35; margin-bottom:6px;">
-          회수 과정 없이 거점 방어 성공 즉시 본체로 경험치가 전송됩니다.
+        <div class="switch-row">
+          <span>💦 워셔액 부족 (TEC↓)</span>
+          <input type="checkbox" id="chk-washer-low" onchange="updateSensors()">
         </div>
-        <button class="action-btn" style="padding:7px; font-size:12px; background:#0284c7;" onclick="triggerDroneDefense()">
-          📡 성수 거점 드론 방어 승리 수신 (+30 EXP)
-        </button>
+        <div class="switch-row">
+          <span>⚠️ 출력제한/잔량≤15% (SPD↓)</span>
+          <input type="checkbox" id="chk-power-low" onchange="updateSensors()">
+        </div>
       </div>
     </div>
 
@@ -645,237 +591,200 @@
     <div class="in-car-screen" id="car-screen">
       <div class="car-ambient-glow" id="ambient-bar"></div>
 
-      <!-- Hardware Orchestration Status Bar -->
       <div class="hw-bar">
         <div class="hw-pills">
-          <span class="hw-pill"><span class="hw-dot" id="hw-light-dot"></span><span id="hw-light-text">Ambient Light: #0088FF (Water)</span></span>
+          <span class="hw-pill"><span class="hw-dot" id="hw-light-dot"></span><span id="hw-light-text">Ambient: #00CED1 (물 버프)</span></span>
           <span class="hw-pill" id="hw-seat-pill">💺 Seat Haptic: Ready</span>
-          <span class="hw-pill">🔊 Audio: 운전석 헤드레스트 독립 사운드존</span>
+          <span class="hw-pill" id="odo-display">Odometer: 12,450 km · 🎫 배틀권 1회</span>
         </div>
-        <div style="font-weight:700; color:#38bdf8;" id="odo-display">Odometer: 12,450.8 km (주행 원소 충전 완료)</div>
       </div>
 
-      <!-- Gleo AI Agent Briefing & Voice Command -->
       <div class="gleo-bubble">
         <div class="gleo-left">
           <div class="gleo-icon">G</div>
-          <div id="gleo-text">주행 중(D)입니다. 운전에 집중하세요. 와이퍼 및 정속 주행 센서 데이터가 백그라운드에서 축적 중입니다.</div>
+          <div id="gleo-text">주행 중(D)입니다. Pleos 게임 앱 안전 정책에 따라 화면이 잠금 상태이며, 10km 주행마다 배틀권이 충전됩니다.</div>
         </div>
         <div class="stt-group" id="stt-controls" style="display:none;">
-          <button class="stt-btn" onclick="voiceCommand('stat')">🎙️ "스탯 파워에 찍어줘"</button>
-          <button class="stt-btn" onclick="voiceCommand('battle')">🎙️ "배틀 시작해줘"</button>
+          <button class="stt-btn" onclick="voiceCommand('stat')">🎙️ "파워 찍어줘"</button>
+          <button class="stt-btn" onclick="voiceCommand('battle')">🎙️ "배틀 시작"</button>
         </div>
       </div>
 
       <!-- Driving Mode View (D/R/N) -->
       <div class="d-gear-overlay" id="view-driving">
         <div class="pulse-dot"></div>
-        <div style="font-size:21px; font-weight:800; letter-spacing:0.5px;">DRIVING MODE — Zero-Distraction Active</div>
-        <div style="font-size:13px; color:#94a3b8; max-width:500px; line-height:1.6;">
-          Pleos 안전 가이드라인에 따라 기어 <strong>D / R / N</strong> 상태에서는 모든 인터랙티브 UI와 터치 이벤트가 즉시 차단(`WebView.pauseTimers()`)됩니다.<br>
-          <span id="driving-stats" style="color:#38bdf8; font-weight:700; display:inline-block; margin-top:8px;">
-            🌧️ 비 오는 날씨 감지: 물 속성 에너지 백그라운드 축적 중
+        <div style="font-family:'Jua',sans-serif; font-size:22px;">DRIVING MODE — P모드 전용 실행 준수</div>
+        <div style="font-size:13px; color:#CBD5E1; max-width:520px; line-height:1.6;">
+          주행 중에는 운전자의 안전을 위해 앱 조작이 잠금됩니다.<br>
+          <span id="driving-stats" style="color:var(--turq); font-weight:700; display:inline-block; margin-top:6px;">
+            🌧️ 우천 주행 감지: 다음 전투에 적용될 [💧 물 속성 버프] 축적 중
           </span>
         </div>
-        <div style="background:#0f172a; border:1px solid #22c55e66; padding:10px 18px; border-radius:8px; margin-top:4px;">
-          <div style="font-size:12px; color:#4ade80; font-weight:700;" id="driving-charge-status">
-            🔋 주행 코어 에너지 100% 충전 완료! (배틀 쿨타임 해제됨)
+        <div style="background:#282150; border:2.5px solid var(--mint); padding:10px 18px; border-radius:16px;">
+          <div style="font-size:12.5px; color:var(--mint); font-weight:800;" id="driving-ticket-status">
+            🎫 현재 보유 배틀권: 1회 (좌측 +10km 버튼으로 추가 충전 가능)
           </div>
-          <div style="font-size:11px; color:#94a3b8; margin-top:3px;">
-            👉 목적지 도착 후 기어를 <strong>[P (주차)]</strong>로 변경하면 메카봇이 변신하며 배틀이 활성화됩니다.
+          <div style="font-size:11px; color:#CBD5E1; margin-top:3px;">
+            👉 주차(<strong>P</strong>) 후 앱에서 직접 <strong>[전투 시작]</strong> 버튼을 눌러 배틀을 시작하세요!
           </div>
         </div>
       </div>
 
       <!-- Parked Mode View (P) -->
       <div class="view-container" id="view-parked" style="display:none;">
-        <!-- Left Panel: My Mekabot & 4 Stats -->
+        <!-- Left Panel: My Mekabot & Parts -->
         <div class="screen-panel" style="flex:1;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:12px; font-weight:800; color:#94a3b8;">MY MEKABOT STATUS</span>
-            <span id="badge-condition" class="badge" style="color:#22c55e; border-color:#22c55e55;">🛡️ Full Armor (+10% HP)</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:6px;">
+            <span style="font-family:'Fredoka',sans-serif; font-size:12px; color:#CBD5E1;">MY MEKABOT GARAGE</span>
+            <span id="badge-condition" class="badge" style="background:var(--mint); font-size:10px;">🛡️ Full Armor (+10% HP)</span>
           </div>
 
           <div class="mecha-showcase" id="mecha-box">
-            <div class="spark-warning" id="tire-spark">⚡ 우측 후륜 공기압 부족 (방어 -10%)</div>
+            <div class="spark-warning" id="tire-spark">⚡ 차량 이상 디버프 적용!</div>
             <div class="mecha-svg-wrap" id="showcase-svg-holder"></div>
             <div class="bot-name-tag">
-              <span id="bot-name">아이오닉-타이탄</span>
-              <span style="font-size:12px; color:#38bdf8;">Lv.<span id="disp-lv">13</span></span>
+              <span id="bot-name">투싼-가디언</span>
+              <span style="font-size:12px; color:var(--turq);">Lv.<span id="disp-lv">13</span></span>
             </div>
-            <div class="element-pill" id="bot-element" style="background:#0088ff22; color:#0088ff; border:1px solid #0088ff;">
-              💧 물 속성 코어 (우천 와이퍼 연계)
-            </div>
-            <div class="cycle-hint">
-              상성 순환: 🔥불 → ❄️얼음 → 🌪️바람 → 🪨땅 → 💧물 → 🔥불
+            <div class="element-pill" id="bot-element" style="background:var(--turq); color:var(--ink);">
+              💧 직전 주행 버프: 물 속성
             </div>
             <div style="display:flex; gap:10px; margin-top:5px;">
-              <span style="font-size:11px; color:#94a3b8; cursor:pointer; text-decoration:underline;" onclick="renameBot()">
-                ✏️ 콜사인 변경 (음성/터치)
-              </span>
-              <span id="btn-bluehands" style="display:none; font-size:11px; color:#f43f5e; font-weight:700; cursor:pointer; text-decoration:underline;" onclick="navigateBluehands()">
-                🧭 인근 블루핸즈 정비소 안내 (NaviHelper)
-              </span>
+              <span style="font-size:11px; color:#CBD5E1; cursor:pointer; text-decoration:underline;" onclick="renameBot()">✏️ 이름 변경</span>
+              <span id="btn-bluehands" style="display:none; font-size:11px; color:var(--coral); font-weight:800; cursor:pointer; text-decoration:underline;" onclick="navigateBluehands()">🧭 블루핸즈 점검 안내</span>
+            </div>
+          </div>
+
+          <!-- Parts Customization -->
+          <div style="margin-top:7px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--gold);">
+              <span>🔧 파츠 보강 (외형 진화 &amp; 능력치 +)</span>
+              <span id="parts-count">0/4 장착</span>
+            </div>
+            <div class="parts-row">
+              <button class="part-btn" id="part-shield" onclick="togglePart('shield')">🛡️ 블루핸즈<br>실드(+3방어)</button>
+              <button class="part-btn" id="part-wing" onclick="togglePart('wing')">⚡ E-pit<br>윙(+3스피드)</button>
+              <button class="part-btn" id="part-cannon" onclick="togglePart('cannon')">💥 블루포인트<br>캐논(+3파워)</button>
+              <button class="part-btn" id="part-core" onclick="togglePart('core')">🌟 이벤트<br>코어(+3테크)</button>
             </div>
           </div>
 
           <!-- EXP Bar -->
           <div style="margin-top:8px;">
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
-              <span>EXP Progress (레벨업 시 +3 Stat Pt)</span>
-              <span style="font-weight:700; color:#38bdf8;"><span id="cur-exp">80</span> / 100 EXP</span>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
+              <span>EXP (레벨업 시 외형 진화 +3 Pt)</span>
+              <span style="font-weight:800; color:var(--gold);"><span id="cur-exp">70</span> / 100</span>
             </div>
-            <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
-              <div id="exp-bar" style="background:linear-gradient(90deg, #0284c7, #38bdf8); width:80%; height:100%; transition:width 0.4s;"></div>
+            <div style="background:#181332; height:10px; border-radius:999px; overflow:hidden; border:2px solid #4E438A;">
+              <div id="exp-bar" style="background:linear-gradient(90deg, var(--turq), var(--mint)); width:70%; height:100%; transition:width 0.35s;"></div>
             </div>
           </div>
 
-          <!-- 4 Stats Allocation -->
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-top:8px;">
-            <span style="color:#94a3b8; font-weight:600;">스탯 배분 (4대 코어 파라미터)</span>
-            <span>보너스 포인트: <strong id="stat-points" style="color:#fbbf24; font-size:14px;">3</strong> P</span>
+          <!-- 4 Stats -->
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px; margin-top:7px;">
+            <span style="color:#CBD5E1; font-weight:700;">코어 스탯 (파츠 보너스 포함)</span>
+            <span>남은 포인트: <strong id="stat-points" style="color:var(--gold); font-size:13px;">3</strong> P</span>
           </div>
           <div class="stat-grid">
             <div class="stat-card">
-              <div>
-                <strong>⚔️ 파워: <span id="val-pow">14</span></strong>
-                <span class="stat-sub">기본 공격력 +<span id="sub-pow">28</span>%</span>
-              </div>
+              <div><strong>⚔️ 파워: <span id="val-pow">14</span></strong><span class="stat-sub" id="sub-pow">공격력 +28%</span></div>
               <button class="btn-plus" onclick="addStat('pow')">+</button>
             </div>
             <div class="stat-card">
-              <div>
-                <strong>🛡️ 방어: <span id="val-def">12</span></strong>
-                <span class="stat-sub">피해 감소 -<span id="sub-def">18</span>%</span>
-              </div>
+              <div><strong>🛡️ 방어: <span id="val-def">12</span></strong><span class="stat-sub" id="sub-def">피해감소 -18%</span></div>
               <button class="btn-plus" onclick="addStat('def')">+</button>
             </div>
             <div class="stat-card">
-              <div>
-                <strong>⚡ 스피드: <span id="val-spd">10</span></strong>
-                <span class="stat-sub">타이밍 바 감속 -<span id="sub-spd">15</span>%</span>
-              </div>
+              <div><strong>⚡ 스피드: <span id="val-spd">10</span></strong><span class="stat-sub" id="sub-spd">바 감속 -15%</span></div>
               <button class="btn-plus" onclick="addStat('spd')">+</button>
             </div>
             <div class="stat-card">
-              <div>
-                <strong>🎯 테크: <span id="val-tec">10</span></strong>
-                <span class="stat-sub">PERFECT 존 <span id="sub-tec">7.0</span>% 폭</span>
-              </div>
+              <div><strong>🎯 테크: <span id="val-tec">10</span></strong><span class="stat-sub" id="sub-tec">PERFECT 7.0%</span></div>
               <button class="btn-plus" onclick="addStat('tec')">+</button>
             </div>
           </div>
         </div>
 
-        <!-- Right Panel: 20s Sector Battle & E-pit Raid -->
-        <div class="screen-panel" style="flex:1.18;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:12px; font-weight:800; color:#94a3b8;">20s SECTOR BATTLE (Gear P Only)</span>
-            <span id="cooldown-tag" class="badge" style="color:#4ade80; border-color:#22c55e55;">🔋 주행 충전 Ready (출격 가능)</span>
+        <!-- Right Panel: 20s Battle -->
+        <div class="screen-panel" style="flex:1.15;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+            <span style="font-family:'Fredoka',sans-serif; font-size:12px; color:#CBD5E1;">20s SPOT BATTLE (GEAR P)</span>
+            <span id="ticket-tag" class="badge" style="background:var(--mint); font-size:10.5px;">🎫 보유 배틀권: 1회</span>
           </div>
 
-          <!-- Lobby -->
           <div id="battle-lobby" style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
-            <div style="background:#151d2f; border:1px solid #334155; padding:11px; border-radius:8px;">
-              <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8;">
-                <span>📍 FusedLocation 반경 3km 매칭</span>
-                <span id="raid-badge" style="display:none; color:#fbbf24; font-weight:700;">⚡ E-pit 비동기 보스 레이드 활성!</span>
+            <div style="background:#1D183B; border:2.5px solid #4E438A; padding:11px; border-radius:18px;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--turq); font-weight:700;">
+                <span id="spot-label">📍 현재 주차 위치에 내 메카봇 배치 완료</span>
+                <span id="special-tag" style="color:var(--gold);">🔥 타 차량 대전 보너스 EXP!</span>
               </div>
-              <div style="font-size:15px; font-weight:800; margin-top:4px;" id="opp-lobby-title">
-                상대: 그랜저-크림슨 (Lv.13 / 🔥 불 속성)
+              <div style="font-family:'Jua',sans-serif; font-size:17px; margin-top:5px; color:#fff;" id="opp-lobby-title">
+                상대: 그랜저-발키리 (타 차량 메카봇)
               </div>
               <div style="font-size:12px; margin-top:5px; font-weight:700;" id="matchup-Result">
-                ⚡ 상성 판정: 💧물 → 🔥불 천적 우위! (최종 데미지 +30% 버프)
+                ⚡ 직전 주행 버프 판정: 💧물 → 🔥불 우위 (+30% 데미지!)
               </div>
-              <div style="font-size:11px; color:#94a3b8; margin-top:4px;" id="matchup-detail">
-                내 스피드(10) 반영 바늘 속도 감속 • 내 테크(10) 반영 PERFECT 범위 7.0% 적용
+              <div style="font-size:11px; color:#B8B0DF; margin-top:4px;" id="debuff-summary">
+                차량 상태 정상: 보호막(+10% HP) 적용 중
               </div>
             </div>
 
-            <!-- Cooldown Lock Alert (Shown after 1 battle until Gear D drive) -->
-            <div class="cooldown-alert" id="cooldown-alert-box">
-              <strong>⏳ [코어 쿨타임 가동 중 — 추가 전투 불가]</strong><br>
-              주차당 1회 전투를 완료하여 코어 에너지가 소진되었습니다.<br>
-              👉 좌측에서 <strong>기어 [D (주행)]</strong>으로 전환해 실제 주행(원소 에너지 재충전) 후 다시 <strong>[P (주차)]</strong>로 오거나, <strong>[⚡ E-pit 급속 충전]</strong>을 연결하면 즉시 쿨타임이 해제됩니다!
-            </div>
-
-            <!-- E-pit Mega Boss Relay Info (Shown when EV Charging) -->
-            <div id="epit-raid-box" style="display:none; background:rgba(234, 179, 8, 0.1); border:1px solid #eab308; padding:9px; border-radius:8px;">
-              <div style="font-size:12px; font-weight:800; color:#fbbf24;">⚡ 주말 E-pit 충전소 메가 보스 비동기 레이드</div>
-              <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">
-                충전 대기 중인 현대차 오너 14명이 협동 타격 중! (보스 잔여 HP: 38,400 / 100,000)
-              </div>
+            <div class="cooldown-alert" id="no-ticket-alert">
+              <strong>🎫 [배틀권이 모두 소진되었습니다]</strong><br>
+              좌측에서 <strong>기어 [D]</strong> 주행(또는 <strong>+10km 주행 완료</strong> 버튼)을 통해 10km마다 새 배틀권을 충전해 주세요!
             </div>
 
             <button class="action-btn" id="btn-start-battle" onclick="startBattle()">
-              ⚔️ 20초 메카 배틀 개시 (기어 P 전용)
+              ⚔️ 20초 메카 배틀 시작 (배틀권 1회 소모)
             </button>
 
-            <div style="border-top:1px solid #232d42; padding-top:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:12px; font-weight:700; color:#94a3b8;">🛰️ 거점 가디언 드론 배치 (최대 3곳)</span>
-                <button style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;" onclick="deployDrone()">
-                  + 현 위치(성수 B2) 드론 배치
-                </button>
-              </div>
-              <div style="font-size:11px; color:#64748b; margin-top:4px;" id="drone-status-text">
-                배치 현황 [1/3]: 성수 오피스 B2 (Lv.13 스탯 복제 완료 • 실시간 방어 경험치 전송 대기)
-              </div>
+            <div style="background:#1D183B; border:2px solid #4E438A; border-radius:14px; padding:9px; font-size:11.5px; color:#CBD5E1;">
+              💡 <strong>차량판 포켓몬 GO 규칙</strong>: 내 차는 기본 무속성이며 <strong>직전 주행 조건</strong>으로 속성 버프를 얻습니다.
+              경복궁·에버랜드·스타필드 등 특정 스팟에서는 <strong>스페셜 메카봇</strong>이 등장합니다!
             </div>
           </div>
 
-          <!-- Arena (Strict 20s Timeline + Animated Mecha Combat) -->
-          <div id="battle-arena" class="battle-arena" style="display:none;">
+          <div class="battle-arena" id="battle-arena" style="display:none;">
             <div class="timeline-bar">
-              <span id="phase-label" style="color:#38bdf8; font-weight:700;">Phase 1 (0~4s): 상성 스캔 및 아머 전개</span>
-              <span style="font-weight:800; color:#fff;">⏱️ <span id="timer-sec">0.0</span>s / 20.0s</span>
+              <span style="color:var(--gold);">⏱️ <strong id="battle-timer">20.0s</strong></span>
+              <span id="battle-phase" style="color:var(--turq);">전투 개시!</span>
             </div>
 
             <div class="combat-stage" id="combat-stage">
               <div class="combat-grid-floor"></div>
               <div class="laser-beam" id="laser-beam"></div>
+              <div class="dmg-popup" id="dmg-popup">CRITICAL!</div>
 
-              <!-- My Mecha Unit -->
               <div class="fighter">
-                <div class="dmg-popup" id="my-dmg-popup">-8%</div>
-                <div class="arena-mecha-unit" id="arena-my-unit"></div>
-                <div style="font-size:10px; font-weight:700; color:#38bdf8; margin-top:2px;" id="arena-my-elem">💧 물 속성</div>
-                <div style="font-size:12px; font-weight:800;" id="arena-my-name">아이오닉-타이탄</div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill" id="my-hp" style="background:#0088ff;"></div></div>
-                <div style="font-size:10px; color:#94a3b8; margin-top:2px;">HP <span id="my-hp-text">110</span>%</div>
+                <div class="arena-mecha-unit" id="my-arena-svg"></div>
+                <div style="font-size:12px; font-weight:800; margin-top:2px;" id="arena-my-name">투싼-가디언</div>
+                <div style="font-size:10.5px; color:var(--turq);" id="arena-my-hp-text">HP 110 / 110</div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="my-hp-bar" style="background:var(--mint);"></div></div>
               </div>
 
               <div class="vs-emblem">VS</div>
 
-              <!-- Opponent Mecha Unit -->
               <div class="fighter">
-                <div class="dmg-popup" id="opp-dmg-popup">-18%</div>
-                <div class="arena-mecha-unit" id="arena-opp-unit"></div>
-                <div style="font-size:10px; font-weight:700; color:#ff3b00; margin-top:2px;" id="arena-opp-elem">🔥 불 속성</div>
-                <div style="font-size:12px; font-weight:800;" id="arena-opp-name">그랜저-크림슨</div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill" id="opp-hp" style="background:#ff3b00;"></div></div>
-                <div style="font-size:10px; color:#94a3b8; margin-top:2px;">HP <span id="opp-hp-text">100</span>%</div>
+                <div class="arena-mecha-unit" id="opp-arena-svg"></div>
+                <div style="font-size:12px; font-weight:800; margin-top:2px;" id="arena-opp-name">그랜저-발키리</div>
+                <div style="font-size:10.5px; color:var(--coral);" id="arena-opp-hp-text">HP 100 / 100</div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="opp-hp-bar" style="background:var(--coral);"></div></div>
               </div>
-            </div>
-
-            <div style="text-align:center; font-size:12px; font-weight:700; color:#e2e8f0; min-height:18px;" id="battle-log">
-              상성 우위 확인! 초기 배리어 전개 중...
             </div>
 
             <div class="timing-area">
-              <div class="critical-banner" id="crit-banner">💥 PERFECT OVERDRIVE! 200% 필살 레이저 캐논 작렬!</div>
-              <div style="font-size:11.5px; font-weight:700; color:#38bdf8;" id="timing-header">
-                8.0초 시점에 OVERDRIVE 타이밍 바가 활성화됩니다 (2초간 왕복)
-              </div>
+              <div class="critical-banner" id="crit-banner">⚡ OVERDRIVE! 중앙 초록 존에 정지하세요!</div>
               <div class="bar-track">
                 <div class="good-zone"></div>
                 <div class="great-zone"></div>
-                <div class="perfect-zone" id="perfect-zone-bar"></div>
-                <div class="needle" id="needle"></div>
+                <div class="perfect-zone" id="perfect-zone"></div>
+                <div class="needle" id="timing-needle"></div>
               </div>
-              <button class="action-btn" id="btn-overdrive" style="background:#e11d48;" disabled onclick="hitTiming()">
-                ⚡ OVERDRIVE 필살기 발사! (정중앙 초록색 PERFECT 존 탭)
-              </button>
+              <button class="action-btn" id="btn-timing-hit" onclick="hitTimingBar()" disabled>타이밍 바 대기 중...</button>
+            </div>
+
+            <div id="battle-log" style="background:#1D183B; border:2px solid #4E438A; border-radius:12px; padding:6px 10px; font-size:11px; color:#E2DCFF; min-height:42px;">
+              전투 준비 중...
             </div>
           </div>
         </div>
@@ -884,778 +793,493 @@
   </div>
 
   <script>
-    // --- Vehicle & Game State ---
-    let gear = 'D';
-    let temp = 24;
-    let isRain = true;
-    let isCruise = false;
-    let tireCondition = 'OK';
-    let trimMode = 'FULL';
-    let isEvCharging = false;
-    let currentCarModel = 'IONIQ6';
-    let odometerKm = 12450.8;
-
-    // 1회 전투 후 D 기어 주행 전까지 쿨타임 잠금 상태 관리
-    let battleReadyFromDrive = true; // 초기 시작 시 D 기어 주행 중이므로 충전 완료 상태
-
-    let botName = "아이오닉-타이탄";
-    let level = 13;
-    let exp = 80;
-    let statPoints = 3;
-    let stats = { pow: 14, def: 12, spd: 10, tec: 10 };
-
-    // 5대 원소 정의 및 순환 상성: 불 -> 얼음 -> 바람 -> 땅 -> 물 -> 불
     const ELEMENTS = {
-      fire:  { name: '불', icon: '🔥', color: '#ff3b00', beats: 'ice',   desc: '고온(28°C↑) 열기 코어' },
-      ice:   { name: '얼음', icon: '❄️', color: '#00f0ff', beats: 'wind',  desc: '혹한(5°C↓) 냉기 코어' },
-      wind:  { name: '바람', icon: '🌪️', color: '#00e676', beats: 'earth', desc: '스마트 크루즈 질풍 코어' },
-      earth: { name: '땅', icon: '🪨', color: '#ffb300', beats: 'water', desc: '무급정거 클린 주행 대지 코어' },
-      water: { name: '물', icon: '💧', color: '#0088ff', beats: 'fire',  desc: '우천 와이퍼 수류 코어' }
+      fire:  { name: '불',   emoji: '🔥', color: '#FF6F61', beats: 'ice',   losesTo: 'water', desc: '고온 주행(28°C+)' },
+      ice:   { name: '얼음', emoji: '❄️', color: '#00CED1', beats: 'wind',  losesTo: 'fire',  desc: '저온 주행(5°C-)' },
+      wind:  { name: '바람', emoji: '🌪️', color: '#2EE59D', beats: 'earth', losesTo: 'ice',   desc: '크루즈 정속 주행' },
+      earth: { name: '땅',   emoji: '🪨', color: '#FFD700', beats: 'water', losesTo: 'wind',  desc: '안정적 일반 주행' },
+      water: { name: '물',   emoji: '💧', color: '#38BDF8', beats: 'fire',  losesTo: 'earth', desc: '우천 와이퍼 주행' }
     };
 
-    const ENEMIES = {
-      fire:  { name: '그랜저-크림슨', elem: 'fire', model: 'GRANDEUR' },
-      ice:   { name: '코나-프로스트', elem: 'ice', model: 'TUCSON' },
-      wind:  { name: '아이오닉5-제피르', elem: 'wind', model: 'IONIQ6' },
-      earth: { name: '싼타페-골렘', elem: 'earth', model: 'TUCSON' },
-      water: { name: '투싼-아쿠아', elem: 'water', model: 'TUCSON' }
+    const CAR_MODELS = {
+      TUCSON:   { name: '투싼-가디언',    body: '#00CED1', accent: '#FFD700', trim: '#1A1635' },
+      GRANDEUR: { name: '그랜저-발키리',  body: '#8B5CF6', accent: '#FFD700', trim: '#1A1635' },
+      IONIQ:    { name: '아이오닉-타이탄', body: '#38BDF8', accent: '#2EE59D', trim: '#1A1635' },
+      PALISADE: { name: '팰리세이드-렉스', body: '#FF6F61', accent: '#FFD700', trim: '#1A1635' }
     };
 
-    let activeElement = 'water';
-    let enemyElement = 'fire';
+    const SPOTS = {
+      USER:      { oppName: '그랜저-발키리 (타 차량 메카봇)', oppModel: 'GRANDEUR', oppEl: 'fire',  bonusExp: 65, tag: '🔥 타 차량 대전 보너스 EXP (+65)!' },
+      AI:        { oppName: '투싼-드론 (지역 AI 메카봇)',    oppModel: 'TUCSON',   oppEl: 'earth', bonusExp: 40, tag: '🤖 지역 AI 메카봇 대전 (+40 EXP)' },
+      GYEONGBOK: { oppName: '해태-가디언 (경복궁 스페셜)',    oppModel: 'PALISADE', oppEl: 'fire',  bonusExp: 80, tag: '🏛️ 경복궁 스팟 한정 스페셜 메카봇!' },
+      EVERLAND:  { oppName: '티익스-드래곤 (에버랜드 스페셜)', oppModel: 'TUCSON',   oppEl: 'wind',  bonusExp: 80, tag: '🎡 에버랜드 스팟 한정 스페셜 메카봇!' },
+      STARFIELD: { oppName: '스타-발키리 (스타필드 스페셜)',   oppModel: 'GRANDEUR', oppEl: 'ice',   bonusExp: 80, tag: '🌟 스타필드 스팟 한정 스페셜 메카봇!' }
+    };
 
-    // --- Custom SVG Mecha Robot Renderer ---
-    function buildMechaSvg(modelType, primaryColor, isEnemy = false) {
-      const flip = isEnemy ? 'transform="scale(-1, 1)" transform-origin="60 60"' : '';
-      const visorColor = isEnemy ? '#ff1744' : '#00f0ff';
-      const coreGlow = primaryColor;
+    const state = {
+      gear: 'D',
+      model: 'TUCSON',
+      botName: '투싼-가디언',
+      trim: 'FULL',
+      temp: 24,
+      isRaining: true,
+      isCruise: false,
+      spot: 'USER',
+      odometerKm: 12450,
+      tickets: 1,
+      myBuff: 'water',
+      level: 13,
+      exp: 70,
+      statPoints: 3,
+      stats: { pow: 14, def: 12, spd: 10, tec: 10 },
+      parts: { shield: false, wing: false, cannon: false, core: false },
+      debuffs: { tire: false, oil: false, washer: false, power: false },
+      inBattle: false,
+      myHp: 110, myMaxHp: 110,
+      oppHp: 100, oppMaxHp: 100,
+      needlePos: 0, needleDir: 1, needleTimer: null, battleTimer: null,
+      timeLeft: 20.0, timingActive: false, timingHitDone: false
+    };
 
-      if (modelType === 'GRANDEUR') {
-        // 중장갑 발키리/커맨더형 메카봇
-        return `
-        <svg viewBox="0 0 120 120" width="100%" height="100%">
-          <g ${flip}>
-            <!-- 숄더 캐논 & 날개 -->
-            <polygon points="12,35 32,20 36,52 16,58" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
-            <polygon points="108,35 88,20 84,52 104,58" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
-            <!-- 헤드 유닛 & V-블레이드 안테나 -->
-            <polygon points="60,8 42,20 48,24 60,16 72,24 78,20" fill="${coreGlow}"/>
-            <rect x="44" y="18" width="32" height="20" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
-            <rect x="48" y="24" width="24" height="6" rx="2" fill="${visorColor}"/>
-            <!-- 흉부 코어 아머 -->
-            <polygon points="34,40 86,40 78,78 42,78" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
-            <circle cx="60" cy="57" r="10" fill="${coreGlow}" opacity="0.9"/>
-            <circle cx="60" cy="57" r="5" fill="#ffffff"/>
-            <!-- 양팔 블래스터 -->
-            <rect x="18" y="46" width="14" height="32" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
-            <rect x="88" y="46" width="14" height="32" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
-            <!-- 레그 부스터 -->
-            <polygon points="42,80 56,80 54,112 38,112" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
-            <polygon points="64,80 78,80 82,112 66,112" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
-          </g>
-        </svg>`;
-      } else if (modelType === 'TUCSON') {
-        // 중장갑 실드 가디언형 메카봇
-        return `
-        <svg viewBox="0 0 120 120" width="100%" height="100%">
-          <g ${flip}>
-            <!-- 헤비 숄더 실드 -->
-            <rect x="10" y="30" width="22" height="44" rx="6" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
-            <rect x="88" y="30" width="22" height="44" rx="6" fill="#1e293b" stroke="${coreGlow}" stroke-width="2.5"/>
-            <!-- 헬멧 & 듀얼 센서 -->
-            <rect x="42" y="14" width="36" height="22" rx="6" fill="#334155" stroke="${coreGlow}" stroke-width="2"/>
-            <rect x="47" y="21" width="26" height="7" rx="2" fill="${visorColor}"/>
-            <!-- 바디 탱크 코어 -->
-            <rect x="34" y="38" width="52" height="42" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
-            <polygon points="60,45 72,58 60,71 48,58" fill="${coreGlow}"/>
-            <circle cx="60" cy="58" r="4" fill="#fff"/>
-            <!-- 헤비 레그 -->
-            <rect x="38" y="82" width="18" height="30" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
-            <rect x="64" y="82" width="18" height="30" rx="4" fill="#334155" stroke="${coreGlow}" stroke-width="1.5"/>
-          </g>
-        </svg>`;
-      } else {
-        // IONIQ 6 하이테크 스트라이커 타이탄 메카봇
-        return `
-        <svg viewBox="0 0 120 120" width="100%" height="100%">
-          <g ${flip}>
-            <!-- 플라즈마 윙 부스터 -->
-            <polygon points="8,24 36,42 28,68 12,56" fill="${coreGlow}" opacity="0.35"/>
-            <polygon points="112,24 84,42 92,68 108,56" fill="${coreGlow}" opacity="0.35"/>
-            <!-- 블레이드 크레스트 & 헤드 -->
-            <polygon points="60,6 53,20 67,20" fill="#fbbf24"/>
-            <polygon points="44,18 76,18 72,36 48,36" fill="#1e293b" stroke="${coreGlow}" stroke-width="2"/>
-            <rect x="49" y="24" width="22" height="5" rx="2" fill="${visorColor}"/>
-            <!-- 에어로 체스트 & 아크 코어 -->
-            <polygon points="32,38 88,38 76,78 44,78" fill="#0f172a" stroke="${coreGlow}" stroke-width="2.5"/>
-            <circle cx="60" cy="56" r="11" fill="${coreGlow}"/>
-            <circle cx="60" cy="56" r="6" fill="#ffffff"/>
-            <!-- 암 블레이드 & 캐논 -->
-            <polygon points="20,42 32,42 28,76 16,72" fill="#334155" stroke="${coreGlow}" stroke-width="1.8"/>
-            <polygon points="88,42 100,42 104,72 92,76" fill="#334155" stroke="${coreGlow}" stroke-width="1.8"/>
-            <!-- 스피드 레그 -->
-            <polygon points="44,80 56,80 52,114 40,114" fill="#1e293b" stroke="${coreGlow}" stroke-width="1.8"/>
-            <polygon points="64,80 76,80 80,114 68,114" fill="#1e293b" stroke="${coreGlow}" stroke-width="1.8"/>
-          </g>
-        </svg>`;
+    // Robocar Poli-inspired 4-car SVG renderer with evolving parts
+    function renderMekabotSvg(modelKey, buffEl, parts, isEnemy) {
+      const m = CAR_MODELS[modelKey] || CAR_MODELS.TUCSON;
+      const elColor = (ELEMENTS[buffEl] || ELEMENTS.water).color;
+      const flip = isEnemy ? 'transform="scale(-1,1) translate(-120,0)"' : '';
+
+      // Car-specific head/visor/grille features (Robocar Poli proportions: cute, chunky, car-front chest + big friendly eyes)
+      let headTop = '';
+      let chestFront = '';
+      if (modelKey === 'TUCSON') {
+        headTop = `<rect x="34" y="10" width="52" height="10" rx="5" fill="${m.accent}" stroke="#1A1635" stroke-width="3"/>
+                   <rect x="44" y="4" width="32" height="9" rx="4" fill="${m.body}" stroke="#1A1635" stroke-width="2.5"/>`;
+        chestFront = `<polygon points="36,52 84,52 78,76 42,76" fill="#1A1635"/>
+                      <rect x="42" y="56" width="12" height="6" rx="2" fill="${elColor}"/>
+                      <rect x="66" y="56" width="12" height="6" rx="2" fill="${elColor}"/>
+                      <rect x="52" y="64" width="16" height="8" rx="3" fill="${m.accent}"/>`;
+      } else if (modelKey === 'GRANDEUR') {
+        headTop = `<rect x="30" y="13" width="60" height="8" rx="4" fill="#E0F2FE" stroke="#1A1635" stroke-width="2.5"/>
+                   <polygon points="50,3 60,12 70,3" fill="${m.accent}" stroke="#1A1635" stroke-width="2"/>`;
+        chestFront = `<rect x="34" y="52" width="52" height="24" rx="8" fill="#1A1635"/>
+                      <rect x="36" y="54" width="48" height="5" rx="2.5" fill="#FFFFFF"/>
+                      <circle cx="60" cy="67" r="6" fill="${elColor}" stroke="#fff" stroke-width="2"/>`;
+      } else if (modelKey === 'IONIQ') {
+        headTop = `<rect x="32" y="11" width="56" height="10" rx="5" fill="#1A1635"/>
+                   <rect x="38" y="14" width="8" height="4" fill="${elColor}"/><rect x="50" y="14" width="8" height="4" fill="${elColor}"/><rect x="62" y="14" width="8" height="4" fill="${elColor}"/><rect x="74" y="14" width="8" height="4" fill="${elColor}"/>`;
+        chestFront = `<rect x="35" y="51" width="50" height="25" rx="10" fill="#E2E8F0" stroke="#1A1635" stroke-width="3"/>
+                      <rect x="44" y="58" width="32" height="11" rx="5" fill="#1A1635"/>
+                      <circle cx="52" cy="63.5" r="3" fill="${elColor}"/><circle cx="60" cy="63.5" r="3" fill="#FFD700"/><circle cx="68" cy="63.5" r="3" fill="${elColor}"/>`;
+      } else { // PALISADE
+        headTop = `<rect x="28" y="8" width="64" height="12" rx="4" fill="${m.body}" stroke="#1A1635" stroke-width="3"/>
+                   <rect x="40" y="3" width="40" height="8" rx="3" fill="${m.accent}" stroke="#1A1635" stroke-width="2.5"/>`;
+        chestFront = `<rect x="32" y="50" width="56" height="28" rx="6" fill="#1A1635"/>
+                      <rect x="35" y="53" width="6" height="20" rx="2" fill="#FFD700"/>
+                      <rect x="79" y="53" width="6" height="20" rx="2" fill="#FFD700"/>
+                      <rect x="45" y="55" width="30" height="18" rx="4" fill="#334155"/>
+                      <circle cx="60" cy="64" r="6" fill="${elColor}"/>`;
       }
+
+      // Optional Upgrade Parts SVGs
+      const wingSvg = parts.wing ? `<polygon points="28,48 4,34 10,64" fill="#00CED1" stroke="#1A1635" stroke-width="3"/>
+                                    <polygon points="92,48 116,34 110,64" fill="#00CED1" stroke="#1A1635" stroke-width="3"/>` : '';
+      const shieldSvg = parts.shield ? `<path d="M10,56 L26,56 L26,78 L18,86 L10,78 Z" fill="#2EE59D" stroke="#1A1635" stroke-width="3"/>` : '';
+      const cannonSvg = parts.cannon ? `<rect x="88" y="42" width="24" height="12" rx="4" fill="#FF6F61" stroke="#1A1635" stroke-width="3"/>
+                                        <circle cx="110" cy="48" r="4" fill="#FFD700"/>` : '';
+      const coreAura = parts.core ? `<circle cx="60" cy="60" r="54" fill="none" stroke="#FFD700" stroke-width="3" stroke-dasharray="8 6"/>` : '';
+
+      return `<svg viewBox="0 0 120 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g ${flip}>
+          ${coreAura}
+          ${wingSvg}
+          <!-- Car Wheel Shoulders (Robocar Poli style) -->
+          <circle cx="24" cy="56" r="13" fill="#26223D" stroke="#1A1635" stroke-width="3"/>
+          <circle cx="24" cy="56" r="5" fill="#CBD5E1"/>
+          <circle cx="96" cy="56" r="13" fill="#26223D" stroke="#1A1635" stroke-width="3"/>
+          <circle cx="96" cy="56" r="5" fill="#CBD5E1"/>
+          <!-- Legs / Wheel Boots -->
+          <rect x="36" y="84" width="18" height="24" rx="7" fill="${m.body}" stroke="#1A1635" stroke-width="3"/>
+          <rect x="66" y="84" width="18" height="24" rx="7" fill="${m.body}" stroke="#1A1635" stroke-width="3"/>
+          <rect x="33" y="101" width="22" height="11" rx="5" fill="#1A1635"/>
+          <rect x="65" y="101" width="22" height="11" rx="5" fill="#1A1635"/>
+          <!-- Torso (Car Hood & Bumper) -->
+          <rect x="28" y="46" width="64" height="40" rx="14" fill="${m.body}" stroke="#1A1635" stroke-width="3.5"/>
+          ${chestFront}
+          <!-- Cute Friendly Robocar Head -->
+          <rect x="34" y="16" width="52" height="32" rx="13" fill="#FFFFFF" stroke="#1A1635" stroke-width="3.5"/>
+          ${headTop}
+          <!-- Big Expressive Eyes -->
+          <circle cx="48" cy="33" r="6" fill="#1A1635"/><circle cx="49.5" cy="31.5" r="2.2" fill="#00CED1"/>
+          <circle cx="72" cy="33" r="6" fill="#1A1635"/><circle cx="73.5" cy="31.5" r="2.2" fill="#00CED1"/>
+          <path d="M54 41 Q60 45 66 41" stroke="#1A1635" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          ${shieldSvg}
+          ${cannonSvg}
+        </g>
+      </svg>`;
     }
 
-    function renderAllMechaModels() {
-      const myColor = ELEMENTS[activeElement].color;
-      const oppObj = ENEMIES[enemyElement];
-      const oppColor = ELEMENTS[enemyElement].color;
-
-      document.getElementById('showcase-svg-holder').innerHTML =
-        buildMechaSvg(currentCarModel, myColor, false);
-      document.getElementById('arena-my-unit').innerHTML =
-        buildMechaSvg(currentCarModel, myColor, false);
-      document.getElementById('arena-opp-unit').innerHTML =
-        buildMechaSvg(isEvCharging ? 'GRANDEUR' : oppObj.model, oppColor, true);
+    function getPartBonus(statKey) {
+      let b = 0;
+      if (statKey === 'def' && state.parts.shield) b += 3;
+      if (statKey === 'spd' && state.parts.wing) b += 3;
+      if (statKey === 'pow' && state.parts.cannon) b += 3;
+      if (statKey === 'tec' && state.parts.core) b += 3;
+      return b;
     }
 
-    function updateCarModel() {
-      currentCarModel = document.getElementById('sel-model').value;
-      if (currentCarModel === 'IONIQ6') {
-        botName = '아이오닉-타이탄';
-      } else if (currentCarModel === 'GRANDEUR') {
-        botName = '그랜저-발키리';
-      } else {
-        botName = '투싼-가디언';
-      }
-      document.getElementById('bot-name').innerText = botName;
-      document.getElementById('arena-my-name').innerText = botName;
-      document.getElementById('gleo-text').innerText =
-        `[Vehicle.getCarInfo] 차종 '${currentCarModel}' 실루엣이 감지되어 전용 전투 로봇 '${botName}' 아머가 장착되었습니다.`;
-      renderAllMechaModels();
+    function getEffectiveStat(statKey) {
+      const base = state.stats[statKey] + getPartBonus(statKey);
+      const debuffMap = { def: state.debuffs.tire, pow: state.debuffs.oil, tec: state.debuffs.washer, spd: state.debuffs.power };
+      return debuffMap[statKey] ? Math.max(4, Math.floor(base * 0.8)) : base;
     }
 
-    function calculateMultiplier(att, def) {
-      if (ELEMENTS[att].beats === def) return 1.3;
-      if (ELEMENTS[def].beats === att) return 0.8;
-      return 1.0;
+    function computeBuffFromSensors() {
+      if (state.isRaining) return 'water';
+      if (state.temp >= 28) return 'fire';
+      if (state.temp <= 5) return 'ice';
+      if (state.isCruise) return 'wind';
+      return 'earth';
     }
 
-    function updateCooldownUI() {
-      const btnStart = document.getElementById('btn-start-battle');
-      const cdTag = document.getElementById('cooldown-tag');
-      const alertBox = document.getElementById('cooldown-alert-box');
-
-      const canFight = battleReadyFromDrive || isEvCharging;
-
-      if (canFight) {
-        btnStart.disabled = false;
-        alertBox.style.display = 'none';
-        if (isEvCharging) {
-          btnStart.innerText = '⚡ E-pit 하이퍼 리차지 배틀 개시 (쿨타임 무제한 해제)';
-          cdTag.innerText = '⚡ EV 하이퍼 리차지 ON';
-          cdTag.style.color = '#4ade80';
-          cdTag.style.borderColor = '#22c55e55';
-        } else {
-          btnStart.innerText = '⚔️ 20초 메카 배틀 개시 (주행 충전 완료 • 1회 출격 가능)';
-          cdTag.innerText = '🔋 주행 충전 Ready (1회 출격 가능)';
-          cdTag.style.color = '#38bdf8';
-          cdTag.style.borderColor = '#38bdf844';
-        }
-      } else {
-        btnStart.disabled = true;
-        btnStart.innerText = '🔒 코어 쿨타임 대기 중 (기어 D로 주행하여 에너지를 재충전하세요)';
-        alertBox.style.display = 'block';
-        cdTag.innerText = '⏳ 코어 쿨타임 (D 주행 필요)';
-        cdTag.style.color = '#f43f5e';
-        cdTag.style.borderColor = '#f43f5e55';
-      }
-    }
-
-    function updateSensors() {
-      isRain = document.getElementById('chk-rain').checked;
-      isCruise = document.getElementById('chk-cruise').checked;
-      tireCondition = document.getElementById('sel-tire').value;
-      trimMode = document.getElementById('sel-trim').value;
-      enemyElement = document.getElementById('sel-enemy').value;
-
-      // 1. 내 원소 판정 (ElementEngine.ts 동일 로직)
-      if (isRain) {
-        activeElement = 'water';
-      } else if (temp <= 5) {
-        activeElement = 'ice';
-      } else if (temp >= 28) {
-        activeElement = 'fire';
-      } else if (isCruise) {
-        activeElement = 'wind';
-      } else {
-        activeElement = 'earth';
-      }
-
-      const elObj = ELEMENTS[activeElement];
-      document.documentElement.style.setProperty('--current-ambient', elObj.color);
-
-      // 2. 앰비언트 라이트 & 폴백 반영 (Native Pleos SDK 연동 포함)
-      const ambientBar = document.getElementById('ambient-bar');
-      ambientBar.style.background = elObj.color;
-      ambientBar.style.boxShadow = `0 0 28px ${elObj.color}`;
-      if (window.PleosNativeVehicle && window.PleosNativeVehicle.syncAmbientLightColor) {
-        window.PleosNativeVehicle.syncAmbientLightColor(elObj.color);
-      }
-
-      const carScreen = document.getElementById('car-screen');
-      if (trimMode === 'FALLBACK') {
-        carScreen.classList.add('fallback-border-glow');
-        document.getElementById('hw-light-text').innerText = `Fallback Screen Glow: ${elObj.color} (${elObj.name})`;
-        document.getElementById('hw-seat-pill').innerText = `📳 Fallback: Screen Shake 모드`;
-      } else {
-        carScreen.classList.remove('fallback-border-glow');
-        document.getElementById('hw-light-text').innerText = `Ambient Light: ${elObj.color} (${elObj.name})`;
-        document.getElementById('hw-seat-pill').innerText = `💺 Seat Haptic: Active`;
-      }
-      document.getElementById('hw-light-dot').style.background = elObj.color;
-
-      // 3. 메카봇 속성 배지 및 SVG 로봇 렌더링 업데이트
-      const botElem = document.getElementById('bot-element');
-      botElem.innerText = `${elObj.icon} ${elObj.name} 속성 코어 (${elObj.desc})`;
-      botElem.style.color = elObj.color;
-      botElem.style.borderColor = elObj.color;
-      botElem.style.background = elObj.color + '22';
-      document.getElementById('driving-stats').innerText = `${elObj.icon} ${elObj.desc} 감지: ${elObj.name} 속성 에너지가 백그라운드에서 축적 중입니다.`;
-
-      renderAllMechaModels();
-
-      // 4. 타이어 공기압 & 블루핸즈 정비 연동
-      const condBadge = document.getElementById('badge-condition');
-      const spark = document.getElementById('tire-spark');
-      const bhBtn = document.getElementById('btn-bluehands');
-      if (tireCondition === 'OK') {
-        condBadge.innerText = '🛡️ Full Armor (+10% HP)';
-        condBadge.style.color = '#22c55e';
-        condBadge.style.borderColor = '#22c55e55';
-        spark.style.display = 'none';
-        bhBtn.style.display = 'none';
-      } else {
-        condBadge.innerText = '⚠️ 우측 후륜 저압 (-10% DEF)';
-        condBadge.style.color = '#f43f5e';
-        condBadge.style.borderColor = '#f43f5e55';
-        spark.style.display = 'inline-flex';
-        bhBtn.style.display = 'inline';
-      }
-
-      // 5. 상대 메카봇과의 실시간 상성 계산 및 쿨타임 UI 갱신
-      updateLobbyMatchup();
-      updateStatUI();
-      updateCooldownUI();
-    }
-
-    function updateLobbyMatchup() {
-      const myEl = ELEMENTS[activeElement];
-      const oppObj = ENEMIES[enemyElement];
-      const oppEl = ELEMENTS[enemyElement];
-      const mult = calculateMultiplier(activeElement, enemyElement);
-
-      const titleEl = document.getElementById('opp-lobby-title');
-      const resEl = document.getElementById('matchup-Result');
-
-      if (isEvCharging) {
-        titleEl.innerText = `⚡ 레이드 보스: 메가-기가트론 (Lv.30 / ${oppEl.icon} ${oppEl.name} 속성)`;
-      } else {
-        titleEl.innerText = `상대: ${oppObj.name} (Lv.13 / ${oppEl.icon} ${oppEl.name} 속성)`;
-      }
-
-      if (mult > 1.0) {
-        resEl.innerText = `⚡ 상성 판정: ${myEl.icon}${myEl.name} → ${oppEl.icon}${oppEl.name} 천적 우위! (최종 데미지 +30% 버프)`;
-        resEl.style.color = '#22c55e';
-      } else if (mult < 1.0) {
-        resEl.innerText = `⚠️ 상성 판정: ${myEl.icon}${myEl.name} ← ${oppEl.icon}${oppEl.name} 상성 열세 (데미지 -20% 페널티 • OVERDRIVE 역전 필요!)`;
-        resEl.style.color = '#f43f5e';
-      } else {
-        resEl.innerText = `⚖️ 상성 판정: ${myEl.icon}${myEl.name} vs ${oppEl.icon}${oppEl.name} 대등 상성 (데미지 100% 표준 연산)`;
-        resEl.style.color = '#38bdf8';
-      }
-    }
-
-    function updateStatUI() {
-      document.getElementById('stat-points').innerText = statPoints;
-      document.getElementById('val-pow').innerText = stats.pow;
-      document.getElementById('val-def').innerText = stats.def;
-      document.getElementById('val-spd').innerText = stats.spd;
-      document.getElementById('val-tec').innerText = stats.tec;
-
-      document.getElementById('sub-pow').innerText = (stats.pow * 2);
-      document.getElementById('sub-def').innerText = Math.round(stats.def * 1.5);
-      const speedSlowdown = Math.min(55, Math.round(stats.spd * 1.5));
-      document.getElementById('sub-spd').innerText = speedSlowdown;
-
-      const perfectWidth = Math.min(16, (2.0 + stats.tec * 0.5)).toFixed(1);
-      document.getElementById('sub-tec').innerText = perfectWidth;
-
-      const pZone = document.getElementById('perfect-zone-bar');
-      pZone.style.width = perfectWidth + '%';
-      pZone.style.left = (50 - perfectWidth / 2) + '%';
-
-      document.getElementById('matchup-detail').innerText =
-        `내 스피드(${stats.spd}) 반영 바늘 속도 -${speedSlowdown}% 감속 • 내 테크(${stats.tec}) 반영 PERFECT 존 ${perfectWidth}% 적용`;
-    }
-
-    function updateTemp(val) {
-      temp = parseInt(val, 10);
-      document.getElementById('disp-temp').innerText = val + '°C';
+    function simulateDrive10km() {
+      state.odometerKm += 10;
+      state.tickets += 1;
+      state.myBuff = computeBuffFromSensors();
       updateSensors();
-    }
-
-    function triggerHapticAndShake() {
-      const screen = document.getElementById('car-screen');
-      screen.classList.remove('shake-fx');
-      void screen.offsetWidth;
-      screen.classList.add('shake-fx');
-      if (window.PleosNativeVehicle && window.PleosNativeVehicle.triggerSeatHapticFeedback) {
-        window.PleosNativeVehicle.triggerSeatHapticFeedback(180);
-      }
-    }
-
-    function speakGleo(msg) {
-      if (window.PleosNativeAudio && window.PleosNativeAudio.speakBriefing) {
-        window.PleosNativeAudio.speakBriefing(msg);
-      }
+      const b = ELEMENTS[state.myBuff];
+      document.getElementById('gleo-text').innerText =
+        `🚗 10km 주행 완료! 배틀권 +1회 충전(총 ${state.tickets}회) 및 직전 주행 버프 [${b.emoji} ${b.name} 속성]이 저장되었습니다.`;
     }
 
     function setGear(g) {
-      gear = g;
-      ['p','r','n','d'].forEach(k => document.getElementById('btn-' + k).classList.remove('active'));
-      document.getElementById('btn-' + g.toLowerCase()).classList.add('active');
-
-      const gleo = document.getElementById('gleo-text');
-      const sttControls = document.getElementById('stt-controls');
-
-      if (gear !== 'P') {
-        // Zero-Distraction: 즉시 모든 배틀 타이머 중단 및 화면 전환
-        abortBattleForSafety();
-        document.getElementById('view-driving').style.display = 'flex';
-        document.getElementById('view-parked').style.display = 'none';
-        sttControls.style.display = 'none';
-
-        if (gear === 'D') {
-          // D 기어 주행 시 오도미터 상승 및 다음 배틀 쿨타임 즉시 충전 완료!
-          odometerKm = +(odometerKm + 3.4).toFixed(1);
-          battleReadyFromDrive = true;
-          updateCooldownUI();
-          document.getElementById('odo-display').innerText = `Odometer: ${odometerKm.toFixed(1)} km (+3.4km 주행 충전 완료!)`;
-          document.getElementById('driving-charge-status').innerText =
-            `🔋 주행 코어 에너지 100% 재충전 완료! (다음 P 주차 시 즉시 배틀 가능)`;
-          gleo.innerText = `[Zero-Distraction] 기어 D 주행 감지: 모든 조작 UI가 차단되며, 주행 에너지가 충전되어 배틀 쿨타임이 해제되었습니다.`;
-        } else {
-          gleo.innerText = `[Zero-Distraction] 기어 ${gear} 감지: 안전을 위해 모든 게임 UI가 비활성화됩니다.`;
-        }
-      } else {
-        document.getElementById('view-driving').style.display = 'none';
-        document.getElementById('view-parked').style.display = 'flex';
-        sttControls.style.display = 'flex';
-        triggerHapticAndShake();
-        updateCooldownUI();
-        const elObj = ELEMENTS[activeElement];
-        const statusMsg = (battleReadyFromDrive || isEvCharging)
-          ? `기어 P 체결 완료. ${elObj.name} 속성 코어가 충전되었습니다! ${botName} 출격 준비 완료.`
-          : `기어 P 체결 완료. 현재 배틀 쿨타임 중입니다. 다음 전투를 위해 기어 D로 주행하여 코어를 충전하세요.`;
-        gleo.innerText = `🔊 [Gleo TTS 브리핑] "${statusMsg}"`;
-        speakGleo(statusMsg);
-      }
-    }
-
-    function toggleEvCharging(checked) {
-      isEvCharging = checked;
-      const gleo = document.getElementById('gleo-text');
-      const raidBox = document.getElementById('epit-raid-box');
-      const raidBadge = document.getElementById('raid-badge');
-      if (checked) {
-        gleo.innerText = "⚡ [EvBattery SDK] E-pit 급속 충전 도킹 감지! 주행 없이도 배틀 쿨타임이 즉시 초기화되며 메가 보스 레이드가 활성화되었습니다.";
-        raidBox.style.display = 'block';
-        raidBadge.style.display = 'inline';
-      } else {
-        raidBox.style.display = 'none';
-        raidBadge.style.display = 'none';
-      }
-      updateLobbyMatchup();
-      updateCooldownUI();
-      renderAllMechaModels();
-    }
-
-    function navigateBluehands() {
-      document.getElementById('gleo-text').innerText =
-        "🧭 [NaviHelper SDK] 우측 후륜 공기압(26 psi) 정비를 위해 1.2km 거리의 '블루핸즈 성수점'을 경유지로 안내합니다. 정비 완료 시 한정판 아머 파츠가 지급됩니다!";
-      speakGleo("우측 후륜 공기압 정비를 위해 인근 블루핸즈 성수점을 경유지로 안내합니다.");
-      if (window.PleosNativeLocation && window.PleosNativeLocation.navigateToBluehands) {
-        window.PleosNativeLocation.navigateToBluehands("블루핸즈 성수점");
-      }
-    }
-
-    function triggerDroneDefense() {
-      addExp(30);
-      const toast = document.getElementById('header-exp-toast');
-      toast.style.display = 'inline-block';
-      setTimeout(() => { toast.style.display = 'none'; }, 3500);
-      document.getElementById('gleo-text').innerText =
-        "📡 [WebSocket 실시간 동기화] 성수 B2 거점 가디언 드론이 도전자 방어에 성공했습니다! 회수 없이 즉시 +30 EXP가 본체에 반영되었습니다.";
-    }
-
-    function addExp(pts) {
-      exp += pts;
-      let leveledUp = false;
-      while (exp >= 100) {
-        exp -= 100;
-        level += 1;
-        statPoints += 3;
-        leveledUp = true;
-      }
-      document.getElementById('disp-lv').innerText = level;
-      document.getElementById('cur-exp').innerText = exp;
-      document.getElementById('exp-bar').style.width = exp + '%';
-      updateStatUI();
-
-      if (leveledUp) {
-        triggerHapticAndShake();
+      if (state.inBattle && g !== 'P') return;
+      state.gear = g;
+      ['P','R','N','D'].forEach(k => document.getElementById('btn-' + k.toLowerCase()).classList.toggle('active', k === g));
+      const isParked = (g === 'P');
+      document.getElementById('view-driving').style.display = isParked ? 'none' : 'flex';
+      document.getElementById('view-parked').style.display = isParked ? 'flex' : 'none';
+      document.getElementById('stt-controls').style.display = isParked ? 'flex' : 'none';
+      if (!isParked) {
+        state.myBuff = computeBuffFromSensors();
         document.getElementById('gleo-text').innerText =
-          `🎉 LEVEL UP! '${botName}'이(가) Lv.${level}로 성장했습니다! 보너스 스탯 포인트 +3점을 4대 스탯(파워/방어/스피드/테크)에 배분하세요.`;
-      }
-    }
-
-    function addStat(type) {
-      if (statPoints > 0) {
-        statPoints -= 1;
-        stats[type] += 1;
-        updateStatUI();
-        const names = { pow: '파워', def: '방어', spd: '스피드', tec: '테크' };
+          '주행 중(D/R/N)입니다. Pleos 게임 앱 정책에 따라 조작이 잠금되며 10km마다 배틀권이 충전됩니다.';
+      } else {
         document.getElementById('gleo-text').innerText =
-          `✅ [${names[type]}] 스탯이 ${stats[type]}(으)로 상승했습니다! (남은 포인트: ${statPoints} P)`;
+          `주차(P) 완료! 내 ${state.botName}이 현재 위치에 배치되었습니다. 원하실 때 [전투 시작]을 눌러주세요.`;
       }
+      updateSensors();
     }
 
-    function voiceCommand(cmd) {
-      if (gear !== 'P') return;
-      if (cmd === 'stat') {
-        if (statPoints > 0) {
+    function updateCarModel() {
+      state.model = document.getElementById('sel-model').value;
+      state.botName = CAR_MODELS[state.model].name;
+      updateSensors();
+    }
+
+    function updateTemp(val) {
+      state.temp = parseInt(val, 10);
+      document.getElementById('disp-temp').innerText = `${state.temp}°C`;
+      updateSensors();
+    }
+
+    function updateSpotTarget() {
+      state.spot = document.getElementById('sel-spot').value;
+      updateSensors();
+    }
+
+    function togglePart(partKey) {
+      state.parts[partKey] = !state.parts[partKey];
+      document.getElementById('part-' + partKey).classList.toggle('equipped', state.parts[partKey]);
+      updateSensors();
+    }
+
+    function updateSensors() {
+      state.trim = document.getElementById('sel-trim').value;
+      state.isRaining = document.getElementById('chk-rain').checked;
+      state.isCruise = document.getElementById('chk-cruise').checked;
+      state.debuffs.tire = document.getElementById('chk-tire-low').checked;
+      state.debuffs.oil = document.getElementById('chk-oil-low').checked;
+      state.debuffs.washer = document.getElementById('chk-washer-low').checked;
+      state.debuffs.power = document.getElementById('chk-power-low').checked;
+
+      if (state.gear !== 'P') state.myBuff = computeBuffFromSensors();
+
+      const el = ELEMENTS[state.myBuff];
+      document.documentElement.style.setProperty('--current-ambient', el.color);
+      document.getElementById('ambient-bar').style.background = el.color;
+      document.getElementById('hw-light-dot').style.background = el.color;
+      document.getElementById('hw-light-text').innerText = `Ambient: ${el.color} (${el.name} 버프)`;
+      document.getElementById('odo-display').innerText = `Odometer: ${state.odometerKm.toLocaleString()} km · 🎫 배틀권 ${state.tickets}회`;
+      document.getElementById('header-ticket-badge').innerText = `🎫 배틀권: ${state.tickets}회`;
+      document.getElementById('ticket-tag').innerText = `🎫 보유 배틀권: ${state.tickets}회`;
+      document.getElementById('driving-ticket-status').innerText = `🎫 현재 보유 배틀권: ${state.tickets}회 (좌측 +10km 버튼으로 추가 충전 가능)`;
+
+      const carScreen = document.getElementById('car-screen');
+      carScreen.classList.toggle('fallback-border-glow', state.trim === 'FALLBACK');
+      document.getElementById('hw-seat-pill').innerText = state.trim === 'FULL' ? '💺 Seat Haptic: Ready' : '🖥️ Fallback: Screen Shake';
+
+      document.getElementById('driving-stats').innerText = `${el.emoji} ${el.desc} 감지: 직전 주행 [${el.name} 속성 버프] 저장 중`;
+
+      // Showcase & Parts
+      document.getElementById('bot-name').innerText = state.botName;
+      document.getElementById('disp-lv').innerText = state.level;
+      const elPill = document.getElementById('bot-element');
+      elPill.innerText = `${el.emoji} 직전 주행 버프: ${el.name} 속성`;
+      elPill.style.background = el.color;
+      document.getElementById('showcase-svg-holder').innerHTML = renderMekabotSvg(state.model, state.myBuff, state.parts, false);
+
+      const eqCount = Object.values(state.parts).filter(Boolean).length;
+      document.getElementById('parts-count').innerText = `${eqCount}/4 장착`;
+
+      // Debuff status
+      const activeDebuffs = [];
+      if (state.debuffs.tire) activeDebuffs.push('공기압(방어↓)');
+      if (state.debuffs.oil) activeDebuffs.push('오일(파워↓)');
+      if (state.debuffs.washer) activeDebuffs.push('워셔액(테크↓)');
+      if (state.debuffs.power) activeDebuffs.push('출력/잔량(스피드↓)');
+
+      const hasDebuff = activeDebuffs.length > 0;
+      document.getElementById('tire-spark').style.display = hasDebuff ? 'flex' : 'none';
+      document.getElementById('tire-spark').innerText = `⚡ 디버프: ${activeDebuffs.join(', ')}`;
+      document.getElementById('btn-bluehands').style.display = hasDebuff ? 'inline' : 'none';
+      const condBadge = document.getElementById('badge-condition');
+      condBadge.innerText = hasDebuff ? `⚠️ 정비 필요 (${activeDebuffs.length}건)` : '🛡️ Full Armor (+10% HP)';
+      condBadge.style.background = hasDebuff ? 'var(--coral)' : 'var(--mint)';
+      document.getElementById('debuff-summary').innerText = hasDebuff
+        ? `⚠️ 차량 이상 디버프: ${activeDebuffs.join(' · ')} (-20%)`
+        : '차량 상태 정상: 보호막(+10% HP) 버프 적용 중';
+
+      // Opponent & Matchup
+      const sp = SPOTS[state.spot];
+      const oppEl = ELEMENTS[sp.oppEl];
+      document.getElementById('opp-lobby-title').innerText = `상대: ${sp.oppName} (${oppEl.emoji} ${oppEl.name})`;
+      document.getElementById('special-tag').innerText = sp.tag;
+      const muEl = document.getElementById('matchup-Result');
+      if (el.beats === sp.oppEl) {
+        muEl.innerText = `⚡ 상성 우위: ${el.emoji}${el.name} → ${oppEl.emoji}${oppEl.name} (+30% 데미지!)`;
+        muEl.style.color = '#2EE59D';
+      } else if (el.losesTo === sp.oppEl) {
+        muEl.innerText = `⚠️ 상성 열세: ${el.emoji}${el.name} ← ${oppEl.emoji}${oppEl.name} (-20% 데미지)`;
+        muEl.style.color = '#FF6F61';
+      } else {
+        muEl.innerText = `⚖️ 상성 호각: ${el.emoji}${el.name} vs ${oppEl.emoji}${oppEl.name} (기본 100%)`;
+        muEl.style.color = '#FFD700';
+      }
+
+      // Stats display
+      ['pow', 'def', 'spd', 'tec'].forEach(k => {
+        document.getElementById('val-' + k).innerText = getEffectiveStat(k);
+      });
+      document.getElementById('sub-pow').innerText = `공격력 +${getEffectiveStat('pow') * 2}%`;
+      document.getElementById('sub-def').innerText = `피해감소 -${Math.min(45, Math.round(getEffectiveStat('def') * 1.5))}%`;
+      document.getElementById('sub-spd').innerText = `바 감속 -${Math.min(45, Math.round(getEffectiveStat('spd') * 1.5))}%`;
+      document.getElementById('sub-tec').innerText = `PERFECT ${(7 + getEffectiveStat('tec') * 0.4).toFixed(1)}%`;
+      document.getElementById('stat-points').innerText = state.statPoints;
+      document.querySelectorAll('.btn-plus').forEach(btn => btn.disabled = state.statPoints <= 0);
+
+      // Battle button state
+      const btnStart = document.getElementById('btn-start-battle');
+      const noTicketAlert = document.getElementById('no-ticket-alert');
+      btnStart.disabled = state.tickets <= 0;
+      noTicketAlert.style.display = state.tickets <= 0 ? 'block' : 'none';
+    }
+
+    function addStat(k) {
+      if (state.statPoints <= 0) return;
+      state.stats[k] += 1;
+      state.statPoints -= 1;
+      updateSensors();
+    }
+
+    function voiceCommand(type) {
+      if (type === 'stat') {
+        if (state.statPoints > 0) {
           addStat('pow');
-          document.getElementById('gleo-text').innerText =
-            `🎙️ [STT 음성 인식: "스탯 파워에 찍어줘"] ➔ 파워 스탯에 1포인트를 배분했습니다! (현재 파워: ${stats.pow})`;
-        } else {
-          document.getElementById('gleo-text').innerText =
-            `🎙️ [STT 음성 인식] 현재 배분 가능한 스탯 포인트가 없습니다. 드론 방어 또는 배틀로 레벨업하세요!`;
+          document.getElementById('gleo-text').innerText = '🎙️ 음성 명령 처리: 파워 스탯 +1 강화 완료!';
         }
-      } else if (cmd === 'battle') {
-        if (!battleReadyFromDrive && !isEvCharging) {
-          document.getElementById('gleo-text').innerText =
-            `🎙️ [STT 음성 인식: "배틀 시작해줘"] ➔ ⏳ 현재 코어 쿨타임 중입니다! 먼저 기어 D로 주행해 원소 에너지를 충전하세요.`;
-          speakGleo("현재 코어 쿨타임 중입니다. 기어 D로 주행하여 에너지를 충전하세요.");
-          return;
-        }
-        document.getElementById('gleo-text').innerText =
-          `🎙️ [STT 음성 인식: "배틀 시작해줘"] ➔ 20초 섹터 배틀 시퀀스를 즉시 개시합니다!`;
+      } else if (type === 'battle') {
         startBattle();
       }
     }
 
     function renameBot() {
-      const name = prompt("새로운 메카봇 콜사인을 입력하세요 (Gleo AI 음성 연동):", botName);
-      if (name) {
-        botName = name;
-        document.getElementById('bot-name').innerText = name;
-        document.getElementById('arena-my-name').innerText = name;
-        document.getElementById('gleo-text').innerText = `🔊 메카봇 고유 콜사인이 '${name}'(으)로 등록되었습니다.`;
+      const next = prompt('새 메카봇 콜사인을 입력하세요:', state.botName);
+      if (next && next.trim()) {
+        state.botName = next.trim();
+        updateSensors();
       }
     }
 
-    function deployDrone() {
-      document.getElementById('drone-status-text').innerText =
-        `배치 완료 [2/3]: 성수 오피스 B2 ('${botName}' Lv.${level} 스탯 복제 드론 • 실시간 방어 대기 중)`;
-      document.getElementById('gleo-text').innerText =
-        `🛰️ 현 주차 위치(성수 B2)에 '${botName}' 가디언 드론을 배치했습니다. 오프라인 중 교전 발생 시 실시간으로 경험치가 전송됩니다.`;
+    function navigateBluehands() {
+      document.getElementById('gleo-text').innerText = '🧭 NaviHelper: 가장 가까운 블루핸즈 정비소(1.4km) 경로를 안내합니다.';
     }
 
-    // --- Combat Visual FX Helpers ---
-    function playCombatExchangeAnimation(attDmg, defDmg, isOverdrive = false) {
-      const myUnit = document.getElementById('arena-my-unit');
-      const oppUnit = document.getElementById('arena-opp-unit');
+    function triggerFX(attacker, dmgText, isCrit) {
+      const stage = document.getElementById('combat-stage');
+      const myUnit = document.getElementById('my-arena-svg');
+      const oppUnit = document.getElementById('opp-arena-svg');
       const beam = document.getElementById('laser-beam');
-      const oppPopup = document.getElementById('opp-dmg-popup');
-      const myPopup = document.getElementById('my-dmg-popup');
+      const popup = document.getElementById('dmg-popup');
 
-      // Reset classes
-      myUnit.className = 'arena-mecha-unit';
-      oppUnit.className = 'arena-mecha-unit';
       beam.className = 'laser-beam';
-      oppPopup.className = 'dmg-popup';
-      myPopup.className = 'dmg-popup';
-      void myUnit.offsetWidth;
+      popup.className = 'dmg-popup';
+      void beam.offsetWidth;
 
-      if (isOverdrive) {
-        myUnit.classList.add('anim-overdrive');
+      if (attacker === 'my') {
+        myUnit.classList.add(isCrit ? 'anim-overdrive' : 'anim-lunge-right');
+        oppUnit.classList.add('anim-hit');
         beam.classList.add('beam-shoot-right');
-        oppUnit.classList.add('anim-hit');
-        oppPopup.innerText = `💥 -${attDmg}% CRITICAL!`;
-        oppPopup.classList.add('dmg-show');
-        return;
+      } else {
+        oppUnit.classList.add('anim-lunge-left');
+        myUnit.classList.add('anim-hit');
+        beam.classList.add('beam-shoot-left');
       }
-
-      // 1. 내 메카봇 돌진 및 레이저 사격 -> 적 피격
-      myUnit.classList.add('anim-lunge-right');
-      beam.classList.add('beam-shoot-right');
+      popup.innerText = dmgText;
+      popup.classList.add('dmg-show');
+      if (state.trim === 'FALLBACK' || isCrit) {
+        stage.classList.add('shake-fx');
+        setTimeout(() => stage.classList.remove('shake-fx'), 340);
+      }
       setTimeout(() => {
-        oppUnit.classList.add('anim-hit');
-        oppPopup.innerText = `-${attDmg}%`;
-        oppPopup.classList.add('dmg-show');
-      }, 150);
-
-      // 2. 적 메카봇 반격 -> 내 메카봇 피격
-      if (defDmg > 0) {
-        setTimeout(() => {
-          oppUnit.className = 'arena-mecha-unit anim-lunge-left';
-          beam.className = 'laser-beam beam-shoot-left';
-          myUnit.className = 'arena-mecha-unit anim-hit';
-          myPopup.innerText = `-${defDmg}%`;
-          myPopup.classList.add('dmg-show');
-        }, 420);
-      }
-    }
-
-    // --- 20-Second Strict Battle Engine ---
-    let battleTimer = null;
-    let needleInterval = null;
-    let needlePos = 0;
-    let needleDir = 1;
-    let battleElapsed = 0;
-    let overdriveResolved = false;
-    let earnedBonusExp = 0;
-    let myHp = 100;
-    let oppHp = 100;
-
-    function abortBattleForSafety() {
-      if (battleTimer || needleInterval) {
-        clearInterval(battleTimer);
-        clearInterval(needleInterval);
-        battleTimer = null;
-        needleInterval = null;
-        document.getElementById('battle-lobby').style.display = 'flex';
-        document.getElementById('battle-arena').style.display = 'none';
-      }
+        myUnit.classList.remove('anim-lunge-right', 'anim-hit', 'anim-overdrive');
+        oppUnit.classList.remove('anim-lunge-left', 'anim-hit');
+      }, 550);
     }
 
     function startBattle() {
-      if (gear !== 'P') return;
-      if (!battleReadyFromDrive && !isEvCharging) {
-        updateCooldownUI();
-        return;
-      }
-      abortBattleForSafety();
+      if (state.gear !== 'P' || state.tickets <= 0 || state.inBattle) return;
+      state.tickets -= 1;
+      state.inBattle = true;
+      updateSensors();
 
-      const myEl = ELEMENTS[activeElement];
-      const oppObj = ENEMIES[enemyElement];
-      const oppEl = ELEMENTS[enemyElement];
-      const mult = calculateMultiplier(activeElement, enemyElement);
+      const sp = SPOTS[state.spot];
+      const hasAnyDebuff = Object.values(state.debuffs).some(Boolean);
+      state.myMaxHp = hasAnyDebuff ? 100 : 110;
+      state.myHp = state.myMaxHp;
+      state.oppMaxHp = 100;
+      state.oppHp = 100;
+      state.timeLeft = 20.0;
+      state.timingActive = false;
+      state.timingHitDone = false;
 
       document.getElementById('battle-lobby').style.display = 'none';
       document.getElementById('battle-arena').style.display = 'flex';
-      document.getElementById('crit-banner').style.display = 'none';
-
-      document.getElementById('arena-my-name').innerText = botName;
-      document.getElementById('arena-my-elem').innerText = `${myEl.icon} ${myEl.name} 속성`;
-      document.getElementById('arena-my-elem').style.color = myEl.color;
-      document.getElementById('my-hp').style.background = myEl.color;
-
-      document.getElementById('arena-opp-name').innerText = isEvCharging ? '메가-기가트론(보스)' : oppObj.name;
-      document.getElementById('arena-opp-elem').innerText = `${oppEl.icon} ${oppEl.name} 속성`;
-      document.getElementById('arena-opp-elem').style.color = oppEl.color;
-      document.getElementById('opp-hp').style.background = oppEl.color;
-
-      renderAllMechaModels();
-
-      myHp = tireCondition === 'OK' ? 110 : 95;
-      oppHp = 100;
+      document.getElementById('arena-my-name').innerText = state.botName;
+      document.getElementById('arena-opp-name').innerText = sp.oppName;
+      document.getElementById('my-arena-svg').innerHTML = renderMekabotSvg(state.model, state.myBuff, state.parts, false);
+      document.getElementById('opp-arena-svg').innerHTML = renderMekabotSvg(sp.oppModel, sp.oppEl, { shield: false, wing: false, cannon: false, core: false }, true);
       updateHpBars();
 
-      battleElapsed = 0;
-      overdriveResolved = false;
-      earnedBonusExp = 0;
-      document.getElementById('timer-sec').innerText = '0.0';
-      document.getElementById('phase-label').innerText = 'Phase 1 (0~4s): 상성 스캔 및 전투 아머 전개';
-      document.getElementById('battle-log').innerText =
-        `[0~4s] ${myEl.icon}${myEl.name} vs ${oppEl.icon}${oppEl.name} 상성 배율 x${mult.toFixed(1)} 스캔 완료!`;
-      document.getElementById('timing-header').innerText = '8.0초 시점에 OVERDRIVE 타이밍 바가 활성화됩니다...';
-      document.getElementById('btn-overdrive').disabled = true;
+      const perfectW = Math.min(18, 7 + getEffectiveStat('tec') * 0.4);
+      const pz = document.getElementById('perfect-zone');
+      pz.style.width = `${perfectW}%`;
+      pz.style.left = `${50 - perfectW / 2}%`;
 
-      // 2초 시점 오프닝 포격 연출
-      setTimeout(() => {
-        if (battleTimer) playCombatExchangeAnimation(8, 0, false);
-      }, 1500);
+      document.getElementById('battle-log').innerText = '⚔️ 20초 배틀 개시! 8초 시점 OVERDRIVE를 준비하세요!';
 
-      // 0.5초 단위 엄격한 20초 타임라인
-      battleTimer = setInterval(() => {
-        battleElapsed = +(battleElapsed + 0.5).toFixed(1);
-        document.getElementById('timer-sec').innerText = battleElapsed.toFixed(1);
+      let autoStep = 0;
+      state.battleTimer = setInterval(() => {
+        state.timeLeft = Math.max(0, state.timeLeft - 0.1);
+        document.getElementById('battle-timer').innerText = `${state.timeLeft.toFixed(1)}s`;
 
-        if (battleElapsed === 4.0) {
-          document.getElementById('phase-label').innerText = 'Phase 2 (4~16s): 메카닉 실시간 교전 & 포격';
-        }
-
-        // 4~8초 및 13~15초 자동 교전 틱 + 로봇 타격 애니메이션
-        if (((battleElapsed >= 4.0 && battleElapsed < 8.0) || (battleElapsed >= 13.0 && battleElapsed <= 15.0)) && battleElapsed % 1.0 === 0) {
-          const attDmg = Math.round((9 + stats.pow * 0.3) * mult);
-          const defDmg = Math.max(3, Math.round(9 - stats.def * 0.25));
-          oppHp = Math.max(10, oppHp - attDmg);
-          myHp = Math.max(25, myHp - defDmg);
+        if (state.timeLeft <= 16.5 && autoStep === 0) {
+          autoStep = 1;
+          const dmg = Math.round(16 * (1 + getEffectiveStat('pow') * 0.015));
+          state.oppHp = Math.max(0, state.oppHp - dmg);
+          triggerFX('my', `-${dmg}`, false);
           updateHpBars();
-          playCombatExchangeAnimation(attDmg, defDmg, false);
-          document.getElementById('battle-log').innerText =
-            `⚔️ 메카 공방전 (${battleElapsed}s): 플라즈마 캐논 -${attDmg}% 적중! (내 잔여 HP ${myHp}%)`;
         }
-
-        // 8.0초: OVERDRIVE 타이밍 바 활성화
-        if (battleElapsed === 8.0) {
-          document.getElementById('phase-label').innerText = '⚡ OVERDRIVE (8.0s): 정중앙 초록 영역을 탭하세요!';
-          document.getElementById('timing-header').innerText = '⚡ 지금! 바늘이 중앙 PERFECT 존에 올 때 필살기를 발사하세요!';
-          document.getElementById('btn-overdrive').disabled = false;
-          startNeedle();
-        }
-
-        // 12.0초까지 미조작 시 기획서 명세대로 'GOOD' 자동 판정 처리
-        if (battleElapsed === 12.0 && !overdriveResolved) {
-          resolveOverdriveAutoGood();
-        }
-
-        // 16.0초: 결과 정산 페이즈
-        if (battleElapsed === 16.0) {
-          document.getElementById('phase-label').innerText = 'Phase 3 (16~20s): 적 메카봇 격파 및 EXP 동기화';
-          oppHp = 0;
+        if (state.timeLeft <= 13.5 && autoStep === 1) {
+          autoStep = 2;
+          const dmg = Math.max(8, Math.round(18 * (1 - getEffectiveStat('def') * 0.012)));
+          state.myHp = Math.max(0, state.myHp - dmg);
+          triggerFX('opp', `-${dmg}`, false);
           updateHpBars();
-          playCombatExchangeAnimation(99, 0, true);
-          document.getElementById('battle-log').innerText =
-            `🏆 적 메카봇 완전 격파! 총 +${60 + earnedBonusExp} EXP 및 전투 데이터 정산 중...`;
         }
-
-        // 20.0초: 엄격 종료
-        if (battleElapsed >= 20.0) {
-          finishBattle();
+        if (state.timeLeft <= 12.0 && !state.timingActive && !state.timingHitDone) {
+          startTimingBar();
         }
-      }, 500);
+        if (state.timeLeft <= 0) {
+          finishBattle(sp.bonusExp);
+        }
+      }, 100);
     }
 
-    function updateHpBars() {
-      document.getElementById('my-hp').style.width = Math.min(100, myHp) + '%';
-      document.getElementById('my-hp-text').innerText = myHp;
-      document.getElementById('opp-hp').style.width = Math.max(0, oppHp) + '%';
-      document.getElementById('opp-hp-text').innerText = oppHp;
-    }
+    function startTimingBar() {
+      state.timingActive = true;
+      state.needlePos = 0;
+      state.needleDir = 1;
+      document.getElementById('crit-banner').style.display = 'block';
+      document.getElementById('battle-phase').innerText = 'OVERDRIVE 타이밍!';
+      const btn = document.getElementById('btn-timing-hit');
+      btn.disabled = false;
+      btn.innerText = '💥 지금 터치! (CRITICAL HIT)';
 
-    function startNeedle() {
-      needlePos = 0;
-      needleDir = 1;
-      const step = Math.max(1.0, 2.8 - (stats.spd * 0.08));
-      needleInterval = setInterval(() => {
-        needlePos += needleDir * step;
-        if (needlePos >= 98) { needlePos = 98; needleDir = -1; }
-        if (needlePos <= 2)  { needlePos = 2;  needleDir = 1; }
-        document.getElementById('needle').style.left = needlePos + '%';
+      const spdFactor = Math.max(0.55, 1 - getEffectiveStat('spd') * 0.012);
+      state.needleTimer = setInterval(() => {
+        state.needlePos += state.needleDir * 2.6 * spdFactor;
+        if (state.needlePos >= 100) { state.needlePos = 100; state.needleDir = -1; }
+        if (state.needlePos <= 0) { state.needlePos = 0; state.needleDir = 1; }
+        document.getElementById('timing-needle').style.left = `${state.needlePos}%`;
       }, 20);
     }
 
-    function hitTiming() {
-      if (overdriveResolved) return;
-      overdriveResolved = true;
-      clearInterval(needleInterval);
-      document.getElementById('btn-overdrive').disabled = true;
+    function hitTimingBar() {
+      if (!state.timingActive) return;
+      clearInterval(state.needleTimer);
+      state.timingActive = false;
+      state.timingHitDone = true;
+      document.getElementById('btn-timing-hit').disabled = true;
+      document.getElementById('crit-banner').style.display = 'none';
 
-      const halfWidth = Math.min(8.0, 1.0 + stats.tec * 0.25);
-      const pMin = 50.0 - halfWidth;
-      const pMax = 50.0 + halfWidth;
+      const dist = Math.abs(state.needlePos - 50);
+      const halfPerfect = (7 + getEffectiveStat('tec') * 0.4) / 2;
+      let mult = 1.0, label = 'GOOD';
+      if (dist <= halfPerfect) { mult = 2.0; label = 'PERFECT 200%!'; }
+      else if (dist <= 15) { mult = 1.4; label = 'GREAT 140%!'; }
 
-      if (needlePos >= pMin && needlePos <= pMax) {
-        earnedBonusExp = 40;
-        oppHp = Math.max(0, oppHp - 65);
-        triggerHapticAndShake();
-        playCombatExchangeAnimation(65, 0, true);
-        document.getElementById('crit-banner').style.display = 'block';
-        document.getElementById('battle-log').innerText =
-          `🔥 [PERFECT 판정!] 200% 크리티컬 버스트 캐논 작렬! (+40 보너스 EXP)`;
-      } else if (needlePos >= 35.0 && needlePos <= 65.0) {
-        earnedBonusExp = 20;
-        oppHp = Math.max(0, oppHp - 45);
-        triggerHapticAndShake();
-        playCombatExchangeAnimation(45, 0, true);
-        document.getElementById('battle-log').innerText =
-          `⚡ [GREAT 판정!] 150% 강화 포격 적중! (+20 보너스 EXP)`;
-      } else {
-        earnedBonusExp = 0;
-        oppHp = Math.max(0, oppHp - 30);
-        playCombatExchangeAnimation(30, 0, false);
-        document.getElementById('battle-log').innerText =
-          `👍 [GOOD 판정!] 100% 표준 타격 적중!`;
+      const el = ELEMENTS[state.myBuff];
+      const sp = SPOTS[state.spot];
+      const elMult = el.beats === sp.oppEl ? 1.3 : (el.losesTo === sp.oppEl ? 0.8 : 1.0);
+      const dmg = Math.round(28 * mult * elMult);
+      state.oppHp = Math.max(0, state.oppHp - dmg);
+      triggerFX('my', `${label} -${dmg}`, mult >= 2.0);
+      updateHpBars();
+      document.getElementById('battle-log').innerText = `💥 ${label} 발동! 상대에게 ${dmg} 데미지!`;
+
+      setTimeout(() => finishBattle(sp.bonusExp), 900);
+    }
+
+    function updateHpBars() {
+      document.getElementById('arena-my-hp-text').innerText = `HP ${state.myHp} / ${state.myMaxHp}`;
+      document.getElementById('arena-opp-hp-text').innerText = `HP ${state.oppHp} / ${state.oppMaxHp}`;
+      document.getElementById('my-hp-bar').style.width = `${(state.myHp / state.myMaxHp) * 100}%`;
+      document.getElementById('opp-hp-bar').style.width = `${(state.oppHp / state.oppMaxHp) * 100}%`;
+    }
+
+    function finishBattle(rewardExp) {
+      if (!state.inBattle) return;
+      clearInterval(state.battleTimer);
+      clearInterval(state.needleTimer);
+      state.inBattle = false;
+
+      state.exp += rewardExp;
+      let lvUpMsg = '';
+      if (state.exp >= 100) {
+        state.exp -= 100;
+        state.level += 1;
+        state.statPoints += 3;
+        lvUpMsg = ` 🎉 레벨업(Lv.${state.level}) +3 스탯 포인트!`;
       }
-      updateHpBars();
-    }
+      document.getElementById('cur-exp').innerText = state.exp;
+      document.getElementById('exp-bar').style.width = `${state.exp}%`;
+      document.getElementById('gleo-text').innerText = `🏆 배틀 종료! +${rewardExp} EXP 획득!${lvUpMsg}`;
 
-    function resolveOverdriveAutoGood() {
-      overdriveResolved = true;
-      clearInterval(needleInterval);
-      document.getElementById('btn-overdrive').disabled = true;
-      earnedBonusExp = 0;
-      oppHp = Math.max(0, oppHp - 30);
-      playCombatExchangeAnimation(30, 0, false);
-      updateHpBars();
-      document.getElementById('battle-log').innerText =
-        `⏱️ [미조작 안전 폴백] GOOD 판정(100% 데미지)으로 자동 포격하여 전투를 지속합니다.`;
-    }
-
-    function finishBattle() {
-      clearInterval(battleTimer);
-      clearInterval(needleInterval);
-      battleTimer = null;
-      needleInterval = null;
-
-      // 1회 전투 완료 후 코어 에너지 소진 -> D 기어로 주행해야 다시 충전됨!
-      battleReadyFromDrive = false;
-      updateCooldownUI();
-
-      const totalExp = 60 + earnedBonusExp;
-      addExp(totalExp);
-
-      document.getElementById('battle-lobby').style.display = 'flex';
       document.getElementById('battle-arena').style.display = 'none';
-      document.getElementById('gleo-text').innerText =
-        `🏆 20초 배틀 승리! 총 +${totalExp} EXP 획득! (코어 쿨타임 가동: 다음 전투를 위해 기어 D로 주행하여 원소를 재충전하세요)`;
+      document.getElementById('battle-lobby').style.display = 'flex';
+      updateSensors();
     }
 
-    // --- Pleos Connect Native SDK Event Bus ---
-    window.PleosEventBus = {
-      dispatch: function(event, payload) {
-        console.log("[PleosEventBus]", event, payload);
-        if (event === 'onGearChanged' && payload && payload.gear) {
-          setGear(payload.gear);
-        } else if (event === 'onExteriorTempChanged' && payload && typeof payload.temp === 'number') {
-          updateTemp(Math.round(payload.temp));
-        } else if (event === 'onWiperChanged' && payload) {
-          document.getElementById('chk-rain').checked = !!payload.isRaining;
-          updateSensors();
-        } else if (event === 'onCruiseChanged' && payload) {
-          document.getElementById('chk-cruise').checked = !!payload.isCruise;
-          updateSensors();
-        } else if (event === 'onTireStatusChanged' && payload) {
-          document.getElementById('sel-tire').value = payload.fullArmor ? 'OK' : 'LOW';
-          updateSensors();
-        } else if (event === 'onEvChargingChanged' && payload) {
-          document.getElementById('chk-ev').checked = !!payload.charging;
-          toggleEvCharging(!!payload.charging);
-        } else if (event === 'onOdometerChanged' && payload && typeof payload.km === 'number') {
-          odometerKm = payload.km;
-          document.getElementById('odo-display').innerText = `Odometer: ${odometerKm.toFixed(1)} km (Pleos SDK 검증됨)`;
-        } else if (event === 'onAmbientCapabilityChecked' && payload) {
-          document.getElementById('sel-trim').value = payload.supported ? 'FULL' : 'FALLBACK';
-          updateSensors();
-        } else if (event === 'onVoiceCommand' && payload && payload.utterance) {
-          if (payload.utterance.includes('파워') || payload.utterance.includes('스탯')) {
-            voiceCommand('stat');
-          } else if (payload.utterance.includes('배틀')) {
-            voiceCommand('battle');
-          }
-        }
-      }
-    };
-
-    // 초기화
+    // Initialize UI
     updateSensors();
   </script>
 </body>

@@ -1,72 +1,61 @@
 # PLEOMEKABOT (플레오메카봇)
 
-> **주행(`Gear D`)으로 차량 센서를 통해 속성을 얻고, 정차(`Gear P`)하면 근처 AI 봇이나 다른 운전자가 배치해둔 봇과 20초 결투해 경험치를 얻는 Pleos Connect 기반 차량 연동 메카닉 배틀 RPG**
+> **운전이 곧 게임이 되는 차량판 포켓몬 GO — Pleos OS 기반 차량 데이터 연동 위치·주행 RPG**
+
+**PLEOMEKABOT**은 현대자동차그룹의 **Pleos Playground Vehicle SDK (`ai.pleos.playground:Vehicle:2.3.2`)**와 차량 내 위치·주행·상태 데이터를 결합하여, **주행 → 정차(Gear P) 전투 → 성장·파츠 커스터마이징 → 재주행**의 직관적인 루프로 즐기는 차량용 게이미피케이션 앱입니다.
 
 ---
 
-## 1. 프로젝트 개요
+## 핵심 게임 루프 (차량판 포켓몬 GO)
 
-**PLEOMEKABOT**은 내연기관·하이브리드·전기차(EV) 등 **현대자동차그룹 전 차종**을 대상으로, **Pleos Vehicle SDK (`ai.pleos.playground:Vehicle:2.3.2`)**를 통해 주행 중 차량 센서 데이터를 수신하고 정차 순간에 20초 메카닉 배틀을 즐기는 **차량 특화 게이미피케이션 앱**입니다.
+1. **주행 & 배틀권 충전 (`DistanceDriven`)**
+   - 차량을 **10km 주행할 때마다 배틀권 1회**가 자동 충전됩니다.
+   - 별도 조작 없이 안전한 주행 자체가 게임의 에너지원이 됩니다.
 
-### 메인 루프 (Core Loop)
-1. **주행 (`Gear D`)**: 주행 중에는 안전을 위해 조작 화면이 잠금(Safety Lock) 처리되며, 온도·와이퍼·크루즈 센서를 통해 **5대 원소 속성**이 충전되고 이전 배틀의 **쿨타임이 해제**됩니다.
-2. **정차 (`Gear P`)**: 목적지에 정차하면 내 차종 실루엣의 메카봇이 깨어나고, 근처 반경 내 **AI 봇 또는 다른 운전자가 배치해둔 봇**과 20초 타이밍 배틀을 펼쳐 **경험치(EXP)와 스탯 포인트**를 획득합니다.
+2. **직전 주행 기반 5대 속성 버프 (고정 속성 없음)**
+   - 메카봇은 태생적으로 고정된 속성을 갖지 않습니다.
+   - **전투 직전 주행 데이터**에 따라 5가지 속성 버프 중 하나를 획득해 전투에 적용합니다.
+     - **화염 (`FIRE`)**: 에코 오프 / 다이내믹 주행 및 엔진 부하 조건
+     - **빙결 (`ICE`)**: 공조(HVAC) 저온 설정 (`HvacTemperatureValue`)
+     - **질풍 (`WIND`)**: 크루즈 컨트롤 고속 항속 (`CruiseControlState`)
+     - **전격 (`VOLT`)**: EV 회생제동·충전 또는 와이퍼 작동 (`WiperState` / `EvBatteryStateOfCharge`)
+     - **대지 (`EARTH`)**: 장거리 정속 에코 주행 (`DistanceDriven`)
 
-### 부가 기능 (Sub Features)
-- **내 봇 주차 위치 배치**: 정차한 위치에 내 봇을 배치해 두고, 다른 운전자가 도전할 때 추가 경험치를 획득합니다.
-- **EV 전용 충전소 보너스 & 협동 레이드**: 전기차(EV)의 경우 **현대자동차그룹이 운영하는 초고속 충전소(E-pit 등)**에서 충전할 때에만 보너스 개념으로 추가 배틀권과 협동 레이드 참여 기회를 제공합니다.
-- **차량 컨디션 연동 버프**: 타이어 공기압 등 차량 상태가 정상일 때 보호막(`+10% HP`) 버프가 적용됩니다.
+3. **정차(Gear `P`) 수동 배틀 시작 & 스페셜 스팟 매칭**
+   - **안전 정책 준수**: 주행 중(`D`/`R`/`N`)에는 전투 및 UI 조작을 차단하고, **기어 `P`단 정차 상태**에서 운전자가 앱을 실행해 직접 **배틀 시작**을 누를 때만 전투가 진행됩니다.
+   - **현재 주차 위치 배치 & 상대 매칭**:
+     - 내 메카봇은 별도 분신 없이 **현재 차량이 주차된 위치**에 배치됩니다.
+     - **유저 차량 메카봇 매칭**: 주변에 주차·배치된 다른 차량 메카봇과 대전 시 **보너스 경험치**를 획득합니다.
+     - **스페셜 스팟(POI) 메카봇**: `경복궁`, `에버랜드`, `스타필드` 등 유명 관광지·유적지·랜드마크 정차 시 해당 장소만의 **스페셜 메카봇**이 등장합니다.
+     - **AI 야생 메카봇**: 주변 유저 차량이나 스페셜 스팟이 없을 경우 AI 생성 메카봇과 대결합니다.
 
----
+4. **실제 차량 상태 연동 디버프 (`Pleos Vehicle SDK v2.3.2`)**
+   - 단순 수치 놀이가 아닌 실제 차량 점검을 유도하도록 차량 이상 상태를 디버프로 반영합니다.
+     - 타이어 공기압 경고 (`TirePressureListener`) → **속도 저하**
+     - 엔진오일 레벨 경고 (`OilLevelStateListener`) → **방어력 저하**
+     - 워셔액 부족 경고 (`LowWasherFluidWaringListener`) → **명중률 저하**
+     - 출력 제한 / 연료·배터리 부족 (`PowerDownWarningIndicatorListener` / `FuelPercentListener` / `EvBatteryStateOfChargeListener`) → **공격력 저하**
 
-## 2. 시스템 아키텍처
-
-```text
-[Pleos Vehicle / Emulator]
-   ├─ Gear / Speed / Odometer (P/D 안전 잠금 & 쿨타임 해제)
-   ├─ HVAC / Wiper / Tire (5대 원소 연산 & 공기압 버프)
-   └─ CarInfo / EvBattery (전 차종 식별 & EV E-pit 충전 감지)
-          │
-          ▼  (ai.pleos.playground:Vehicle:2.3.2 / Kotlin StateFlow)
-[Android Native Host - PleosVehicleBridge.kt]
-   ├─ Safety & Cooldown Controller
-   └─ @JavascriptInterface (window.PleosBridge)
-          │
-          ▼  (WebView Pixel Art UI & Custom SVG Mecha Renderer)
-[PLEOMEKABOT Pixel Web Engine (demo.html / index.html)]
-   ├─ 5대 원소 상성 엔진 (불 → 얼음 → 바람 → 땅 → 물 → 불)
-   ├─ 4대 핵심 스탯 (파워 · 방어 · 스피드 · 테크)
-   └─ 20초 타이밍 배틀 & 8초 OVERDRIVE 물리 엔진
-```
-
-자세한 구조와 시나리오는 루트 경로의 **`PLEOMEKABOT_아키텍처_프로세스_요약.html`**에서 확인할 수 있습니다.
-
----
-
-## 3. 프로젝트 구조
-
-```text
-.
-├── android/                                # Android Studio / Pleos Vehicle SDK v2.3.2 네이티브 프로젝트
-│   └── app/src/main/
-│       ├── java/.../PleosVehicleBridge.kt  # Pleos SDK 연동 & Safety/Cooldown 브릿지
-│       └── assets/index.html               # WebView 탑재 Pixel Art UI 게임 엔진
-├── web-engine/                             # 웹 엔진 모듈 소스
-├── mock-server/                            # Mock 텔레메트리 시뮬레이터 서버
-├── demo.html                               # 단독 실행 가능한 웹 시뮬레이터
-├── PLEOMEKABOT_아키텍처_프로세스_요약.html    # 아키텍처 · 프로세스 · 서비스 요약 HTML
-├── PLEOMEKABOT-debug.apk                   # Pleos Connect Emulator 설치용 빌드 APK
-└── README.md
-```
+5. **4대 차종 로봇 디자인 & 파츠 성장 시스템**
+   - **지원 차종 (로보카 폴리 스타일 친근한 메카봇)**:
+     - **투싼 (`TUCSON`)**: 파라메트릭 쥬얼 그릴·히든 램프 시그니처
+     - **그랜저 (`GRANDEUR`)**: 심리스 호라이즌 램프 시그니처
+     - **아이오닉 (`IONIQ`)**: 파라메트릭 픽셀 LED 시그니처
+     - **팰리세이드 (`PALISADE`)**: 수직형 LED 주간주행등·대형 플래그십 시그니처
+   - **현대자동차그룹 서비스 연계 파츠 획득 & 외형 업그레이드**:
+     - 레벨업에 따라 메카봇 외형 티어가 진화하며, **블루핸즈 정비(블루핸즈 실드)**, **E-pit 충전(E-pit 윙)**, **블루멤버스 포인트(블루포인트 캐논)**, **공식 이벤트(이벤트 코어)** 등을 통해 능력치(`+ATK`/`+DEF`/`+SPD`/`+HP`)와 외형이 강화되는 파츠를 장착할 수 있습니다.
 
 ---
 
-## 4. 실행 및 빌드 방법
+## UI/UX 디자인 컨셉
 
-### A. 웹 시뮬레이터로 즉시 체험하기
-별도 빌드 없이 `demo.html` 또는 `PLEOMEKABOT_아키텍처_프로세스_요약.html`을 웹 브라우저(Chrome/Edge)로 열면 즉시 동작을 확인할 수 있습니다.
+- **도파민 디자인 (Dopamine Design)**: 고채도 네온·비비드 팔레트(`#FF6F61`, `#FFD700`, `#00CED1`, `#FF1493`, `#2EE59D`)와 둥글고 촉각적인 3D 버튼으로 게이머부터 어린 자녀·동승자까지 직관적으로 몰입할 수 있도록 설계했습니다.
 
-### B. Android Studio & Pleos Connect Emulator 빌드
-1. `android/` 디렉터리를 Android Studio에서 엽니다.
-2. Pleos Playground Repository 및 `ai.pleos.playground:Vehicle:2.3.2` 의존성이 포함된 상태에서 Gradle Sync를 진행합니다.
-3. Pleos Connect Emulator를 실행한 뒤 `./gradlew app:installDebug` (또는 루트의 `PLEOMEKABOT-debug.apk`를 `adb install`로 설치)하여 실행합니다.
+---
+
+## 프로젝트 구성
+
+- [`demo.html`](./demo.html): 도파민 디자인 기반 인터랙티브 웹 시뮬레이터 (주행 거리 10km 배틀권 충전, 기어 P 배틀, POI 스페셜 메카봇, 4대 차종 SVG 및 파츠/디버프 실시간 테스트)
+- [`PLEOMEKABOT_아키텍처_프로세스_요약.html`](./PLEOMEKABOT_아키텍처_프로세스_요약.html): 아키텍처, 게임 메커니즘, Pleos SDK 연동 요약 문서
+- [`android/`](./android): Pleos Playground Vehicle SDK (`ai.pleos.playground:Vehicle:2.3.2`) 연동 Android 앱 소스 (`PleosVehicleBridge.kt` + WebView 브리지)
+- [`PLEOMEKABOT-debug.apk`](./PLEOMEKABOT-debug.apk): 최신 디버그 APK 빌드
