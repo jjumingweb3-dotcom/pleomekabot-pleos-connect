@@ -651,7 +651,6 @@
             </div>
             <div style="display:flex; gap:10px; margin-top:5px;">
               <span style="font-size:11px; color:#CBD5E1; cursor:pointer; text-decoration:underline;" onclick="renameBot()">✏️ 이름 변경</span>
-              <span id="btn-bluehands" style="display:none; font-size:11px; color:var(--coral); font-weight:800; cursor:pointer; text-decoration:underline;" onclick="navigateBluehands()">🧭 블루핸즈 점검 안내</span>
             </div>
           </div>
 
@@ -1041,7 +1040,6 @@
       const hasDebuff = activeDebuffs.length > 0;
       document.getElementById('tire-spark').style.display = hasDebuff ? 'flex' : 'none';
       document.getElementById('tire-spark').innerText = `⚡ 디버프: ${activeDebuffs.join(', ')}`;
-      document.getElementById('btn-bluehands').style.display = hasDebuff ? 'inline' : 'none';
       const condBadge = document.getElementById('badge-condition');
       condBadge.innerText = hasDebuff ? `⚠️ 정비 필요 (${activeDebuffs.length}건)` : '🛡️ Full Armor (+10% HP)';
       condBadge.style.background = hasDebuff ? 'var(--coral)' : 'var(--mint)';
@@ -1108,10 +1106,6 @@
         state.botName = next.trim();
         updateSensors();
       }
-    }
-
-    function navigateBluehands() {
-      document.getElementById('gleo-text').innerText = '🧭 NaviHelper: 가장 가까운 블루핸즈 정비소(1.4km) 경로를 안내합니다.';
     }
 
     function triggerFX(attacker, dmgText, isCrit) {
